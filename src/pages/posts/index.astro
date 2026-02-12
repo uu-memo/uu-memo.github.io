@@ -1,0 +1,218 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+// Fetch all posts
+const posts = (await getCollection('posts')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// Get unique categories and calculate counts
+const categories = [...new Set(posts.map((post) => post.data.category).filter(Boolean))] as string[];
+
+// Sort categories (optional) or prioritize specific ones
+const prioritizedCats = ['生活記事', '日本生活', '技術文檔', 'life', 'reading', 'travel'];
+categories.sort((a, b) => {
+    const idxA = prioritizedCats.indexOf(a);
+    const idxB = prioritizedCats.indexOf(b);
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+    return a.localeCompare(b);
+});
+---
+
+<Layout title="所有文章 - UU MEMO">
+    <Header />
+    
+    <main class="max-w-6xl mx-auto px-6 py-12 min-h-[60vh]">
+        
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 border-b border-uu-sub pb-4 gap-4">
+            <h1 class="text-3xl font-bold text-uu-main">所有文章</h1>
+            
+            <div class="w-full md:w-auto flex flex-col md:flex-row items-center gap-4 flex-1 md:justify-end">
+                 <!-- Full Width Search Bar -->
+                 <div class="relative w-full md:max-w-md">
+                    <input type="text" id="page-search-input" placeholder="搜尋文章標題、內容或標籤..." 
+                        class="w-full bg-uu-light border border-uu-sub rounded-full py-2 pl-12 pr-6 text-sm focus:outline-none focus:border-uu-main transition-colors shadow-sm">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-uu-main/40 text-lg">search</span>
+                </div>
+                <span class="text-sm font-mono opacity-50 whitespace-nowrap hidden md:inline-block"><span id="post-count">{posts.length}</span> POSTS</span>
+            </div>
+        </div>
+
+        <!-- Dynamic Category Filter -->
+        <div class="mb-10 overflow-x-auto no-scrollbar">
+            <div class="flex flex-nowrap gap-2 items-center pb-2">
+                <span class="text-xs font-bold text-uu-main/60 uppercase tracking-widest mr-2 shrink-0">分類：</span>
+                <a href="/posts" class="text-xs px-4 py-1.5 bg-uu-main text-white rounded-full hover:bg-uu-dark transition-colors shrink-0 font-medium">全部</a>
+                {categories.map((cat) => (
+                    <a href={`/posts?q=${cat}`} class="category-filter text-xs px-4 py-1.5 bg-uu-sub/20 text-uu-main rounded-full hover:bg-uu-main hover:text-white transition-colors shrink-0 font-medium whitespace-nowrap cursor-pointer">
+                        {cat}
+                    </a>
+                ))}
+            </div>
+        </div>
+
+        <!-- Post Grid -->
+        <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {posts.map((post) => (
+                <article class="post-item bg-uu-light rounded-2xl overflow-hidden border border-uu-sub group shadow-sm hover:shadow-md transition-shadow flex flex-col h-full"
+                    data-title={post.data.title.toLowerCase()}
+                    data-description={post.data.description.toLowerCase()}
+                    data-category={post.data.category?.toLowerCase() || ''}
+                    data-tags={(post.data.tags || []).join(' ').toLowerCase()} 
+                >
+                    {post.data.heroImage ? (
+                        <div class="aspect-[16/10] bg-uu-sub/20 relative overflow-hidden shrink-0">
+                            <img src={post.data.heroImage} alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        </div>
+                    ) : (
+                        <div class="aspect-[16/10] bg-uu-sub/20 flex items-center justify-center text-uu-main/20 shrink-0">
+                            <span class="material-symbols-outlined text-5xl">image</span>
+                        </div>
+                    )}
+                    <div class="p-6 flex flex-col flex-1">
+                        <div class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium flex justify-between items-center">
+                            <span>{post.data.pubDate.toLocaleDateString('zh-TW')}</span>
+                            <span class="text-uu-main/80">{post.data.category || '未分類'}</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-3 group-hover:text-uu-dark transition-colors line-clamp-2">
+                            <a href={`/posts/${post.id}`}>{post.data.title}</a>
+                        </h3>
+                        <p class="text-sm opacity-70 line-clamp-3 mb-4 leading-relaxed flex-1">
+                            {post.data.description}
+                        </p>
+                        
+                        <!-- Tags in Grid Card -->
+                        {post.data.tags && post.data.tags.length > 0 && (
+                            <div class="flex flex-wrap gap-1.5 mb-4">
+                                {post.data.tags.slice(0, 3).map(tag => (
+                                    <span class="text-[10px] px-2 py-0.5 bg-uu-sub/10 rounded-md text-uu-main/70">#{tag}</span>
+                                ))}
+                            </div>
+                        )}
+
+                        <a href={`/posts/${post.id}`} class="btn-text text-sm font-bold self-start mt-auto">看更多</a>
+                    </div>
+                </article>
+            ))}
+        </div>
+
+        <!-- No Results State -->
+        <div id="no-results" class="hidden py-20 text-center opacity-60">
+            <span class="material-symbols-outlined text-4xl mb-4 text-uu-sub">search_off</span>
+            <p>沒有找到符合的文章。</p>
+            <button id="clear-search" class="mt-4 text-sm text-uu-main underline hover:text-uu-dark">清除搜尋</button>
+        </div>
+
+    </main>
+    <Footer />
+</Layout>
+
+<script>
+    function initSearch() {
+        const grid = document.getElementById('posts-grid');
+        const items = document.querySelectorAll('.post-item');
+        const searchInput = document.getElementById('page-search-input') as HTMLInputElement;
+        const noResults = document.getElementById('no-results');
+        const countSpan = document.getElementById('post-count');
+        const clearBtn = document.getElementById('clear-search');
+        const categoryFilters = document.querySelectorAll('.category-filter');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        let query = (urlParams.get('q') || urlParams.get('tag') || '').toLowerCase();
+
+        if (query) {
+            searchInput.value = query;
+            performSearch(query);
+            updateFilterActiveState(query);
+        }
+
+        searchInput?.addEventListener('input', (e) => {
+            const val = (e.target as HTMLInputElement).value.toLowerCase();
+            performSearch(val);
+            // update URL without reload for better UX? or keep simple
+        });
+
+        clearBtn?.addEventListener('click', () => {
+            if(searchInput) searchInput.value = '';
+            performSearch('');
+            updateFilterActiveState('');
+            window.history.pushState({}, '', '/posts');
+        });
+
+        // Handle category filter clicks as internal search instead of page reload (optional enhancement)
+        categoryFilters.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const url = new URL((e.currentTarget as HTMLAnchorElement).href);
+                const q = url.searchParams.get('q') || '';
+                
+                searchInput.value = q;
+                performSearch(q);
+                updateFilterActiveState(q);
+                window.history.pushState({}, '', `/posts?q=${q}`);
+            });
+        });
+
+        function updateFilterActiveState(activeQuery: string) {
+             categoryFilters.forEach(el => {
+                 const linkQuery = new URL((el as HTMLAnchorElement).href).searchParams.get('q') || '';
+                 if (linkQuery && activeQuery.includes(linkQuery.toLowerCase())) {
+                     el.classList.remove('bg-uu-sub/20', 'text-uu-main');
+                     el.classList.add('bg-uu-main', 'text-white');
+                 } else {
+                     el.classList.add('bg-uu-sub/20', 'text-uu-main');
+                     el.classList.remove('bg-uu-main', 'text-white');
+                 }
+             });
+        }
+
+        function performSearch(filterText: string) {
+            let visibleCount = 0;
+            const cleanFilter = filterText.replace(/#/g, '').trim(); 
+
+            items.forEach((item) => {
+                if (!cleanFilter) {
+                    item.classList.remove('hidden');
+                    visibleCount++;
+                    return;
+                }
+
+                const title = item.getAttribute('data-title') || '';
+                const desc = item.getAttribute('data-description') || '';
+                const category = item.getAttribute('data-category') || '';
+                const tags = item.getAttribute('data-tags') || '';
+                
+                const match = title.includes(cleanFilter) || 
+                              desc.includes(cleanFilter) || 
+                              category.includes(cleanFilter) ||
+                              tags.includes(cleanFilter);
+
+                if (match) {
+                    item.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            if (countSpan) countSpan.innerText = visibleCount.toString();
+
+            if (visibleCount === 0) {
+                noResults?.classList.remove('hidden');
+                grid?.classList.add('hidden');
+            } else {
+                noResults?.classList.add('hidden');
+                grid?.classList.remove('hidden');
+            }
+        }
+    }
+
+    initSearch();
+    document.addEventListener('astro:page-load', initSearch);
+</script>

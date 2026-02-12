@@ -14,6 +14,8 @@
     color: var(--color-uu-main);
     font-family: 'Noto Sans TC', sans-serif;
     -webkit-font-smoothing: antialiased;
+    line-height: 1.8;
+    /* Increased line-height globally */
   }
 }
 
@@ -46,7 +48,10 @@
   /* Search Input Focus */
   .search-input:focus {
     outline: none;
-    border-color: var(--color-uu-main);
+    border-color: var(--color-uu-main) !important;
+    /* Force main color */
+    ring: 1px solid var(--color-uu-main);
+    /* Optional ring */
   }
 
   /* Button Text Hover */
@@ -54,6 +59,13 @@
     position: relative;
     transition-property: color;
     transition-duration: 300ms;
+    color: var(--color-uu-main);
+    /* Ensure base color */
+  }
+
+  .btn-text:hover {
+    color: var(--color-uu-main);
+    /* Ensure hover color stays main */
   }
 
   .btn-text::after {
@@ -64,6 +76,7 @@
     bottom: -2px;
     left: 0;
     background-color: var(--color-uu-main);
+    /* Force main color underline */
     transition-property: width;
     transition-duration: 300ms;
   }

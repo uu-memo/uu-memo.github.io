@@ -30,8 +30,10 @@ import Footer from '../components/Footer.astro';
                                 </div>
                             </div>
                             <div class="flex flex-col justify-center">
-                                <div class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium">2026.02.12 /
-                                    生活記事</div>
+                                <div class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium flex items-center gap-1">
+                                    <span>2026.02.12</span> /
+                                    <a href="/category/life" class="hover:text-uu-main hover:underline decoration-1 underline-offset-2 transition-colors">生活記事</a>
+                                </div>
                                 <h3 class="text-xl font-bold mb-3 group-hover:text-uu-dark transition-colors">
                                     <a href="/posts/first-post">在城市的夾縫中尋找陽光，關於春天的第一次散步</a></h3>
                                 <p class="text-sm leading-relaxed opacity-70 line-clamp-2 mb-4">
@@ -52,8 +54,10 @@ import Footer from '../components/Footer.astro';
                                 </div>
                             </div>
                             <div class="flex flex-col justify-center">
-                                <div class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium">2026.01.28 /
-                                    日本生活</div>
+                                <div class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium flex items-center gap-1">
+                                    <span>2026.01.28</span> /
+                                    <a href="/category/life" class="hover:text-uu-main hover:underline decoration-1 underline-offset-2 transition-colors">日本生活</a>
+                                </div>
                                 <h3 class="text-xl font-bold mb-3 group-hover:text-uu-dark transition-colors">
                                     <a href="/posts/tokyo-cafe">東京の静かな午後、古い喫茶店で見つけた物語。</a></h3>
                                 <p class="text-sm leading-relaxed opacity-70 line-clamp-2 mb-4">
@@ -62,6 +66,9 @@ import Footer from '../components/Footer.astro';
                                 <a href="/posts/tokyo-cafe" class="btn-text text-sm font-bold self-start">看更多</a>
                             </div>
                         </article>
+                    </div>
+                    <div class="mt-8 text-right">
+                        <a href="/posts" class="btn-text text-sm font-bold tracking-widest text-uu-main/80 hover:text-uu-main">看所有文章 →</a>
                     </div>
                 </section>
 
@@ -108,6 +115,9 @@ import Footer from '../components/Footer.astro';
                                 <a href="#" class="btn-text text-sm font-bold">看更多</a>
                             </div>
                         </article>
+                    </div>
+                    <div class="mt-8 text-right">
+                         <a href="/posts?tag=精選" class="btn-text text-sm font-bold tracking-widest text-uu-main/80 hover:text-uu-main">看所有精選 →</a>
                     </div>
                 </section>
 
@@ -171,11 +181,11 @@ import Footer from '../components/Footer.astro';
                 <section>
                     <h4 class="text-sm font-bold tracking-widest border-b border-uu-sub pb-2 mb-6 uppercase">熱門標籤</h4>
                     <div class="flex flex-wrap gap-2">
-                        <span class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full">#咖啡</span>
-                        <span class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full">#東京</span>
-                        <span class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full">#底片</span>
-                        <span class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full">#隨筆</span>
-                        <span class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full">#閱讀</span>
+                        <a href="/posts?tag=咖啡" class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer">#咖啡</a>
+                        <a href="/posts?tag=東京" class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer">#東京</a>
+                        <a href="/posts?tag=底片" class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer">#底片</a>
+                        <a href="/posts?tag=隨筆" class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer">#隨筆</a>
+                        <a href="/posts?tag=閱讀" class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer">#閱讀</a>
                     </div>
                 </section>
 

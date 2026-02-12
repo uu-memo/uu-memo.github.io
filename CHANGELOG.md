@@ -25,3 +25,32 @@ All notable changes to this project will be documented in this file.
 - None anticipated.
 
 **中文說明：實作行動版響應式導航選單與留言區佈局優化，同時擴大了手機上的連結點擊範圍。**
+
+### [2026-02-12.2] - Feature Expansion & Navigation Refactor
+
+#### Summary of changes
+- Refactored site navigation and menu items.
+- Implemented "All Posts" archive with dynamic category filtering and tags.
+- Added Tags, Bookmarks, Share, and Copy Link features to article pages.
+- Optimized About page with author avatar and layout.
+- Fixed mobile menu visual jumps and overlay transparency.
+
+#### Technical details
+- Integrated dynamic category loader in `posts/index.astro` for client-side filtering.
+- Updated `config.ts` schema to support `tags` array across posts.
+- Implemented scroll-lock with padding compensation in `Header.astro` to prevent layout shift on mobile menu toggle.
+- Enforced site-wide line-height and primary color mapping for interactive states in `global.css`.
+
+#### Affected files
+- `src/components/Header.astro`
+- `src/pages/posts/index.astro`
+- `src/pages/posts/[...slug].astro`
+- `src/content/config.ts`
+- `src/styles/global.css`
+- `src/content/pages/about.md`
+- `src/pages/bookmarks/index.astro`
+
+#### Side effects
+- None anticipated.
+
+**中文說明：重構導航選單，新增「所有文章」頁面（含分類篩選與標籤），並在文章頁面實作書籤、分享與標籤功能。同時修復了手機選單跳動問題，並優化全站閱讀行距。**
