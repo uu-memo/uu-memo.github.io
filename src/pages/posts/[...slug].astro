@@ -1,0 +1,76 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('posts');
+	return posts.map((post) => ({
+		params: { slug: post.id },
+		props: post,
+	}));
+}
+
+const post = Astro.props;
+const { Content } = await render(post);
+---
+
+<Layout title={post.data.title}>
+    <Header />
+    <main class="max-w-4xl mx-auto px-6 py-12">
+        <article class="bg-uu-light rounded-2xl p-8 md:p-12 shadow-sm border border-uu-sub">
+            <!-- Article Header -->
+            <header class="mb-12 border-b border-uu-sub pb-8">
+                <div class="text-xs font-mono tracking-widest text-uu-main/60 mb-4">
+                    {post.data.pubDate.toLocaleDateString('zh-TW')} / {post.data.category || '未分類'}
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-uu-main mb-6 leading-tight">
+                    {post.data.title}
+                </h1>
+                {post.data.heroImage && (
+                    <div class="mt-8 rounded-xl overflow-hidden aspect-video bg-uu-sub/20 relative">
+                         <!-- Placeholder or actual image -->
+                         <img src={post.data.heroImage} alt="" class="w-full h-full object-cover opacity-80" onerror="this.style.display='none'" />
+                         <div class="absolute inset-0 flex items-center justify-center text-uu-main/20 -z-10">
+                            <span class="material-symbols-outlined text-6xl">image</span>
+                         </div>
+                    </div>
+                )}
+            </header>
+
+            <!-- Content -->
+            <div class="prose prose-stone max-w-none 
+                prose-headings:text-uu-main prose-headings:font-bold
+                prose-p:text-uu-main/80 prose-p:leading-relaxed
+                prose-a:text-uu-dark prose-a:font-medium prose-a:underline hover:prose-a:text-uu-main
+                prose-strong:text-uu-main prose-strong:font-bold
+                prose-blockquote:border-uu-sub prose-blockquote:bg-uu-sub/10 prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
+                prose-code:text-uu-dark prose-code:bg-uu-sub/20 prose-code:px-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+                prose-pre:bg-[#f5f0e7] prose-pre:text-uu-main prose-pre:border prose-pre:border-uu-sub
+                prose-li:text-uu-main/80
+                prose-img:rounded-xl">
+                <Content />
+            </div>
+        </article>
+
+        <!-- Comments Section Placeholder -->
+        <section class="mt-16 max-w-4xl mx-auto">
+            <h3 class="text-xl font-bold mb-8 flex items-center gap-4">
+                <span>留言</span>
+                <span class="text-sm font-normal opacity-50 bg-uu-sub/30 px-2 py-1 rounded-full">0</span>
+            </h3>
+            
+            <div class="bg-uu-light rounded-2xl p-8 border border-uu-sub text-center py-12">
+                <span class="material-symbols-outlined text-4xl text-uu-sub mb-4">chat_bubble_outline</span>
+                <p class="text-sm opacity-60 mb-6">還沒有留言，成為第一個留言的人吧！</p>
+                <div class="flex gap-4 justify-center items-center">
+                    <input type="text" placeholder="暱稱" class="bg-uu-base border border-uu-sub rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-uu-main h-10">
+                    <input type="text" placeholder="留言內容..." class="bg-uu-base border border-uu-sub rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-uu-main h-10 flex-1 max-w-xs">
+                    <button class="bg-uu-main text-white px-6 py-2 rounded-lg text-sm hover:bg-uu-dark transition-colors h-10">送出</button>
+                </div>
+            </div>
+        </section>
+    </main>
+    <Footer />
+</Layout>

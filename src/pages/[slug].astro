@@ -1,0 +1,30 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+export async function getStaticPaths() {
+	const pages = await getCollection('pages');
+	return pages.map((page) => ({
+		params: { slug: page.id },
+		props: page,
+	}));
+}
+
+const page = Astro.props;
+const { Content } = await render(page);
+---
+
+<Layout title={page.data.title}>
+    <Header />
+    <main class="max-w-4xl mx-auto px-6 py-12 min-h-[60vh]">
+        <article class="bg-uu-light rounded-2xl p-8 md:p-12 shadow-sm border border-uu-sub">
+            <h1 class="text-3xl font-bold text-uu-main mb-8 border-b border-uu-sub pb-4 tracking-tight">{page.data.title}</h1>
+            <div class="prose prose-stone max-w-none prose-headings:text-uu-main prose-headings:font-bold prose-p:text-uu-main/80 prose-a:text-uu-dark hover:prose-a:text-uu-main">
+                <Content />
+            </div>
+        </article>
+    </main>
+    <Footer />
+</Layout>

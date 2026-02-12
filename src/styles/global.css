@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme {
+  --color-uu-base: #f5f0e7;
+  --color-uu-sub: #ddccb3;
+  --color-uu-main: #6d492f;
+  --color-uu-dark: #4a301e;
+  --color-uu-light: #ffffff;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-uu-base);
+    color: var(--color-uu-main);
+    font-family: 'Noto Sans TC', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Custom fonts */
+.font-logo {
+  font-family: 'Zen Maru Gothic', sans-serif;
+}
+
+.font-jp {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+}
+[lang="ja"] {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+}
+
+/* Components from demo.html */
+@layer components {
+  /* Hide scrollbar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Search Input Focus */
+  .search-input:focus {
+    outline: none;
+    border-color: var(--color-uu-main);
+  }
+
+  /* Button Text Hover */
+  .btn-text {
+    position: relative;
+    transition-property: color;
+    transition-duration: 300ms;
+  }
+  
+  .btn-text::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -2px;
+    left: 0;
+    background-color: var(--color-uu-main);
+    transition-property: width;
+    transition-duration: 300ms;
+  }
+  
+  .btn-text:hover::after {
+    width: 100%;
+  }
+
+  /* Material Symbols */
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+  }
+}

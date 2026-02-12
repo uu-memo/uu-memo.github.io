@@ -1,0 +1,81 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+export async function getStaticPaths() {
+    const posts = await getCollection('posts');
+    const categories = new Set(posts.map((post) => post.data.category).filter(Boolean));
+    // Ensure default categories exist
+    ['life', 'reading', 'travel', 'visual'].forEach(c => categories.add(c));
+    
+    return [...categories].map((category) => ({
+        params: { category },
+        props: { 
+            category,
+            posts: posts.filter((post) => post.data.category === category)
+        },
+    }));
+}
+
+const { category, posts } = Astro.props;
+// Translate category slug to display name could be done here
+const categoryMap: Record<string, string> = {
+    '生活記事': '生活記事',
+    '日本生活': '日本生活',
+    '技術文檔': '技術文檔',
+    'life': '日常紀錄',
+    'reading': '讀書筆記',
+    'travel': '旅行見聞',
+    'visual': '影像生活',
+};
+const categoryName = categoryMap[category] || category;
+
+---
+
+<Layout title={`分類：${categoryName} - UU MEMO`}>
+    <Header />
+    <main class="max-w-6xl mx-auto px-6 py-12 min-h-[60vh]">
+        <div class="flex items-end justify-between mb-12 border-b border-uu-sub pb-4">
+            <h1 class="text-3xl font-bold text-uu-main">分類：{categoryName}</h1>
+            <span class="text-sm font-mono opacity-50">{posts.length} POSTS</span>
+        </div>
+
+        {posts.length > 0 ? (
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {posts.map((post) => (
+                    <article class="bg-uu-light rounded-2xl overflow-hidden border border-uu-sub group shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
+                        {post.data.heroImage ? (
+                            <div class="aspect-[16/10] bg-uu-sub/20 relative overflow-hidden shrink-0">
+                                <img src={post.data.heroImage} alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            </div>
+                        ) : (
+                            <div class="aspect-[16/10] bg-uu-sub/20 flex items-center justify-center text-uu-main/20 shrink-0">
+                                <span class="material-symbols-outlined text-5xl">image</span>
+                            </div>
+                        )}
+                        <div class="p-6 flex flex-col flex-1">
+                            <div class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium">
+                                {post.data.pubDate.toLocaleDateString('zh-TW')}
+                            </div>
+                            <h3 class="text-lg font-bold mb-3 group-hover:text-uu-dark transition-colors line-clamp-2">
+                                <a href={`/posts/${post.id}`}>{post.data.title}</a>
+                            </h3>
+                            <p class="text-sm opacity-70 line-clamp-3 mb-4 leading-relaxed flex-1">
+                                {post.data.description}
+                            </p>
+                            <a href={`/posts/${post.id}`} class="btn-text text-sm font-bold self-start mt-auto">看更多</a>
+                        </div>
+                    </article>
+                ))}
+            </div>
+        ) : (
+             <div class="text-center py-20 opacity-60">
+                <span class="material-symbols-outlined text-4xl mb-4">folder_off</span>
+                <p>此分類目前沒有文章。</p>
+             </div>
+        )}
+    </main>
+    <Footer />
+</Layout>
