@@ -1,18 +1,18 @@
 ---
 ---
-<header class="sticky top-0 z-50 bg-uu-base/80 backdrop-blur-md border-b border-uu-sub">
+<header class="sticky top-0 z-50 bg-uu-base/80 backdrop-blur-md border-b border-uu-sub" x-data="{ open: false }">
     <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
         <!-- Logotype -->
-        <div class="font-logo text-3xl tracking-tighter text-uu-main">
-            <a href="/">UU MEMO</a>
+        <div class="font-logo text-3xl tracking-tighter text-uu-main relative z-50">
+            <a href="/" @click="open = false">UU MEMO</a>
         </div>
 
-        <!-- Navigation & Search -->
-        <div class="flex items-center gap-8">
-            <nav class="hidden md:flex gap-8 text-sm font-medium tracking-widest">
-                <a href="/category/life" class="hover:text-uu-dark transition-colors">生活</a>
-                <a href="/category/reading" class="hover:text-uu-dark transition-colors">閱讀</a>
-                <a href="/category/travel" class="hover:text-uu-dark transition-colors">旅行</a>
+        <!-- Desktop Navigation & Search -->
+        <div class="hidden md:flex items-center gap-8">
+            <nav class="flex gap-8 text-sm font-medium tracking-widest">
+                <a href="/category/life" class="hover:text-uu-dark transition-colors py-2">生活</a>
+                <a href="/category/reading" class="hover:text-uu-dark transition-colors py-2">閱讀</a>
+                <a href="/category/travel" class="hover:text-uu-dark transition-colors py-2">旅行</a>
             </nav>
 
             <!-- Search Bar -->
@@ -22,5 +22,65 @@
                     class="search-input bg-transparent border border-uu-sub rounded-full py-1.5 pl-10 pr-4 text-sm w-40 md:w-60 transition-all">
             </div>
         </div>
+
+        <!-- Mobile Menu Button -->
+        <button 
+            id="menu-btn"
+            class="md:hidden relative z-50 w-10 h-10 flex items-center justify-center -mr-2 text-uu-main focus:outline-none"
+            aria-label="Toggle menu"
+        >
+            <span class="material-symbols-outlined text-3xl" id="menu-icon">menu</span>
+        </button>
+    </div>
+
+    <!-- Mobile Navigation Overlay -->
+    <div 
+        id="mobile-menu"
+        class="fixed inset-0 bg-uu-base/95 backdrop-blur-xl z-40 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-center items-center gap-8"
+        aria-hidden="true"
+    >
+        <nav class="flex flex-col items-center gap-8 text-xl font-medium tracking-widest text-uu-main">
+            <a href="/" class="hover:text-uu-dark transition-colors py-2 px-4 w-full text-center mobile-link">首頁</a>
+            <a href="/category/life" class="hover:text-uu-dark transition-colors py-2 px-4 w-full text-center mobile-link">生活</a>
+            <a href="/category/reading" class="hover:text-uu-dark transition-colors py-2 px-4 w-full text-center mobile-link">閱讀</a>
+            <a href="/category/travel" class="hover:text-uu-dark transition-colors py-2 px-4 w-full text-center mobile-link">旅行</a>
+        </nav>
+
+        <!-- Mobile Search -->
+        <div class="relative flex items-center mt-4">
+            <span class="material-symbols-outlined absolute left-3 text-uu-main/50 text-xl">search</span>
+            <input type="text" placeholder="搜尋內容..."
+                class="bg-white/50 border border-uu-sub rounded-full py-3 pl-10 pr-6 text-base w-64 focus:outline-none focus:border-uu-main">
+        </div>
     </div>
 </header>
+
+<script>
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+    let isMenuOpen = false;
+
+    function toggleMenu() {
+        isMenuOpen = !isMenuOpen;
+        if (isMenuOpen) {
+            mobileMenu?.classList.remove('translate-x-full');
+            if (menuIcon) menuIcon.innerText = 'close';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        } else {
+            mobileMenu?.classList.add('translate-x-full');
+            if (menuIcon) menuIcon.innerText = 'menu';
+            document.body.style.overflow = '';
+        }
+    }
+
+    menuBtn?.addEventListener('click', toggleMenu);
+
+    // Close menu when clicking a link
+    mobileLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (isMenuOpen) toggleMenu();
+        });
+    });
+</script>

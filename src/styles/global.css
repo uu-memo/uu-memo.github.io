@@ -25,16 +25,19 @@
 .font-jp {
   font-family: 'M PLUS Rounded 1c', sans-serif;
 }
+
 [lang="ja"] {
   font-family: 'M PLUS Rounded 1c', sans-serif;
 }
 
 /* Components from demo.html */
 @layer components {
+
   /* Hide scrollbar */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -52,7 +55,7 @@
     transition-property: color;
     transition-duration: 300ms;
   }
-  
+
   .btn-text::after {
     content: '';
     position: absolute;
@@ -64,7 +67,7 @@
     transition-property: width;
     transition-duration: 300ms;
   }
-  
+
   .btn-text:hover::after {
     width: 100%;
   }
@@ -73,5 +76,19 @@
   .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
     vertical-align: middle;
+  }
+
+  /* Mobile Touch Improvements */
+  @media (max-width: 768px) {
+    .btn-text {
+      padding: 12px;
+      margin: -12px;
+      display: inline-block;
+    }
+  }
+
+  /* Active states */
+  .active\:scale-95:active {
+    transform: scale(0.95);
   }
 }
