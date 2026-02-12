@@ -1,7 +1,7 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 ---
 
 <Layout title="UU MEMO - 紀錄生活碎隙">
@@ -9,169 +9,320 @@ import Footer from '../components/Footer.astro';
 
     <main class="max-w-6xl mx-auto px-6 py-12">
         <div class="flex flex-col lg:flex-row gap-16">
-
             <!-- Left Content Area (Main) -->
             <div class="flex-1 space-y-20">
-
                 <!-- 最新文章 (Horizontal Cards) -->
                 <section>
                     <div class="flex justify-between items-end mb-8">
-                        <h2 class="text-2xl font-bold tracking-tight border-b-2 border-uu-main pb-1">最新文章</h2>
-                        <span class="text-xs opacity-40 font-mono tracking-widest">LATEST UPDATES</span>
+                        <h2
+                            class="text-2xl font-bold tracking-tight border-b-2 border-uu-main pb-1"
+                        >
+                            最新文章
+                        </h2>
+                        <span
+                            class="text-xs opacity-40 font-mono tracking-widest"
+                            >LATEST UPDATES</span
+                        >
                     </div>
 
                     <div class="space-y-8">
                         <!-- Horizontal Card 1 -->
                         <article class="flex flex-col md:flex-row gap-6 group">
-                            <div class="w-full md:w-72 aspect-[16/10] bg-uu-sub/30 rounded-lg overflow-hidden shrink-0">
+                            <div
+                                class="w-full md:w-72 aspect-[16/10] bg-uu-sub/30 rounded-lg overflow-hidden shrink-0"
+                            >
                                 <div
-                                    class="w-full h-full bg-[#eaddce] flex items-center justify-center text-uu-main/20">
-                                    <span class="material-symbols-outlined text-5xl">image</span>
+                                    class="w-full h-full bg-[#eaddce] flex items-center justify-center text-uu-main/20"
+                                >
+                                    <span
+                                        class="material-symbols-outlined text-5xl"
+                                        >image</span
+                                    >
                                 </div>
                             </div>
                             <div class="flex flex-col justify-center">
-                                <div class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium flex items-center gap-1">
+                                <div
+                                    class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium flex items-center gap-1"
+                                >
                                     <span>2026.02.12</span> /
-                                    <a href="/category/life" class="hover:text-uu-main hover:underline decoration-1 underline-offset-2 transition-colors">生活記事</a>
+                                    <a
+                                        href="/category/life"
+                                        class="hover:text-uu-main hover:underline decoration-1 underline-offset-2 transition-colors"
+                                        >生活記事</a
+                                    >
                                 </div>
-                                <h3 class="text-xl font-bold mb-3 group-hover:text-uu-dark transition-colors">
-                                    <a href="/posts/first-post">在城市的夾縫中尋找陽光，關於春天的第一次散步</a></h3>
-                                <p class="text-sm leading-relaxed opacity-70 line-clamp-2 mb-4">
+                                <h3
+                                    class="text-xl font-bold mb-3 group-hover:text-uu-dark transition-colors"
+                                >
+                                    <a href="/posts/first-post"
+                                        >在城市的夾縫中尋找陽光，關於春天的第一次散步</a>
+                                </h3>
+                                <p
+                                    class="text-sm leading-relaxed opacity-70 line-clamp-2 mb-4"
+                                >
                                     清晨的空氣還帶著一絲涼意，但路邊的櫻花枝頭已經隱約可見飽滿的芽。這是我來到這個城市的第三個春天，依然對這些微小的變化感到驚喜...
                                 </p>
-                                <a href="/posts/first-post" class="btn-text text-sm font-bold self-start">看更多</a>
+                                <a
+                                    href="/posts/first-post"
+                                    class="btn-text text-sm font-bold self-start"
+                                    >看更多</a
+                                >
                             </div>
                         </article>
 
                         <div class="h-px bg-uu-sub/50 w-full"></div>
 
                         <!-- Horizontal Card 2 (日文範例) -->
-                        <article class="flex flex-col md:flex-row gap-6 group" lang="ja">
-                            <div class="w-full md:w-72 aspect-[16/10] bg-uu-sub/30 rounded-lg overflow-hidden shrink-0">
+                        <article
+                            class="flex flex-col md:flex-row gap-6 group"
+                            lang="ja"
+                        >
+                            <div
+                                class="w-full md:w-72 aspect-[16/10] bg-uu-sub/30 rounded-lg overflow-hidden shrink-0"
+                            >
                                 <div
-                                    class="w-full h-full bg-[#e6ded5] flex items-center justify-center text-uu-main/20">
-                                    <span class="material-symbols-outlined text-5xl">image</span>
+                                    class="w-full h-full bg-[#e6ded5] flex items-center justify-center text-uu-main/20"
+                                >
+                                    <span
+                                        class="material-symbols-outlined text-5xl"
+                                        >image</span
+                                    >
                                 </div>
                             </div>
                             <div class="flex flex-col justify-center">
-                                <div class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium flex items-center gap-1">
+                                <div
+                                    class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium flex items-center gap-1"
+                                >
                                     <span>2026.01.28</span> /
-                                    <a href="/category/life" class="hover:text-uu-main hover:underline decoration-1 underline-offset-2 transition-colors">日本生活</a>
+                                    <a
+                                        href="/category/life"
+                                        class="hover:text-uu-main hover:underline decoration-1 underline-offset-2 transition-colors"
+                                        >日本生活</a
+                                    >
                                 </div>
-                                <h3 class="text-xl font-bold mb-3 group-hover:text-uu-dark transition-colors">
-                                    <a href="/posts/tokyo-cafe">東京の静かな午後、古い喫茶店で見つけた物語。</a></h3>
-                                <p class="text-sm leading-relaxed opacity-70 line-clamp-2 mb-4">
+                                <h3
+                                    class="text-xl font-bold mb-3 group-hover:text-uu-dark transition-colors"
+                                >
+                                    <a href="/posts/tokyo-cafe"
+                                        >東京の静かな午後、古い喫茶店で見つけた物語。</a>
+                                </h3>
+                                <p
+                                    class="text-sm leading-relaxed opacity-70 line-clamp-2 mb-4"
+                                >
                                     神保町の裏通りにある小さな喫茶店。そこには、時間が止まったような静寂がありました。一杯のコーヒーと、誰かが残した古い本...
                                 </p>
-                                <a href="/posts/tokyo-cafe" class="btn-text text-sm font-bold self-start">看更多</a>
+                                <a
+                                    href="/posts/tokyo-cafe"
+                                    class="btn-text text-sm font-bold self-start"
+                                    >看更多</a
+                                >
                             </div>
                         </article>
                     </div>
                     <div class="mt-8 text-right">
-                        <a href="/posts" class="btn-text text-sm font-bold tracking-widest text-uu-main/80 hover:text-uu-main">看所有文章 →</a>
+                        <a
+                            href="/posts"
+                            class="btn-text text-sm font-bold tracking-widest text-uu-main/80 hover:text-uu-main"
+                            >看所有文章 →</a
+                        >
                     </div>
                 </section>
 
                 <!-- 精選文章 (Vertical Cards) -->
                 <section>
                     <div class="flex justify-between items-end mb-8">
-                        <h2 class="text-2xl font-bold tracking-tight border-b-2 border-uu-main pb-1">精選文章</h2>
-                        <span class="text-xs opacity-40 font-mono tracking-widest">FEATURED POSTS</span>
+                        <h2
+                            class="text-2xl font-bold tracking-tight border-b-2 border-uu-main pb-1"
+                        >
+                            精選文章
+                        </h2>
+                        <span
+                            class="text-xs opacity-40 font-mono tracking-widest"
+                            >FEATURED POSTS</span
+                        >
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- Vertical Card 1 -->
                         <article
-                            class="bg-uu-light rounded-2xl overflow-hidden border border-uu-sub group shadow-sm hover:shadow-md transition-shadow">
+                            class="bg-uu-light rounded-2xl overflow-hidden border border-uu-sub group shadow-sm hover:shadow-md transition-shadow"
+                        >
                             <div class="aspect-[16/9] bg-uu-sub/20 relative">
-                                <div class="absolute inset-0 flex items-center justify-center text-uu-main/20">
-                                    <span class="material-symbols-outlined text-4xl">photo_library</span>
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center text-uu-main/20"
+                                >
+                                    <span
+                                        class="material-symbols-outlined text-4xl"
+                                        >photo_library</span
+                                    >
                                 </div>
                             </div>
                             <div class="p-6">
-                                <h3 class="text-lg font-bold mb-3 group-hover:text-uu-dark transition-colors">
-                                    <a href="#">那些年我們一起讀過的詩集：關於孤獨與陪伴</a></h3>
-                                <p class="text-sm opacity-70 line-clamp-3 mb-6 leading-relaxed">
+                                <h3
+                                    class="text-lg font-bold mb-3 group-hover:text-uu-dark transition-colors"
+                                >
+                                    <a href="#"
+                                        >那些年我們一起讀過的詩集：關於孤獨與陪伴</a>
+                                </h3>
+                                <p
+                                    class="text-sm opacity-70 line-clamp-3 mb-6 leading-relaxed"
+                                >
                                     書架上的那本詩集已經有些發黃，但每一次翻開，都能在字裡行間找到當時的自己。詩不是為了解答生活，而是為了安慰靈魂。
                                 </p>
-                                <a href="#" class="btn-text text-sm font-bold">看更多</a>
+                                <a href="#" class="btn-text text-sm font-bold"
+                                    >看更多</a
+                                >
                             </div>
                         </article>
 
                         <!-- Vertical Card 2 -->
                         <article
-                            class="bg-uu-light rounded-2xl overflow-hidden border border-uu-sub group shadow-sm hover:shadow-md transition-shadow">
+                            class="bg-uu-light rounded-2xl overflow-hidden border border-uu-sub group shadow-sm hover:shadow-md transition-shadow"
+                        >
                             <div class="aspect-[16/9] bg-uu-sub/20 relative">
-                                <div class="absolute inset-0 flex items-center justify-center text-uu-main/20">
-                                    <span class="material-symbols-outlined text-4xl">photo_library</span>
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center text-uu-main/20"
+                                >
+                                    <span
+                                        class="material-symbols-outlined text-4xl"
+                                        >photo_library</span
+                                    >
                                 </div>
                             </div>
                             <div class="p-6">
-                                <h3 class="text-lg font-bold mb-3 group-hover:text-uu-dark transition-colors">
-                                    <a href="#">給未來的自己：在繁瑣日常中保持溫度的五個練習</a></h3>
-                                <p class="text-sm opacity-70 line-clamp-3 mb-6 leading-relaxed">
+                                <h3
+                                    class="text-lg font-bold mb-3 group-hover:text-uu-dark transition-colors"
+                                >
+                                    <a href="#"
+                                        >給未來的自己：在繁瑣日常中保持溫度的五個練習</a>
+                                </h3>
+                                <p
+                                    class="text-sm opacity-70 line-clamp-3 mb-6 leading-relaxed"
+                                >
                                     生活是由無數個微小的瞬間組成的。如何從瑣事中抽離，看見隱藏在日常之下的光？這是我給自己設計的五個生活練習。
                                 </p>
-                                <a href="#" class="btn-text text-sm font-bold">看更多</a>
+                                <a href="#" class="btn-text text-sm font-bold"
+                                    >看更多</a
+                                >
                             </div>
                         </article>
                     </div>
                     <div class="mt-8 text-right">
-                         <a href="/posts?tag=精選" class="btn-text text-sm font-bold tracking-widest text-uu-main/80 hover:text-uu-main">看所有精選 →</a>
+                        <a
+                            href="/posts?tag=精選"
+                            class="btn-text text-sm font-bold tracking-widest text-uu-main/80 hover:text-uu-main"
+                            >看所有精選 →</a
+                        >
                     </div>
                 </section>
-
             </div>
 
             <!-- Right Sidebar -->
             <aside class="w-full lg:w-72 space-y-12 shrink-0">
-
                 <!-- Author Bio -->
-                <section class="bg-uu-light p-8 rounded-2xl border border-uu-sub text-center">
-                    <div class="w-20 h-20 mx-auto bg-uu-sub/30 rounded-full flex items-center justify-center mb-6">
-                        <span class="material-symbols-outlined text-4xl text-uu-main">person</span>
+                <section
+                    class="bg-uu-light p-8 rounded-2xl border border-uu-sub text-center"
+                >
+                    <div
+                        class="w-20 h-20 mx-auto bg-uu-sub/30 rounded-full flex items-center justify-center mb-6 overflow-hidden"
+                    >
+                        <img
+                            src="/uu-memo.png"
+                            alt="UU Avatar"
+                            class="w-full h-full object-cover"
+                        />
                     </div>
                     <h4 class="font-bold text-lg mb-2">UU</h4>
-                    <p class="text-xs opacity-60 mb-6 tracking-widest">WRITER / TRAVELER</p>
+                    <p class="text-xs opacity-60 mb-6 tracking-widest">
+                        WRITER / TRAVELER
+                    </p>
                     <p class="text-sm leading-relaxed opacity-80 mb-6">
                         在東京與台北之間生活。喜歡底片攝影、黑咖啡以及安靜的書寫時光。
                     </p>
                     <div class="flex justify-center gap-4">
-                        <a href="mailto:contact@uu.memo" class="text-uu-main/50 hover:text-uu-main transition-colors">
+                        <a
+                            href="mailto:contact@uu.memo"
+                            class="text-uu-main/50 hover:text-uu-main transition-colors"
+                        >
                             <span class="material-symbols-outlined">mail</span>
                         </a>
-                        <a href="#" class="text-uu-main/50 hover:text-uu-main transition-colors">
-                            <span class="material-symbols-outlined">alternate_email</span>
+                        <a
+                            href="#"
+                            class="text-uu-main/50 hover:text-uu-main transition-colors"
+                        >
+                            <span class="material-symbols-outlined"
+                                >alternate_email</span
+                            >
                         </a>
                     </div>
                 </section>
 
                 <!-- Directory (Sitemap Index) -->
                 <section>
-                    <h4 class="text-sm font-bold tracking-widest border-b border-uu-sub pb-2 mb-6 uppercase">目錄索引</h4>
+                    <h4
+                        class="text-sm font-bold tracking-widest border-b border-uu-sub pb-2 mb-6 uppercase"
+                    >
+                        目錄索引
+                    </h4>
                     <ul class="space-y-4 text-sm font-medium">
                         <li>
-                            <a href="/category/life" class="flex items-center justify-between group">
-                                <span class="group-hover:translate-x-1 transition-transform">日常紀錄</span>
-                                <span class="material-symbols-outlined text-sm opacity-30">chevron_right</span>
+                            <a
+                                href="/category/life"
+                                class="flex items-center justify-between group"
+                            >
+                                <span
+                                    class="group-hover:translate-x-1 transition-transform"
+                                    >日常紀錄</span
+                                >
+                                <span
+                                    class="material-symbols-outlined text-sm opacity-30"
+                                    >chevron_right</span
+                                >
                             </a>
                         </li>
                         <li>
-                            <a href="/category/reading" class="flex items-center justify-between group">
-                                <span class="group-hover:translate-x-1 transition-transform">讀書筆記</span>
-                                <span class="material-symbols-outlined text-sm opacity-30">chevron_right</span>
+                            <a
+                                href="/category/reading"
+                                class="flex items-center justify-between group"
+                            >
+                                <span
+                                    class="group-hover:translate-x-1 transition-transform"
+                                    >讀書筆記</span
+                                >
+                                <span
+                                    class="material-symbols-outlined text-sm opacity-30"
+                                    >chevron_right</span
+                                >
                             </a>
                         </li>
                         <li>
-                            <a href="/category/travel" class="flex items-center justify-between group">
-                                <span class="group-hover:translate-x-1 transition-transform">旅行見聞</span>
-                                <span class="material-symbols-outlined text-sm opacity-30">chevron_right</span>
+                            <a
+                                href="/category/travel"
+                                class="flex items-center justify-between group"
+                            >
+                                <span
+                                    class="group-hover:translate-x-1 transition-transform"
+                                    >旅行見聞</span
+                                >
+                                <span
+                                    class="material-symbols-outlined text-sm opacity-30"
+                                    >chevron_right</span
+                                >
                             </a>
                         </li>
                         <li>
-                            <a href="/category/visual" class="flex items-center justify-between group">
-                                <span class="group-hover:translate-x-1 transition-transform">影像生活</span>
-                                <span class="material-symbols-outlined text-sm opacity-30">chevron_right</span>
+                            <a
+                                href="/category/visual"
+                                class="flex items-center justify-between group"
+                            >
+                                <span
+                                    class="group-hover:translate-x-1 transition-transform"
+                                    >影像生活</span
+                                >
+                                <span
+                                    class="material-symbols-outlined text-sm opacity-30"
+                                    >chevron_right</span
+                                >
                             </a>
                         </li>
                     </ul>
@@ -179,16 +330,39 @@ import Footer from '../components/Footer.astro';
 
                 <!-- Tag Cloud (Optional decoration) -->
                 <section>
-                    <h4 class="text-sm font-bold tracking-widest border-b border-uu-sub pb-2 mb-6 uppercase">熱門標籤</h4>
+                    <h4
+                        class="text-sm font-bold tracking-widest border-b border-uu-sub pb-2 mb-6 uppercase"
+                    >
+                        熱門標籤
+                    </h4>
                     <div class="flex flex-wrap gap-2">
-                        <a href="/posts?tag=咖啡" class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer">#咖啡</a>
-                        <a href="/posts?tag=東京" class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer">#東京</a>
-                        <a href="/posts?tag=底片" class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer">#底片</a>
-                        <a href="/posts?tag=隨筆" class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer">#隨筆</a>
-                        <a href="/posts?tag=閱讀" class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer">#閱讀</a>
+                        <a
+                            href="/posts?tag=咖啡"
+                            class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer"
+                            >#咖啡</a
+                        >
+                        <a
+                            href="/posts?tag=東京"
+                            class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer"
+                            >#東京</a
+                        >
+                        <a
+                            href="/posts?tag=底片"
+                            class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer"
+                            >#底片</a
+                        >
+                        <a
+                            href="/posts?tag=隨筆"
+                            class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer"
+                            >#隨筆</a
+                        >
+                        <a
+                            href="/posts?tag=閱讀"
+                            class="text-[11px] px-3 py-1 bg-uu-sub/20 rounded-full hover:bg-uu-main hover:text-white transition-colors cursor-pointer"
+                            >#閱讀</a
+                        >
                     </div>
                 </section>
-
             </aside>
         </div>
     </main>
