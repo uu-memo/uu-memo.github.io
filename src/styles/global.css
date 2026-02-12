@@ -15,7 +15,9 @@
     font-family: 'Noto Sans TC', sans-serif;
     -webkit-font-smoothing: antialiased;
     line-height: 1.8;
-    /* Increased line-height globally */
+    width: 100%;
+    overflow-x: hidden;
+    min-height: 100vh;
   }
 }
 

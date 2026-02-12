@@ -6,15 +6,29 @@ import Footer from '../../components/Footer.astro';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('posts');
-	return posts.map((post) => ({
+    // Sort posts by date to ensure correct prev/next logic
+    const sortedPosts = posts.sort((a, b) => 
+        (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0)
+    );
+
+	return sortedPosts.map((post, i) => ({
 		params: { slug: post.id },
-		props: post,
+		props: { 
+            post,
+            prevPost: i + 1 < sortedPosts.length ? sortedPosts[i + 1] : null,
+            nextPost: i > 0 ? sortedPosts[i - 1] : null,
+        },
 	}));
 }
 
-const post = Astro.props;
+const { post, prevPost, nextPost } = Astro.props;
 const { Content } = await render(post);
 const tags = post.data.tags || [];
+
+// Helper to handle category array or string
+const categories = Array.isArray(post.data.category) 
+    ? post.data.category 
+    : post.data.category ? [post.data.category] : ['未分類'];
 ---
 
 <Layout title={post.data.title}>
@@ -23,8 +37,15 @@ const tags = post.data.tags || [];
         <article class="bg-uu-light rounded-2xl p-8 md:p-12 shadow-sm border border-uu-sub">
             <!-- Article Header -->
             <header class="mb-12 border-b border-uu-sub pb-8">
-                <div class="text-xs font-mono tracking-widest text-uu-main/60 mb-4">
-                    {post.data.pubDate.toLocaleDateString('zh-TW')} / {post.data.category || '未分類'}
+                <div class="text-xs font-mono tracking-widest text-uu-main/60 mb-4 flex flex-wrap gap-2">
+                    <span>{post.data.pubDate.toLocaleDateString('zh-TW')}</span>
+                    <span>/</span>
+                    {categories.map((cat, index) => (
+                        <>
+                            <a href={`/posts?q=${cat}`} class="hover:text-uu-main hover:underline transition-colors">{cat}</a>
+                            {index < categories.length - 1 && <span>,</span>}
+                        </>
+                    ))}
                 </div>
                 <h1 class="text-3xl md:text-4xl font-bold text-uu-main mb-6 leading-tight">
                     {post.data.title}
@@ -79,6 +100,33 @@ const tags = post.data.tags || [];
             </div>
         </article>
 
+        <!-- Prev/Next Navigation -->
+        <nav class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {prevPost ? (
+                <a href={`/posts/${prevPost.id}`} class="group flex flex-col p-6 bg-uu-light rounded-2xl border border-uu-sub hover:shadow-md transition-shadow">
+                    <span class="text-xs text-uu-main/50 mb-2 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">arrow_back</span>
+                        上一篇
+                    </span>
+                    <span class="font-bold text-uu-main truncate group-hover:text-uu-dark transition-colors block w-full">{prevPost.data.title}</span>
+                </a>
+            ) : (
+                <div class="hidden md:block"></div>
+            )}
+
+            {nextPost ? (
+                <a href={`/posts/${nextPost.id}`} class="group flex flex-col p-6 bg-uu-light rounded-2xl border border-uu-sub hover:shadow-md transition-shadow text-right items-end">
+                    <span class="text-xs text-uu-main/50 mb-2 flex items-center gap-1">
+                        下一篇
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </span>
+                    <span class="font-bold text-uu-main truncate group-hover:text-uu-dark transition-colors block w-full">{nextPost.data.title}</span>
+                </a>
+            ) : (
+                <div class="hidden md:block"></div>
+            )}
+        </nav>
+
         <!-- Comments Section Placeholder -->
         <section class="mt-16 max-w-4xl mx-auto">
             <h3 class="text-xl font-bold mb-8 flex items-center gap-4">
@@ -89,10 +137,10 @@ const tags = post.data.tags || [];
             <div class="bg-uu-light rounded-2xl p-8 border border-uu-sub text-center py-12">
                 <span class="material-symbols-outlined text-4xl text-uu-sub mb-4">chat_bubble_outline</span>
                 <p class="text-sm opacity-60 mb-6">還沒有留言，成為第一個留言的人吧！</p>
-                <div class="flex flex-col md:flex-row gap-4 justify-center items-stretch md:items-center">
-                    <input type="text" placeholder="暱稱" class="bg-uu-base border border-uu-sub rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-uu-main h-10 w-full md:w-auto">
-                    <input type="text" placeholder="留言內容..." class="bg-uu-base border border-uu-sub rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-uu-main h-10 flex-1 w-full md:max-w-xs">
-                    <button class="bg-uu-main text-white px-6 py-2 rounded-lg text-sm hover:bg-uu-dark transition-colors h-10 w-full md:w-auto font-medium active:scale-95 transform duration-100">送出</button>
+                <div class="flex flex-col gap-4 max-w-lg mx-auto">
+                    <input type="text" placeholder="暱稱" class="bg-uu-base border border-uu-sub rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-uu-main w-full">
+                    <textarea placeholder="留言內容..." rows="4" class="bg-uu-base border border-uu-sub rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-uu-main w-full resize-none"></textarea>
+                    <button class="bg-uu-main text-white px-6 py-3 rounded-lg text-sm hover:bg-uu-dark transition-colors w-full font-medium active:scale-95 transform duration-100">送出留言</button>
                 </div>
             </div>
         </section>

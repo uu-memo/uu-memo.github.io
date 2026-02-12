@@ -6,7 +6,17 @@ import Footer from '../../components/Footer.astro';
 
 export async function getStaticPaths() {
     const posts = await getCollection('posts');
-    const categories = new Set(posts.map((post) => post.data.category).filter(Boolean));
+    const categories = new Set<string>();
+    
+    // Extract unique categories from all posts (handling arrays)
+    posts.forEach(post => {
+        if (post.data.category) {
+            // post.data.category is already normalized to an array by schema
+             const cats = Array.isArray(post.data.category) ? post.data.category : [post.data.category];
+             cats.forEach(c => categories.add(c));
+        }
+    });
+
     // Ensure default categories exist
     ['life', 'reading', 'travel', 'visual'].forEach(c => categories.add(c));
     
@@ -14,7 +24,11 @@ export async function getStaticPaths() {
         params: { category },
         props: { 
             category,
-            posts: posts.filter((post) => post.data.category === category)
+            // Filter posts that include this category
+            posts: posts.filter((post) => {
+                const cats = Array.isArray(post.data.category) ? post.data.category : [post.data.category];
+                return cats.includes(category);
+            })
         },
     }));
 }

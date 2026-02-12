@@ -1,6 +1,6 @@
 ---
 ---
-<header class="sticky top-0 z-50 bg-uu-base/80 backdrop-blur-md border-b border-uu-sub" x-data="{ open: false }">
+<header class="sticky top-0 z-50 w-full bg-uu-base/80 backdrop-blur-md border-b border-uu-sub" x-data="{ open: false }">
     <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
         <!-- Logotype -->
         <div class="font-logo text-3xl tracking-tighter text-uu-main relative z-50">
@@ -50,14 +50,14 @@
     <!-- Mobile Navigation Overlay -->
     <div 
         id="mobile-menu"
-        class="fixed inset-0 bg-uu-base z-40 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col pt-24 px-6 items-center gap-6"
+        class="fixed inset-0 bg-uu-base z-40 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col pt-24 px-6 items-center gap-6 w-full h-screen overflow-y-auto"
         aria-hidden="true"
     >
-        <nav class="w-full flex flex-col items-center gap-4 text-lg font-medium tracking-widest text-uu-main">
-            <a href="/" class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30">首頁</a>
-            <a href="/about" class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30">關於我</a>
-            <a href="/posts" class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30">所有文章</a>
-            <a href="/bookmarks" class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30">我的書籤</a>
+        <nav class="w-full flex flex-col items-center gap-4 text-lg font-medium tracking-widest text-uu-main shrink-0">
+            <a href="/" class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30 block">首頁</a>
+            <a href="/about" class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30 block">關於我</a>
+            <a href="/posts" class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30 block">所有文章</a>
+            <a href="/bookmarks" class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30 block">我的書籤</a>
         </nav>
 
         <!-- Mobile Search -->
