@@ -82,3 +82,28 @@ All notable changes to this project will be documented in this file.
 - None anticipated.
 
 **中文說明：升級 YAML 前置資料格式（支援多分類陣列），實作文章底部「上一篇/下一篇」導航，加高留言輸入框，並解決手機視窗寬度偵測與跑版問題。**
+
+### [2026-02-12.4] - User Authentication & Dashboard
+
+#### Summary of changes
+- Implemented Google Sign-In via Firebase Authentication.
+- Created User Dashboard at `/user` with tabs for Bookmarks, Comments, and Profile management.
+- Added Admin redirection logic for specific email accounts.
+
+#### Technical details
+- Integrated `firebase` SDK and configured initialization in `src/lib/firebase.js`.
+- Implemented Google Auth Provider with popup flow in `src/pages/user/index.astro`.
+- Added client-side state management for user session and tab navigation (Vanilla JS).
+- Enforced strict project color tokens (`uu-base`, `uu-main`, `uu-sub`) for the new interface.
+- Configured automatic redirect to `/admin` (future route) for authorized admin email `jing180804@gmail.com`.
+- Connected Header user icons to the `/user` dashboard for both desktop and mobile views.
+
+#### Affected files
+- `package.json` (Added `firebase` dependency)
+- `src/lib/firebase.js` (New file)
+- `src/pages/user/index.astro` (New file)
+
+#### Side effects
+- Admin users will be redirected to `/admin`, which currently returns 404 until created.
+
+**中文說明：實作 Firebase Google 登入功能，建立包含書籤、留言與個人資料管理的使用者儀表板 (`/user`)，並針對特定信箱設置管理員後台自動跳轉邏輯。**

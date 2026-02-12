@@ -1,79 +1,153 @@
 ---
 ---
-<header class="sticky top-0 z-50 w-full bg-uu-base/80 backdrop-blur-md border-b border-uu-sub" x-data="{ open: false }">
+
+<header
+    class="sticky top-0 z-50 w-full bg-uu-base/80 backdrop-blur-md border-b border-uu-sub"
+    x-data="{ open: false }"
+>
     <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
         <!-- Logotype -->
-        <div class="font-logo text-3xl tracking-tighter text-uu-main relative z-50">
+        <div
+            class="font-logo text-3xl tracking-tighter text-uu-main relative z-50"
+        >
             <a href="/" @click="open = false">UU MEMO</a>
         </div>
 
         <!-- Desktop Navigation & Search -->
         <div class="hidden md:flex items-center gap-6">
-            <nav class="flex gap-6 text-sm font-medium tracking-widest items-center">
-                <a href="/" class="hover:text-uu-dark transition-colors py-2">首頁</a>
-                <a href="/about" class="hover:text-uu-dark transition-colors py-2">關於我</a>
-                <a href="/posts" class="hover:text-uu-dark transition-colors py-2">所有文章</a>
-                <a href="/bookmarks" class="hover:text-uu-dark transition-colors py-2">我的書籤</a>
+            <nav
+                class="flex gap-6 text-sm font-medium tracking-widest items-center"
+            >
+                <a href="/" class="hover:text-uu-dark transition-colors py-2"
+                    >首頁</a
+                >
+                <a
+                    href="/about"
+                    class="hover:text-uu-dark transition-colors py-2">關於我</a
+                >
+                <a
+                    href="/posts"
+                    class="hover:text-uu-dark transition-colors py-2"
+                    >所有文章</a
+                >
+                <a
+                    href="/bookmarks"
+                    class="hover:text-uu-dark transition-colors py-2"
+                    >我的書籤</a
+                >
             </nav>
 
             <!-- Search Bar -->
-            <form action="/posts" method="get" class="relative flex items-center">
-                <span class="material-symbols-outlined absolute left-3 text-uu-main/50 text-xl">search</span>
-                <input type="text" name="q" placeholder="搜尋..."
-                    class="search-input bg-transparent border border-uu-sub rounded-full py-1.5 pl-9 pr-4 text-sm w-32 focus:w-48 transition-all duration-300">
+            <form
+                action="/posts"
+                method="get"
+                class="relative flex items-center"
+            >
+                <span
+                    class="material-symbols-outlined absolute left-3 text-uu-main/50 text-xl"
+                    >search</span
+                >
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="搜尋..."
+                    class="search-input bg-transparent border border-uu-sub rounded-full py-1.5 pl-9 pr-4 text-sm w-32 focus:w-48 transition-all duration-300"
+                />
             </form>
 
-            <!-- Login Icon (Placeholder) -->
-            <button class="flex items-center justify-center text-uu-main/80 hover:text-uu-main p-2 rounded-full hover:bg-uu-sub/10 transition-colors" title="登入/管理">
+            <!-- Login Icon -->
+            <a
+                href="/user"
+                class="flex items-center justify-center text-uu-main/80 hover:text-uu-main p-2 rounded-full hover:bg-uu-sub/10 transition-colors"
+                title="登入/管理"
+            >
                 <span class="material-symbols-outlined">account_circle</span>
-            </button>
+            </a>
         </div>
 
         <!-- Mobile Controls -->
         <div class="md:hidden flex items-center gap-4 relative z-50">
-             <!-- Mobile Login Icon -->
-             <button class="flex items-center justify-center text-uu-main hover:text-uu-dark p-1" title="登入/管理">
-                <span class="material-symbols-outlined text-2xl">account_circle</span>
-            </button>
+            <!-- Mobile Login Icon -->
+            <a
+                href="/user"
+                class="flex items-center justify-center text-uu-main hover:text-uu-dark p-1"
+                title="登入/管理"
+            >
+                <span class="material-symbols-outlined text-2xl"
+                    >account_circle</span
+                >
+            </a>
 
             <!-- Mobile Menu Button -->
-            <button 
+            <button
                 id="menu-btn"
                 class="w-10 h-10 flex items-center justify-center -mr-2 text-uu-main focus:outline-none focus:bg-uu-sub/20 rounded-full transition-colors"
                 aria-label="Toggle menu"
             >
-                <span class="material-symbols-outlined text-3xl transition-transform duration-300" id="menu-icon">menu</span>
+                <span
+                    class="material-symbols-outlined text-3xl transition-transform duration-300"
+                    id="menu-icon">menu</span
+                >
             </button>
         </div>
     </div>
 
     <!-- Mobile Navigation Overlay -->
-    <div 
+    <div
         id="mobile-menu"
         class="fixed inset-0 bg-uu-base z-40 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col pt-24 px-6 items-center gap-6 w-full h-screen overflow-y-auto"
         aria-hidden="true"
     >
-        <nav class="w-full flex flex-col items-center gap-4 text-lg font-medium tracking-widest text-uu-main shrink-0">
-            <a href="/" class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30 block">首頁</a>
-            <a href="/about" class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30 block">關於我</a>
-            <a href="/posts" class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30 block">所有文章</a>
-            <a href="/bookmarks" class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30 block">我的書籤</a>
+        <nav
+            class="w-full flex flex-col items-center gap-4 text-lg font-medium tracking-widest text-uu-main shrink-0"
+        >
+            <a
+                href="/"
+                class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30 block"
+                >首頁</a
+            >
+            <a
+                href="/about"
+                class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30 block"
+                >關於我</a
+            >
+            <a
+                href="/posts"
+                class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30 block"
+                >所有文章</a
+            >
+            <a
+                href="/bookmarks"
+                class="hover:bg-uu-sub/20 rounded-xl transition-colors py-3 px-4 w-full text-center mobile-link border-b border-uu-sub/30 block"
+                >我的書籤</a
+            >
         </nav>
 
         <!-- Mobile Search -->
-        <form action="/posts" method="get" class="relative w-full max-w-sm mt-2">
-            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-uu-main/50 text-xl">search</span>
-            <input type="text" name="q" placeholder="搜尋全站文章..."
-                class="w-full bg-white/50 border border-uu-sub rounded-full py-3 pl-12 pr-6 text-base focus:outline-none focus:border-uu-main focus:bg-white transition-colors">
+        <form
+            action="/posts"
+            method="get"
+            class="relative w-full max-w-sm mt-2"
+        >
+            <span
+                class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-uu-main/50 text-xl"
+                >search</span
+            >
+            <input
+                type="text"
+                name="q"
+                placeholder="搜尋全站文章..."
+                class="w-full bg-white/50 border border-uu-sub rounded-full py-3 pl-12 pr-6 text-base focus:outline-none focus:border-uu-main focus:bg-white transition-colors"
+            />
         </form>
     </div>
 </header>
 
 <script>
-    const menuBtn = document.getElementById('menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const menuIcon = document.getElementById('menu-icon');
-    const mobileLinks = document.querySelectorAll('.mobile-link');
+    const menuBtn = document.getElementById("menu-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+    const menuIcon = document.getElementById("menu-icon");
+    const mobileLinks = document.querySelectorAll(".mobile-link");
     let isMenuOpen = false;
     let scrollPosition = 0;
 
@@ -81,34 +155,35 @@
         isMenuOpen = !isMenuOpen;
         if (isMenuOpen) {
             scrollPosition = window.scrollY;
-            const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
-            document.body.style.overflow = 'hidden';
+            const scrollBarWidth =
+                window.innerWidth - document.documentElement.clientWidth;
+            document.body.style.overflow = "hidden";
             document.body.style.paddingRight = `${scrollBarWidth}px`;
-            
-            mobileMenu?.classList.remove('translate-x-full');
+
+            mobileMenu?.classList.remove("translate-x-full");
             if (menuIcon) {
-                menuIcon.innerText = 'close';
-                menuIcon.style.transform = 'rotate(90deg)';
+                menuIcon.innerText = "close";
+                menuIcon.style.transform = "rotate(90deg)";
             }
         } else {
-            mobileMenu?.classList.add('translate-x-full');
+            mobileMenu?.classList.add("translate-x-full");
             setTimeout(() => {
-                document.body.style.overflow = '';
-                document.body.style.paddingRight = '';
+                document.body.style.overflow = "";
+                document.body.style.paddingRight = "";
                 window.scrollTo(0, scrollPosition);
             }, 300);
 
             if (menuIcon) {
-                menuIcon.innerText = 'menu';
-                menuIcon.style.transform = 'rotate(0deg)';
+                menuIcon.innerText = "menu";
+                menuIcon.style.transform = "rotate(0deg)";
             }
         }
     }
 
-    menuBtn?.addEventListener('click', toggleMenu);
+    menuBtn?.addEventListener("click", toggleMenu);
 
-    mobileLinks.forEach(link => {
-        link.addEventListener('click', () => {
+    mobileLinks.forEach((link) => {
+        link.addEventListener("click", () => {
             if (isMenuOpen) toggleMenu();
         });
     });
