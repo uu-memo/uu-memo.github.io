@@ -204,3 +204,34 @@ All notable changes to this project will be documented in this file.
 
 **中文說明：管理員後台介面全面進化。完全沿用 User Dashboard 的佈局邏輯（圓角容器、側邊欄分頁），並新增 .md 拖移上傳、自動生成 Slug、具備比例感知（Aspect Ratio Aware）的影像預覽功能。同時整合 Firestore 實作「全站設定」模組，包含自定義 Apple 風格開關與打賞資訊管理。**
 
+
+### [2026-02-13.15] - Advanced Comment Management & UI Refinement
+
+#### Summary of changes
+- Enhanced the Comment Management module with real-time Firestore integration, filtering, and a nested reply system.
+- Refined UI/UX consistency: unified button styles, fixed overlapping elements, and ensured strict color compliance.
+- Implemented "Latest" vs "Archive" workflow for better moderation.
+- Translated the admin dashboard interface to Traditional Chinese.
+
+#### Technical details
+- Developed a dynamic filtering system within `onSnapshot`:
+    - **Latest**: Filtered by `!is_read && !is_hidden && !is_deleted`.
+    - **All**: Public active comments `!is_hidden && !is_deleted`.
+    - **Hidden/Deleted**: Strictly category-specific views.
+- Implemented a "Mark as Read" backend toggle to manage the administrative "inbox" workflow.
+- Built a nested reply viewer that groups management responses under original author comments using a `parent_id` architecture.
+- Integrated "UU (站長)" identity with the project's brand asset (`uu-memo.png`) for replies.
+- Added permanent deletion logic for the "Trash" category to purge documents from Firestore.
+- Fixed UI regressions in the reply component where timestamps and actions overlapped.
+- Updated the sidebar to replace the "Back" link with a functional Firebase Auth `signOut` button.
+- Created `firestore.rules` to document and backup database security policies.
+
+#### Affected files
+- `src/pages/admin/index.astro`
+- `firestore.rules`
+- `CHANGELOG.md`
+
+#### Side effects
+- None anticipated.
+
+**中文說明：留言管理模組深度開發。實作實時 Firestore 篩選邏輯（分流最新、所有、隱藏、回收），支援「UU (站長)」嵌套回覆功能與已讀標記 Inbox 系統。統一全站按鈕樣式並完善回收桶永久刪除機制。同時完成介面全面中文化、備份資料庫安全規則，並優化側邊欄登出功能。**

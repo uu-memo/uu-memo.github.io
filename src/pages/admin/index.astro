@@ -103,18 +103,18 @@ import Footer from "../../components/Footer.astro";
 
                         <div class="h-2"></div>
 
-                        <a
-                            href="/user"
-                            class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-uu-main/40 hover:text-uu-main hover:bg-uu-sub/10 transition-all group border border-transparent hover:border-uu-sub/20 text-left mt-2"
+                        <button
+                            id="logout-btn"
+                            class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-uu-main/40 hover:text-uu-main hover:bg-uu-sub/10 transition-all group border border-transparent hover:border-uu-sub/20 text-left mt-2 cursor-pointer"
                         >
                             <span class="material-symbols-outlined text-xl"
-                                >arrow_back</span
+                                >logout</span
                             >
                             <span
                                 class="text-sm font-bold tracking-widest leading-none"
-                                >返回個人選單</span
+                                >登出</span
                             >
-                        </a>
+                        </button>
                     </nav>
                 </div>
             </aside>
@@ -274,25 +274,62 @@ import Footer from "../../components/Footer.astro";
                     class="tab-content hidden w-full flex-1 flex flex-col p-10"
                 >
                     <div
-                        class="flex items-center gap-3.5 mb-8 pb-6 border-b border-uu-sub/20"
+                        class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20"
                     >
-                        <div
-                            class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main"
-                        >
-                            <span class="material-symbols-outlined">forum</span>
+                        <div class="flex items-center gap-3.5">
+                            <div
+                                class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main"
+                            >
+                                <span class="material-symbols-outlined"
+                                    >forum</span
+                                >
+                            </div>
+                            <h3 class="font-bold text-xl text-uu-dark">
+                                留言管理
+                            </h3>
                         </div>
-                        <h3 class="font-bold text-xl text-uu-dark">留言管理</h3>
+                        <div class="flex items-center gap-2">
+                            <button
+                                id="seed-comments-btn"
+                                class="px-3 py-1.5 border border-uu-sub/30 rounded-full text-[9px] font-black text-uu-main/40 hover:bg-uu-main hover:text-white transition-all uppercase tracking-widest"
+                                >Seed Test Data</button
+                            >
+                            <div
+                                id="comment-stats"
+                                class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest bg-uu-base/50 px-3 py-1.5 rounded-full border border-uu-sub/20"
+                            >
+                                Loading...
+                            </div>
+                        </div>
                     </div>
 
+                    <!-- Filters -->
+                    <div class="flex gap-2 mb-6">
+                        <button class="comment-filter active px-4 py-2 rounded-full text-[10px] font-bold tracking-widest border border-uu-sub/30 bg-white text-uu-dark transition-all hover:border-uu-main" data-filter="latest">最新 (未讀)</button>
+                        <button class="comment-filter px-4 py-2 rounded-full text-[10px] font-bold tracking-widest border border-uu-sub/30 text-uu-main/40 transition-all hover:border-uu-main" data-filter="all">所有留言</button>
+                        <button class="comment-filter px-4 py-2 rounded-full text-[10px] font-bold tracking-widest border border-uu-sub/30 text-uu-main/40 transition-all hover:border-uu-main" data-filter="hidden">隱藏中</button>
+                        <button class="comment-filter px-4 py-2 rounded-full text-[10px] font-bold tracking-widest border border-uu-sub/30 text-uu-main/40 transition-all hover:border-uu-main" data-filter="deleted">回收桶</button>
+                    </div>
+
+                    <!-- Comments List -->
                     <div
-                        class="flex-1 flex flex-col items-center justify-center text-center opacity-40"
+                        id="comments-list"
+                        class="flex-1 space-y-4 overflow-y-auto pr-2 no-scrollbar min-h-[500px]"
                     >
-                        <span class="material-symbols-outlined text-6xl mb-4"
-                            >construction</span
+                        <!-- Dynamic Comment Cards -->
+                        <div
+                            class="flex flex-col items-center justify-center h-full opacity-20 py-20"
                         >
-                        <p class="text-sm tracking-widest font-bold">
-                            留言審核模組正在建構中
-                        </p>
+                            <span
+                                class="material-symbols-outlined text-6xl mb-4"
+                                >history_edu</span
+                            >
+                            <p
+                                class="text-sm font-bold tracking-widest uppercase"
+                            >
+                                Fetching conversations...
+                            </p>
+                        </div>
                     </div>
                 </section>
 
@@ -410,7 +447,22 @@ import Footer from "../../components/Footer.astro";
 <script>
     import { auth, db } from "../../lib/firebase";
     import { onAuthStateChanged } from "firebase/auth";
-    import { doc, getDoc, setDoc } from "firebase/firestore";
+    import {
+        doc,
+        getDoc,
+        setDoc,
+        collection,
+        query,
+        orderBy,
+        onSnapshot,
+        updateDoc,
+        deleteDoc,
+        addDoc,
+        serverTimestamp,
+    } from "firebase/firestore";
+
+    const GAS_URL =
+        "https://script.google.com/macros/s/AKfycbzIF6fuTnS-CPWBMe3UiVd3EtSKtj5CSde6BlPHGPVY6msOGJQupcY4L5QbmPHtKmdeGA/exec";
 
     const loading = document.getElementById("auth-loading");
     const dashboard = document.getElementById("admin-dashboard");
@@ -461,8 +513,9 @@ import Footer from "../../components/Footer.astro";
         if (user && user.email === "jing180804@gmail.com") {
             if (emailSpan) emailSpan.textContent = user.email;
 
-            // Fetch System Config once authorized
+            // Fetch Data
             fetchSystemConfig();
+            initCommentsModule();
 
             loading?.classList.add("opacity-0");
             setTimeout(() => {
@@ -474,6 +527,11 @@ import Footer from "../../components/Footer.astro";
             // Un-authorized
             window.location.href = "/user";
         }
+    });
+
+    // --- Logout ---
+    document.getElementById("logout-btn")?.addEventListener("click", () => {
+        auth.signOut();
     });
 
     // --- System Settings Firestore Logic ---
@@ -656,6 +714,272 @@ import Footer from "../../components/Footer.astro";
         });
     }
 
+    // --- Comments Management Module ---
+    const commentsList = document.getElementById("comments-list");
+    const commentStats = document.getElementById("comment-stats");
+    const filterBtns = document.querySelectorAll(".comment-filter");
+    let activeFilter = "latest";
+    let allComments: any[] = [];
+
+    function initCommentsModule() {
+        const q = query(
+            collection(db, "comments"),
+            orderBy("created_at", "asc") // Sort by asc so replies appear in order after grouping
+        );
+ 
+        onSnapshot(q, (snapshot) => {
+            allComments = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            // Sort local array descending for top-level display, but keep original for nested lookups
+            const sortedComments = [...allComments].sort((a,b) => (b.created_at?.seconds || 0) - (a.created_at?.seconds || 0));
+            renderComments(sortedComments);
+            if (commentStats)
+                commentStats.textContent = `${allComments.filter(c => !c.parent_id).length} 原生留言`;
+        });
+
+ 
+        filterBtns.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                filterBtns.forEach((b) => {
+                    b.classList.remove("active", "bg-white", "text-uu-dark");
+                    b.classList.add("text-uu-main/40");
+                });
+                btn.classList.add("active", "bg-white", "text-uu-dark");
+                btn.classList.remove("text-uu-main/40");
+                activeFilter = btn.getAttribute("data-filter") || "latest";
+                renderComments(allComments);
+            });
+        });
+    }
+
+
+    function renderComments(comments: any[]) {
+        if (!commentsList) return;
+
+        // Separate top-level comments and replies
+        const topLevel = comments.filter(c => !c.parent_id);
+        const replies = comments.filter(c => c.parent_id);
+
+        const filtered = topLevel.filter((c) => {
+            if (activeFilter === "latest") return !c.is_read && !c.is_hidden && !c.is_deleted;
+            if (activeFilter === "hidden") return c.is_hidden && !c.is_deleted;
+            if (activeFilter === "deleted") return c.is_deleted;
+            return !c.is_hidden && !c.is_deleted; // Default view is ALL (includes read/unread, but not hidden/deleted)
+        });
+
+        if (filtered.length === 0) {
+            commentsList.innerHTML = `<div class="py-20 text-center opacity-30 text-xs font-bold tracking-widest uppercase">目前沒有符合條件的留言</div>`;
+            return;
+        }
+
+        commentsList.innerHTML = filtered
+            .map((c) => {
+                const date = c.created_at?.toDate ? c.created_at.toDate().toLocaleString() : "剛剛";
+                const belongsTo = c.post_slug || "全站";
+                
+                // Find replies to this comment
+                const myReplies = replies.filter(r => r.parent_id === c.id);
+
+                return `
+                <div class="bg-white border border-uu-sub/20 rounded-2xl p-6 transition-all hover:border-uu-main/30 group ${c.is_hidden ? "opacity-60 grayscale" : ""}">
+                    <!-- Main Comment Info -->
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center overflow-hidden border border-uu-sub/20">
+                                ${c.author_avatar ? `<img src="${c.author_avatar}" class="w-full h-full object-cover">` : `<span class="material-symbols-outlined text-uu-main/40">person</span>`}
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-uu-dark flex items-center gap-2">
+                                    ${c.author_name || "訪客"}
+                                </h4>
+                                <p class="text-[10px] text-uu-main/40 font-mono italic">${c.author_email || "未提供信箱"}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] font-black text-uu-main/30 mb-1 uppercase tracking-tighter">
+                                來自：<a href="/posts/${c.post_slug}" target="_blank" class="text-uu-main/60 hover:text-uu-main hover:underline decoration-uu-sub/50 underline-offset-2">${belongsTo}</a>
+                            </p>
+                            <p class="text-[9px] text-uu-main/30">${date}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-uu-base/10 rounded-xl p-4 mb-4 text-sm text-uu-main/80 leading-relaxed">
+                        ${c.content}
+                    </div>
+
+                    <!-- My Replies Section -->
+                    ${myReplies.length > 0 ? `
+                        <div class="space-y-3 mb-4 mt-2 pl-6 border-l-2 border-uu-sub/20">
+                            ${myReplies.map(r => `
+                                <div class="bg-uu-main/5 rounded-xl p-4 border border-uu-main/10 relative">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <div class="w-6 h-6 rounded-full overflow-hidden border border-uu-main/20">
+                                            <img src="/uu-memo.png" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="flex-1 flex justify-between items-center">
+                                            <span class="text-[10px] font-black text-uu-main tracking-wider">UU (站長)</span>
+                                            <div class="flex items-center gap-4">
+                                                <span class="text-[8px] text-uu-main/40 font-mono">${r.created_at?.toDate ? r.created_at.toDate().toLocaleString() : '剛剛'}</span>
+                                                <button class="action-perm-delete opacity-40 hover:opacity-100 text-uu-main transition-opacity" data-id="${r.id}">
+                                                    <span class="material-symbols-outlined text-sm">delete</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-[11px] text-uu-main/80 leading-relaxed">${r.content}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+
+                    <!-- Action Bar -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            ${!c.is_read && !c.is_deleted ? `<button class="action-read text-[10px] font-black text-uu-main hover:underline" data-id="${c.id}">標記已讀</button>` : ""}
+                            <button class="action-hide text-[10px] font-black text-uu-main/40 hover:text-uu-main" data-id="${c.id}">${c.is_hidden ? "取消隱藏" : "隱藏留言"}</button>
+                            <button class="action-delete text-[10px] font-black text-uu-main/40 hover:text-uu-main" data-id="${c.id}">${c.is_deleted ? '永久刪除' : '移至回收桶'}</button>
+                        </div>
+                        <button class="action-reply-toggle flex items-center gap-1.5 px-4 py-1.5 bg-uu-dark text-white rounded-lg text-[10px] font-bold hover:bg-uu-main transition-all" data-id="${c.id}">
+                            <span class="material-symbols-outlined text-xs">reply</span>
+                            回覆內容
+                        </button>
+                    </div>
+
+                    <!-- Hidden Reply Form -->
+                    <div id="reply-form-${c.id}" class="hidden mt-6 pt-6 border-t border-uu-sub/10">
+                        <div class="space-y-3">
+                            <label class="text-[9px] font-bold text-uu-main/40 uppercase tracking-widest">管理員回覆</label>
+                            <textarea class="reply-textarea w-full bg-white border border-uu-sub/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all h-24 shadow-inner" placeholder="輸入回覆內容..."></textarea>
+                            <div class="flex justify-end gap-2">
+                                <button class="cancel-reply text-[10px] font-bold text-uu-main/40 hover:text-uu-dark" data-id="${c.id}">取消</button>
+                                <button class="send-reply bg-uu-main text-white px-5 py-2 rounded-lg text-[10px] font-black tracking-widest uppercase hover:bg-uu-dark transition-all" data-id="${c.id}" data-slug="${c.post_slug}">發送回覆</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join("");
+
+
+
+        // Attach Event Listeners
+        commentsList.querySelectorAll(".action-read").forEach((btn) => {
+            btn.addEventListener("click", () => markAsRead(btn.getAttribute("data-id")!));
+        });
+        commentsList.querySelectorAll(".action-hide").forEach((btn) => {
+            btn.addEventListener("click", () =>
+                toggleCommentVisibility(btn.getAttribute("data-id")!, true)
+            );
+        });
+        commentsList.querySelectorAll(".action-unhide").forEach((btn) => {
+            btn.addEventListener("click", () =>
+                toggleCommentVisibility(btn.getAttribute("data-id")!, false)
+            );
+        });
+        commentsList.querySelectorAll(".action-delete").forEach((btn) => {
+            btn.addEventListener("click", () =>
+                destructiveAction(btn.getAttribute("data-id")!)
+            );
+        });
+
+        // Specific Permanent Delete for nested replies
+        commentsList.querySelectorAll(".action-perm-delete").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                if(confirm("確定要永久刪除此條回覆？")) {
+                    deleteDoc(doc(db, "comments", btn.getAttribute("data-id")!));
+                }
+            });
+        });
+
+        // Reply UI Toggle
+        commentsList.querySelectorAll(".action-reply-toggle").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.getAttribute("data-id");
+                const form = document.getElementById(`reply-form-${id}`);
+                form?.classList.toggle("hidden");
+            });
+        });
+
+        commentsList.querySelectorAll(".cancel-reply").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.getAttribute("data-id");
+                const form = document.getElementById(`reply-form-${id}`);
+                form?.classList.add("hidden");
+            });
+        });
+
+        commentsList.querySelectorAll(".send-reply").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.getAttribute("data-id");
+                const slug = btn.getAttribute("data-slug");
+                const textarea = document.querySelector(`#reply-form-${id} textarea`) as HTMLTextAreaElement;
+                if (textarea.value.trim()) {
+                    submitReply(id!, slug!, textarea.value);
+                }
+            });
+        });
+    }
+
+    async function markAsRead(id: string) {
+        try {
+            await updateDoc(doc(db, "comments", id), { is_read: true });
+        } catch (e) { console.error(e); }
+    }
+
+    async function toggleCommentVisibility(id: string, hide: boolean) {
+        try {
+            await updateDoc(doc(db, "comments", id), { is_hidden: hide });
+        } catch (e) {
+            alert("操作失敗: " + e);
+        }
+    }
+
+    async function destructiveAction(id: string) {
+        const comment = allComments.find(c => c.id === id);
+        if (!comment) return;
+
+        if (comment.is_deleted) {
+            // Permanent Delete
+            if (!confirm("確定要將這條留言從資料庫徹底移除嗎？此操作不可恢復。")) return;
+            try {
+                await deleteDoc(doc(db, "comments", id));
+            } catch (e) { alert("刪除失敗: " + e); }
+        } else {
+            // Move to Trash
+            if (!confirm("將此留言移至回收桶？")) return;
+            try {
+                await updateDoc(doc(db, "comments", id), { is_deleted: true });
+            } catch (e) { alert("移動失敗: " + e); }
+        }
+    }
+
+    async function submitReply(parentId: string, postSlug: string, content: string) {
+        try {
+            await addDoc(collection(db, "comments"), {
+                author_name: "UU (站長)",
+                author_email: "jing180804@gmail.com",
+                author_avatar: "/uu-memo.png",
+                content: content,
+                post_slug: postSlug,
+                parent_id: parentId, // Links to original comment
+                is_hidden: false,
+                is_deleted: false,
+                is_read: true,
+                created_at: serverTimestamp()
+            });
+            // Mark original as read
+            await markAsRead(parentId);
+            alert("回覆已發送");
+            const form = document.getElementById(`reply-form-${parentId}`);
+            form?.classList.add("hidden");
+        } catch (e) {
+            alert("發送失敗: " + e);
+        }
+    }
+
+
     function renderImagePreview(
         data: { url: string; type: string; w: number; h: number },
         name: string
@@ -688,6 +1012,56 @@ import Footer from "../../components/Footer.astro";
         `;
         imageQueue.appendChild(card);
     }
+
+    // --- Seeding Logic ---
+    const seedBtn = document.getElementById("seed-comments-btn");
+    seedBtn?.addEventListener("click", async () => {
+        if (!confirm("Add 3 test comments to Firestore?")) return;
+
+        const testData = [
+            {
+                author_name: "小林",
+                author_email: "lin@example.com",
+                content:
+                    "這篇文章寫得很有溫度，圖片的色調也配得很安靜。期待更多的分享！",
+                post_slug: "2024-spring-trip",
+                is_hidden: false,
+                is_deleted: false,
+                is_read: false,
+                created_at: serverTimestamp(),
+            },
+            {
+                author_name: "Art Explorer",
+                author_email: "art@travel.io",
+                content:
+                    "關於膠卷攝影的那一段很有同感，那種等待沖洗的不確定感才是最迷人的地方。",
+                post_slug: "film-photography-essence",
+                is_hidden: true,
+                is_deleted: false,
+                is_read: false,
+                created_at: serverTimestamp(),
+            },
+            {
+                author_name: "匿名訪客",
+                author_email: "",
+                content: "請問這張照片是在哪裡拍的？構圖好美！",
+                post_slug: "kyoto-morning-walk",
+                is_hidden: false,
+                is_deleted: false,
+                is_read: true,
+                created_at: serverTimestamp(),
+            },
+        ];
+
+        try {
+            for (const item of testData) {
+                await addDoc(collection(db, "comments"), item);
+            }
+            alert("Test data seeded successfully!");
+        } catch (e) {
+            alert("Seeding failed: " + e);
+        }
+    });
 </script>
 
 <style>
