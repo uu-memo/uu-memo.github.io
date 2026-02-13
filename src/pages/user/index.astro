@@ -222,84 +222,174 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                 </section>
 
                 <!-- Profile -->
-                <section id="tab-profile" class="tab-content hidden w-full flex-1 flex flex-col p-10">
-                    <div class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20">
+                <section
+                    id="tab-profile"
+                    class="tab-content hidden w-full flex-1 flex flex-col p-10"
+                >
+                    <div
+                        class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20"
+                    >
                         <div class="flex items-center gap-3.5">
-                            <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main">
-                                <span class="material-symbols-outlined">badge</span>
+                            <div
+                                class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main"
+                            >
+                                <span class="material-symbols-outlined"
+                                    >badge</span
+                                >
                             </div>
-                            <h3 class="font-bold text-xl text-uu-dark">個人帳號設定</h3>
+                            <h3 class="font-bold text-xl text-uu-dark">
+                                個人帳號設定
+                            </h3>
                         </div>
                     </div>
 
                     <div class="space-y-10">
                         <!-- Module 1: Nickname Settings -->
-                        <div class="bg-white border border-uu-sub/20 rounded-2xl p-8 space-y-8 shadow-sm">
-                            <div class="flex items-center gap-3 pb-4 border-b border-uu-sub/10">
-                                <div class="w-8 h-8 rounded-lg bg-uu-main/5 flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-uu-main text-sm">edit_note</span>
+                        <div
+                            class="bg-white border border-uu-sub/20 rounded-2xl p-8 space-y-8 shadow-sm"
+                        >
+                            <div
+                                class="flex items-center gap-3 pb-4 border-b border-uu-sub/10"
+                            >
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-uu-main/5 flex items-center justify-center"
+                                >
+                                    <span
+                                        class="material-symbols-outlined text-uu-main text-sm"
+                                        >edit_note</span
+                                    >
                                 </div>
-                                <h4 class="text-xs font-black text-uu-dark uppercase tracking-widest">基本資料設定 (Nickname)</h4>
+                                <h4
+                                    class="text-xs font-black text-uu-dark uppercase tracking-widest"
+                                >
+                                    基本資料設定 (Profile Settings)
+                                </h4>
                             </div>
 
-                            <div class="max-w-md">
-                                <div class="space-y-3">
-                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block">Display Nickname (顯示名稱)</label>
-                                    <input
-                                        type="text"
-                                        id="display-name-input"
-                                        class="w-full bg-uu-base/20 border border-uu-sub/30 rounded-xl px-5 py-4 text-uu-dark focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner text-base"
-                                        placeholder="您的顯示名稱"
-                                    />
-                                    <p class="text-[10px] text-uu-main/40 italic mt-2">
-                                        ※ 此名稱將公開顯示於您在網站上的所有留言中
-                                    </p>
+                            <div class="space-y-6">
+                                <div>
+                                    <div class="space-y-3">
+                                        <label
+                                            class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block"
+                                            >Display Nickname (顯示名稱)</label
+                                        >
+                                        <input
+                                            type="text"
+                                            id="display-name-input"
+                                            class="w-full bg-uu-base/20 border border-uu-sub/30 rounded-xl px-5 py-4 text-uu-dark focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner text-base"
+                                            placeholder="您的顯示名稱"
+                                        />
+                                        <p
+                                            class="text-[10px] text-uu-main/40 italic mt-2"
+                                        >
+                                            ※
+                                            此名稱將公開顯示於您在網站上的所有留言中
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Google Original Data Reset -->
+                                <div class="pt-4 border-t border-uu-sub/10">
+                                    <button
+                                        id="reset-to-google-btn"
+                                        class="group flex items-center gap-3 px-5 py-3 bg-uu-base/10 hover:bg-uu-sub/10 border border-uu-sub/20 rounded-xl transition-all text-left w-full"
+                                    >
+                                        <div
+                                            class="w-10 h-10 rounded-lg bg-white border border-uu-sub/10 flex items-center justify-center group-hover:border-uu-main transition-colors"
+                                        >
+                                            <span
+                                                class="material-symbols-outlined text-uu-main text-xl"
+                                                >account_circle</span
+                                            >
+                                        </div>
+                                        <div class="flex-1">
+                                            <p
+                                                class="text-xs font-bold text-uu-dark group-hover:text-uu-main transition-colors"
+                                            >
+                                                使用 Google 帳號原始資料
+                                            </p>
+                                            <p
+                                                class="text-[10px] text-uu-main/40 mt-0.5"
+                                            >
+                                                將名稱與頭像恢復為 Google
+                                                帳號預設值
+                                            </p>
+                                        </div>
+                                        <span
+                                            class="material-symbols-outlined text-uu-main/30 group-hover:text-uu-main transition-colors"
+                                            >refresh</span
+                                        >
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Module 2: Avatar Selection -->
-                        <div class="bg-white border border-uu-sub/20 rounded-2xl p-8 space-y-8 shadow-sm">
-                            <div class="flex items-center gap-3 pb-4 border-b border-uu-sub/10">
-                                <div class="w-8 h-8 rounded-lg bg-uu-main/5 flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-uu-main text-sm">mood</span>
+                        <div
+                            class="bg-white border border-uu-sub/20 rounded-2xl p-8 space-y-8 shadow-sm"
+                        >
+                            <div
+                                class="flex items-center gap-3 pb-4 border-b border-uu-sub/10"
+                            >
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-uu-main/5 flex items-center justify-center"
+                                >
+                                    <span
+                                        class="material-symbols-outlined text-uu-main text-sm"
+                                        >mood</span
+                                    >
                                 </div>
-                                <h4 class="text-xs font-black text-uu-dark uppercase tracking-widest">虛擬頭像選擇 (Avatar Icon)</h4>
+                                <h4
+                                    class="text-xs font-black text-uu-dark uppercase tracking-widest"
+                                >
+                                    虛擬頭像選擇 (Avatar Icon)
+                                </h4>
                             </div>
 
                             <div class="space-y-6">
-                                <p class="text-[11px] text-uu-main/60 leading-relaxed max-w-lg">
-                                    如果您不希望使用 Google 原始頭像，可以從下方挑選一個與您心情契合的 Icon 做為替代。
+                                <p
+                                    class="text-[11px] text-uu-main/60 leading-relaxed max-w-lg"
+                                >
+                                    從下方挑選一個與您心情契合的 Icon
+                                    做為個人化頭像。
                                 </p>
 
-                                <div class="grid grid-cols-5 gap-6 max-w-sm" id="avatar-grid">
-                                    <!-- Option: Original Google Photo -->
-                                    <button 
-                                        class="avatar-option group transition-all duration-300 flex flex-col items-center"
-                                        data-icon="original"
-                                        title="使用 Google 原始照片"
-                                    >
-                                        <div class="w-12 h-12 rounded-2xl bg-uu-base/20 border border-uu-sub/10 flex items-center justify-center text-uu-main/40 group-hover:bg-uu-sub/10 group-hover:text-uu-main transition-all relative overflow-hidden">
-                                            <span class="material-symbols-outlined text-2xl">account_circle</span>
-                                            <div class="absolute inset-0 bg-uu-main/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                        </div>
-                                    </button>
-
-                                    {[
-                                        "face", "cruelty_free", "potted_plant", "smart_toy", "auto_awesome",
-                                        "palette", "rocket_launch", "local_florist", "bedroom_baby", "person"
-                                    ].map((icon) => (
-                                        <button 
-                                            class="avatar-option group transition-all duration-300 flex flex-col items-center"
-                                            data-icon={icon}
-                                        >
-                                            <div class="w-12 h-12 rounded-2xl bg-uu-base/20 border border-uu-sub/10 flex items-center justify-center text-uu-main/40 group-hover:bg-uu-sub/10 group-hover:text-uu-main transition-all">
-                                                <span class="material-symbols-outlined text-2xl">{icon}</span>
-                                            </div>
-                                        </button>
-                                    ))}
+                                <div class="icon-grid" id="avatar-grid">
+                                    {
+                                        [
+                                            "face",
+                                            "cruelty_free",
+                                            "potted_plant",
+                                            "smart_toy",
+                                            "auto_awesome",
+                                            "palette",
+                                            "rocket_launch",
+                                            "local_florist",
+                                            "bedroom_baby",
+                                            "person",
+                                            "favorite",
+                                            "star",
+                                            "pets",
+                                            "eco",
+                                            "nightlight",
+                                        ].map((icon) => (
+                                            <button
+                                                class="avatar-option group transition-all duration-300 flex items-center justify-center"
+                                                data-icon={icon}
+                                            >
+                                                <div class="icon-box w-full aspect-square rounded-2xl bg-uu-base/20 border border-uu-sub/10 flex items-center justify-center text-uu-main/40 group-hover:bg-uu-sub/10 group-hover:text-uu-main transition-all">
+                                                    <span class="material-symbols-outlined icon-symbol">
+                                                        {icon}
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        ))
+                                    }
                                 </div>
-                                <input type="hidden" id="selected-avatar-input" />
+                                <input
+                                    type="hidden"
+                                    id="selected-avatar-input"
+                                />
                             </div>
                         </div>
 
@@ -366,39 +456,80 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
         });
     }
 
-    const displayNameInput = document.getElementById("display-name-input") as HTMLInputElement;
+    const displayNameInput = document.getElementById(
+        "display-name-input"
+    ) as HTMLInputElement;
     const profileSaveBtn = document.getElementById("profile-save-btn");
     const profileSaveLoader = document.getElementById("profile-save-loader");
     const avatarOptions = document.querySelectorAll(".avatar-option");
-    const selectedAvatarInput = document.getElementById("selected-avatar-input") as HTMLInputElement;
+    const selectedAvatarInput = document.getElementById(
+        "selected-avatar-input"
+    ) as HTMLInputElement;
+    const resetToGoogleBtn = document.getElementById("reset-to-google-btn");
+
+    // Reset to Google Original Data
+    resetToGoogleBtn?.addEventListener("click", async () => {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        if (
+            confirm(
+                "確定要恢復為 Google 帳號原始資料嗎？這將清除您的自訂名稱與頭像。"
+            )
+        ) {
+            try {
+                // Clear custom data from Firestore
+                await setDoc(
+                    doc(db, "users", user.uid),
+                    {
+                        nickname: null,
+                        avatar_icon: null,
+                        email: user.email,
+                        updated_at: serverTimestamp(),
+                    },
+                    { merge: true }
+                );
+
+                alert("已恢復為 Google 原始資料！");
+                window.location.reload();
+            } catch (e) {
+                alert("重置失敗: " + e);
+            }
+        }
+    });
 
     // Avatar Selection Interaction
-    avatarOptions.forEach(opt => {
+    avatarOptions.forEach((opt) => {
         opt.addEventListener("click", () => {
             const icon = opt.getAttribute("data-icon");
             const user = auth.currentUser;
             if (selectedAvatarInput) selectedAvatarInput.value = icon || "";
-            
+
             // UI Feedback for Grid
-            avatarOptions.forEach(o => {
-                const box = o.querySelector("div");
-                box?.classList.remove("bg-uu-main", "text-white", "scale-110", "shadow-md");
+            avatarOptions.forEach((o) => {
+                const box = o.querySelector(".icon-box");
+                box?.classList.remove(
+                    "bg-uu-main",
+                    "text-white",
+                    "scale-110",
+                    "shadow-md"
+                );
                 box?.classList.add("bg-uu-base/20", "text-uu-main/40");
             });
-            
-            const selectedBox = opt.querySelector("div");
+
+            const selectedBox = opt.querySelector(".icon-box");
             selectedBox?.classList.remove("bg-uu-base/20", "text-uu-main/40");
-            selectedBox?.classList.add("bg-uu-main", "text-white", "scale-110", "shadow-md");
+            selectedBox?.classList.add(
+                "bg-uu-main",
+                "text-white",
+                "scale-110",
+                "shadow-md"
+            );
 
             // Live Preview in Sidebar
-            if (userAvatar) {
-                if (icon === "original" && user?.photoURL) {
-                    userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover">`;
-                    userAvatar.classList.remove("bg-uu-main");
-                } else if (icon !== "original") {
-                    userAvatar.innerHTML = `<span class="material-symbols-outlined text-uu-light text-4xl">${icon}</span>`;
-                    userAvatar.classList.add("bg-uu-main");
-                }
+            if (userAvatar && icon) {
+                userAvatar.innerHTML = `<span class="material-symbols-outlined text-uu-light text-4xl">${icon}</span>`;
+                userAvatar.classList.add("bg-uu-main");
             }
         });
     });
@@ -422,37 +553,55 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if (userDoc.exists()) {
                     const data = userDoc.data();
-                    if (displayNameInput) displayNameInput.value = data.nickname || user.displayName || "";
-                    
-                    // Pre-select Saved Avatar
-                    const savedIcon = data.avatar_icon || "original";
-                    if (selectedAvatarInput) selectedAvatarInput.value = savedIcon;
-                    
-                    const savedOpt = document.querySelector(`.avatar-option[data-icon="${savedIcon}"]`) as HTMLElement;
-                    if (savedOpt) {
-                        // Apply active style
-                        const box = savedOpt.querySelector("div");
-                        box?.classList.remove("bg-uu-base/20", "text-uu-main/40");
-                        box?.classList.add("bg-uu-main", "text-white", "scale-110", "shadow-md");
+                    if (displayNameInput)
+                        displayNameInput.value =
+                            data.nickname || user.displayName || "";
 
-                        // Update Sidebar
-                        if (userAvatar) {
-                            if (savedIcon === "original" && user.photoURL) {
-                                userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover">`;
-                                userAvatar.classList.remove("bg-uu-main");
-                            } else if (savedIcon !== "original") {
+                    // Pre-select Saved Avatar
+                    const savedIcon = data.avatar_icon;
+                    if (savedIcon && selectedAvatarInput) {
+                        selectedAvatarInput.value = savedIcon;
+
+                        const savedOpt = document.querySelector(
+                            `.avatar-option[data-icon="${savedIcon}"]`
+                        ) as HTMLElement;
+                        if (savedOpt) {
+                            // Apply active style
+                            const box = savedOpt.querySelector(".icon-box");
+                            box?.classList.remove(
+                                "bg-uu-base/20",
+                                "text-uu-main/40"
+                            );
+                            box?.classList.add(
+                                "bg-uu-main",
+                                "text-white",
+                                "scale-110",
+                                "shadow-md"
+                            );
+
+                            // Update Sidebar
+                            if (userAvatar) {
                                 userAvatar.innerHTML = `<span class="material-symbols-outlined text-uu-light text-4xl">${savedIcon}</span>`;
                                 userAvatar.classList.add("bg-uu-main");
                             }
                         }
+                    } else {
+                        // Use Google photo if no custom avatar
+                        if (userAvatar && user.photoURL) {
+                            userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover">`;
+                            userAvatar.classList.remove("bg-uu-main");
+                        }
                     }
                 } else {
-                    if (displayNameInput) displayNameInput.value = user.displayName || "";
+                    if (displayNameInput)
+                        displayNameInput.value = user.displayName || "";
                     if (userAvatar && user.photoURL) {
                         userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover">`;
                     }
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
 
             userDashboard?.classList.remove("hidden");
             setTimeout(() => userDashboard?.classList.add("opacity-100"), 50);
@@ -475,16 +624,19 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
         profileSaveBtn.setAttribute("disabled", "true");
 
         try {
-            const finalIcon = selectedAvatarInput?.value === "original" ? null : selectedAvatarInput?.value;
-            await setDoc(doc(db, "users", user.uid), {
-                nickname: displayNameInput.value,
-                avatar_icon: finalIcon,
-                email: user.email,
-                updated_at: serverTimestamp()
-            }, { merge: true });
-            
+            await setDoc(
+                doc(db, "users", user.uid),
+                {
+                    nickname: displayNameInput.value,
+                    avatar_icon: selectedAvatarInput?.value || null,
+                    email: user.email,
+                    updated_at: serverTimestamp(),
+                },
+                { merge: true }
+            );
+
             alert("資料已成功更新！");
-            window.location.reload(); 
+            window.location.reload();
         } catch (e) {
             alert("更新失敗: " + e);
         } finally {
@@ -536,6 +688,22 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
 <style>
     :global(body) {
         -webkit-tap-highlight-color: transparent;
+    }
+
+    /* === Responsive Avatar Icon Grid === */
+    .icon-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: clamp(0.75rem, 2vw, 1.5rem);
+        max-width: 100%;
+    }
+
+    .icon-box {
+        position: relative;
+    }
+
+    .icon-symbol {
+        font-size: clamp(1.5rem, 3vw, 2.5rem);
     }
 
     /* === Hard-Locked Dashboard Grid Layout === */

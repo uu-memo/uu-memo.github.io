@@ -327,3 +327,43 @@ All notable changes to this project will be documented in this file.
 
 **中文說明：使用者儀表板重構與頭像系統。將個人設定頁面改為分段式全寬佈局，並新增虛擬頭像選擇功能，提供 10 個 Material Symbols 圖示供使用者挑選，同時保留切換回 Google 原始照片的選項。選取時會即時預覽於側邊欄，儲存後同步至 Firestore。**
 
+
+### [2026-02-13.19] - Avatar System Refinement & Google Reset Feature
+
+#### Summary of changes
+- Redesigned Google account data reset functionality with dedicated button in Profile Settings module.
+- Expanded avatar icon selection from 10 to 15 Material Symbols with responsive auto-sizing grid.
+- Removed confusing "original photo" option from icon grid and relocated it to a clearer reset button.
+- Applied full-width layout to nickname input and reset button for visual consistency.
+
+#### Technical details
+- **Google Reset Button**:
+    - Added standalone button in "Basic Profile Settings" module with clear labeling: "使用 Google 帳號原始資料".
+    - Clicking triggers confirmation dialog, then clears `nickname` and `avatar_icon` from Firestore.
+    - Automatically reverts both display name and avatar to Google account defaults.
+    - Provides visual feedback with hover states and refresh icon.
+- **Responsive Icon Grid**:
+    - Implemented CSS Grid with `repeat(5, 1fr)` for consistent 5-column layout.
+    - Used `clamp()` for responsive sizing:
+        - Gap: `clamp(0.75rem, 2vw, 1.5rem)`
+        - Icon size: `clamp(1.5rem, 3vw, 2.5rem)`
+    - Icons automatically scale based on container width while maintaining aspect ratio.
+- **Expanded Icon Library**:
+    - Added 5 new icons: `favorite`, `star`, `pets`, `eco`, `nightlight`.
+    - Total selection now offers 15 distinct Material Symbols.
+- **Layout Refinements**:
+    - Removed `max-w-md` constraints from nickname input container and Google reset button.
+    - Both elements now extend full-width within their card containers for better visual balance.
+- **Logic Simplification**:
+    - Removed `"original"` as a selectable avatar option.
+    - Simplified avatar loading: if `avatar_icon` is `null`, display Google photo; otherwise show selected icon.
+
+#### Affected files
+- `src/pages/user/index.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- Users who previously had no custom avatar will now see their Google photo by default (no functional change, just clearer logic).
+
+**中文說明：頭像系統優化與 Google 重置功能。將「恢復原始資料」功能從頭像網格中獨立出來，改為專屬按鈕並放置於基本資料模組中，點擊後可一鍵清除自訂名稱與頭像。頭像選擇區擴增至 15 個 Icon，並採用響應式網格自動調整尺寸，確保一行固定 5 個且視覺比例協調。同時移除輸入欄位與按鈕的寬度限制，實現滿版佈局。**
+
