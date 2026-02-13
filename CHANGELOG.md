@@ -176,3 +176,31 @@ All notable changes to this project will be documented in this file.
 - None anticipated.
 
 **中文說明：全站內容頁面寬度穩定化。透過在主容器加上 `w-full` 與 `self-stretch`，解決了內容較短的頁面（如：「與我聯繫」）會因此縮窄的問題，確保關於我、聯繫、條款與文章頁面的視覺寬度始終保持一致。**
+
+### [2026-02-13.11] - Admin Dashboard Premium Overhaul & Firestore Integration
+
+#### Summary of changes
+- Rebuilt the Admin Dashboard interface to strictly follow the high-quality design language of the User Dashboard.
+- Implemented an advanced Markdown content creation workflow with drag-and-drop support.
+- Upgraded the "Image Workshop" with intelligent orientation-aware previews.
+- Integrated Firestore-backed system configuration for site-wide settings (e.g., Donation/Support).
+
+#### Technical details
+- Replaced the initial admin layout with the standardized `dashboard-layout` Grid (sidebar + content mirroring `/user`).
+- Implemented a drag-and-drop zone and file input for `.md` files; added automatic slug generation based on filename.
+- Developed a dynamic "Image Workshop" previewer that detects and renders specific aspect ratios (Landscape 16:9, Portrait 3:4, Square 1:1) instead of fixed squares.
+- Expanded the Markdown textarea to `min-h-[500px]` with premium styling and shadow effects.
+- Integrated `firebase/firestore` to manage the `site_config/donation_settings` document.
+- Created a custom, high-fidelity toggle switch (Apple-style) for system settings, bypassing native browser checkboxes.
+- Updated `src/lib/firebase.js` to export the `db` (Firestore) instance.
+
+#### Affected files
+- `src/pages/admin/index.astro`
+- `src/lib/firebase.js`
+- `CHANGELOG.md`
+
+#### Side effects
+- None anticipated.
+
+**中文說明：管理員後台介面全面進化。完全沿用 User Dashboard 的佈局邏輯（圓角容器、側邊欄分頁），並新增 .md 拖移上傳、自動生成 Slug、具備比例感知（Aspect Ratio Aware）的影像預覽功能。同時整合 Firestore 實作「全站設定」模組，包含自定義 Apple 風格開關與打賞資訊管理。**
+

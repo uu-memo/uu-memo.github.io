@@ -12,9 +12,12 @@ const firebaseConfig = {
     measurementId: "G-ZKZV3JK52J"
 };
 
+import { getFirestore } from "firebase/firestore";
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
 let analytics;
@@ -23,4 +26,4 @@ if (typeof window !== "undefined") {
     analytics = getAnalytics(app);
 }
 
-export { app, auth, googleProvider, analytics };
+export { app, auth, db, googleProvider, analytics };

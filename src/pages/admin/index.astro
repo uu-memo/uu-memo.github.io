@@ -1,0 +1,733 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+---
+
+<Layout title="Admin Management | UU MEMO">
+    <Header />
+
+    <main
+        class="max-w-6xl mx-auto px-6 py-12 md:py-20 min-h-[85vh] flex flex-col w-full self-stretch"
+    >
+        <!-- Auth Loading (Same as User Page) -->
+        <div
+            id="auth-loading"
+            class="fixed inset-0 z-[60] bg-uu-base flex flex-col items-center justify-center space-y-4 transition-opacity duration-300"
+        >
+            <div
+                class="w-12 h-12 border-4 border-uu-sub border-t-uu-main rounded-full animate-spin"
+            >
+            </div>
+            <p
+                class="text-uu-main/60 tracking-widest text-sm font-medium uppercase"
+            >
+                Verifying Credentials...
+            </p>
+        </div>
+
+        <!-- Admin Dashboard Container (Exact Mirror of User Dashboard Layout) -->
+        <div
+            id="admin-dashboard"
+            class="hidden opacity-0 transition-opacity duration-500 dashboard-layout w-full"
+        >
+            <!-- LEFT COLUMN: Sidebar -->
+            <aside class="dashboard-sidebar">
+                <div
+                    class="bg-uu-light p-8 rounded-2xl border border-uu-sub/30 shadow-sm flex flex-col items-center text-center"
+                >
+                    <div
+                        class="w-20 h-20 bg-uu-main/10 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-sm mb-4 shrink-0"
+                    >
+                        <span
+                            class="material-symbols-outlined text-uu-main text-4xl"
+                            >admin_panel_settings</span
+                        >
+                    </div>
+
+                    <div class="w-full">
+                        <h1
+                            class="text-lg font-bold font-logo text-uu-dark mb-0.5 truncate px-2"
+                        >
+                            ADMINISTRATOR
+                        </h1>
+                        <p
+                            id="admin-email"
+                            class="text-[10px] text-uu-main/60 tracking-wider font-mono truncate px-2"
+                        >
+                        </p>
+                    </div>
+
+                    <div
+                        class="w-8 h-0.5 bg-uu-sub/20 rounded-full my-6 shrink-0"
+                    >
+                    </div>
+
+                    <nav class="w-full flex flex-col gap-1.5">
+                        <button
+                            class="tab-btn active group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full bg-uu-main text-white shadow-sm text-left"
+                            data-tab="editor"
+                        >
+                            <span class="material-symbols-outlined text-xl"
+                                >edit_note</span
+                            >
+                            <span
+                                class="text-sm font-bold tracking-widest leading-none"
+                                >文章編輯</span
+                            >
+                        </button>
+                        <button
+                            class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
+                            data-tab="comments"
+                        >
+                            <span class="material-symbols-outlined text-xl"
+                                >forum</span
+                            >
+                            <span
+                                class="text-sm font-bold tracking-widest leading-none"
+                                >留言管理</span
+                            >
+                        </button>
+                        <button
+                            class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
+                            data-tab="system"
+                        >
+                            <span class="material-symbols-outlined text-xl"
+                                >tune</span
+                            >
+                            <span
+                                class="text-sm font-bold tracking-widest leading-none"
+                                >全站設定</span
+                            >
+                        </button>
+
+                        <div class="h-2"></div>
+
+                        <a
+                            href="/user"
+                            class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-uu-main/40 hover:text-uu-main hover:bg-uu-sub/10 transition-all group border border-transparent hover:border-uu-sub/20 text-left mt-2"
+                        >
+                            <span class="material-symbols-outlined text-xl"
+                                >arrow_back</span
+                            >
+                            <span
+                                class="text-sm font-bold tracking-widest leading-none"
+                                >返回個人選單</span
+                            >
+                        </a>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- RIGHT COLUMN: Content -->
+            <div
+                class="dashboard-content bg-uu-light rounded-2xl border border-uu-sub/30 shadow-sm min-h-[700px] flex flex-col overflow-hidden"
+            >
+                <!-- CONTENT: EDITOR -->
+                <section
+                    id="tab-editor"
+                    class="tab-content w-full flex-1 flex flex-col p-10"
+                >
+                    <div
+                        class="flex items-center gap-3.5 mb-8 pb-6 border-b border-uu-sub/20"
+                    >
+                        <div
+                            class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main"
+                        >
+                            <span class="material-symbols-outlined"
+                                >description</span
+                            >
+                        </div>
+                        <h3 class="font-bold text-xl text-uu-dark">內容創作</h3>
+                    </div>
+
+                    <div class="space-y-8 flex-1">
+                        <!-- Top Meta -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label
+                                    class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest"
+                                    >Article Slug</label
+                                >
+                                <input
+                                    id="post-slug"
+                                    type="text"
+                                    class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all"
+                                    placeholder="例如: 2024-spring-trip"
+                                />
+                            </div>
+                            <div class="space-y-2">
+                                <label
+                                    class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest"
+                                    >Visibility</label
+                                >
+                                <div class="relative">
+                                    <select
+                                        id="post-status"
+                                        class="w-full appearance-none bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all pr-10"
+                                    >
+                                        <option value="public"
+                                            >立即發佈 (Public)</option
+                                        >
+                                        <option value="private"
+                                            >私密閱讀 (Private)</option
+                                        >
+                                    </select>
+                                    <span
+                                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-uu-main/40 pointer-events-none"
+                                        >expand_more</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Markdown Upload Dropzone -->
+                        <div
+                            id="md-dropzone"
+                            class="border-2 border-dashed border-uu-sub/30 rounded-2xl py-12 flex flex-col items-center justify-center gap-3 transition-colors hover:border-uu-main/50 hover:bg-uu-sub/5 group cursor-pointer"
+                        >
+                            <input
+                                type="file"
+                                id="md-file-input"
+                                accept=".md"
+                                class="hidden"
+                            />
+                            <span
+                                class="material-symbols-outlined text-4xl text-uu-main/30 group-hover:text-uu-main transition-colors"
+                                >cloud_upload</span
+                            >
+                            <div class="text-center">
+                                <p class="text-xs font-bold text-uu-main/60">
+                                    拖移 .md 檔案至此，或點擊選擇
+                                </p>
+                                <p
+                                    class="text-[10px] text-uu-main/30 mt-1 italic"
+                                >
+                                    系統將自動讀取內容並嘗試生成 Slug
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Editor -->
+                        <div class="space-y-2 flex-1 flex flex-col">
+                            <label
+                                class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest"
+                                >Markdown Editor</label
+                            >
+                            <textarea
+                                id="md-content"
+                                class="w-full flex-1 min-h-[500px] bg-uu-base/10 border border-uu-sub/10 rounded-2xl p-8 text-sm font-mono leading-relaxed focus:outline-none focus:bg-white transition-all shadow-inner"
+                                placeholder="# 標題..."></textarea>
+                        </div>
+
+                        <!-- Image Workshop -->
+                        <div class="space-y-6 pt-6 border-t border-uu-sub/20">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="material-symbols-outlined text-uu-main"
+                                        >image</span
+                                    >
+                                    <h4 class="font-bold text-sm text-uu-dark">
+                                        影像工坊
+                                    </h4>
+                                </div>
+                                <input
+                                    type="file"
+                                    id="image-input"
+                                    multiple
+                                    accept="image/*"
+                                    class="hidden"
+                                />
+                                <button
+                                    onclick="document.getElementById('image-input').click()"
+                                    class="px-4 py-2 bg-uu-dark text-white rounded-lg text-[10px] font-black tracking-widest uppercase hover:bg-uu-main transition-all active:scale-95"
+                                    >批次上傳照片</button
+                                >
+                            </div>
+
+                            <div
+                                id="image-queue"
+                                class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                            >
+                                <!-- Dynamic Preview Cards -->
+                            </div>
+                        </div>
+
+                        <div class="pt-10 flex justify-end">
+                            <button
+                                id="final-push-btn"
+                                class="bg-uu-main text-white px-10 py-4 rounded-full font-bold tracking-[0.2em] text-sm shadow-xl hover:shadow-2xl transition-all active:scale-95 flex items-center gap-3"
+                            >
+                                <span class="material-symbols-outlined"
+                                    >send</span
+                                >
+                                SYNC TO GITHUB
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CONTENT: COMMENTS -->
+                <section
+                    id="tab-comments"
+                    class="tab-content hidden w-full flex-1 flex flex-col p-10"
+                >
+                    <div
+                        class="flex items-center gap-3.5 mb-8 pb-6 border-b border-uu-sub/20"
+                    >
+                        <div
+                            class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main"
+                        >
+                            <span class="material-symbols-outlined">forum</span>
+                        </div>
+                        <h3 class="font-bold text-xl text-uu-dark">留言管理</h3>
+                    </div>
+
+                    <div
+                        class="flex-1 flex flex-col items-center justify-center text-center opacity-40"
+                    >
+                        <span class="material-symbols-outlined text-6xl mb-4"
+                            >construction</span
+                        >
+                        <p class="text-sm tracking-widest font-bold">
+                            留言審核模組正在建構中
+                        </p>
+                    </div>
+                </section>
+
+                <!-- CONTENT: SYSTEM -->
+                <section
+                    id="tab-system"
+                    class="tab-content hidden w-full flex-1 flex flex-col p-10"
+                >
+                    <div
+                        class="flex items-center gap-3.5 mb-10 pb-6 border-b border-uu-sub/20"
+                    >
+                        <div
+                            class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main"
+                        >
+                            <span class="material-symbols-outlined"
+                                >payments</span
+                            >
+                        </div>
+                        <h3 class="font-bold text-xl text-uu-dark">全站設定</h3>
+                    </div>
+
+                    <div class="max-w-xl mx-auto w-full space-y-10">
+                        <!-- Donation Config -->
+                        <div class="space-y-6">
+                            <h4
+                                class="text-xs font-black text-uu-main/40 uppercase tracking-[0.2em] border-l-4 border-uu-main/20 pl-4"
+                            >
+                                Donation Settings
+                            </h4>
+
+                            <div class="space-y-4">
+                                <div class="space-y-2">
+                                    <label
+                                        class="text-[9px] font-black text-uu-main/60 uppercase"
+                                        >Platform Title</label
+                                    >
+                                    <input
+                                        id="sys-donate-name"
+                                        type="text"
+                                        class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none"
+                                        placeholder="例如: 給這段時光留下一點餘溫"
+                                    />
+                                </div>
+                                <div class="space-y-2">
+                                    <label
+                                        class="text-[9px] font-black text-uu-main/60 uppercase"
+                                        >Donation Link</label
+                                    >
+                                    <input
+                                        id="sys-donate-url"
+                                        type="text"
+                                        class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none"
+                                        placeholder="https://..."
+                                    />
+                                </div>
+                                <div class="space-y-2">
+                                    <label
+                                        class="text-[9px] font-black text-uu-main/60 uppercase"
+                                        >Display Message</label
+                                    >
+                                    <textarea
+                                        id="sys-donate-msg"
+                                        class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none h-32 resize-none"
+                                        placeholder="感謝訊息..."></textarea>
+                                </div>
+
+                                <!-- Custom Toggle -->
+                                <div
+                                    class="flex items-center justify-between p-4 bg-uu-base/30 rounded-xl border border-uu-sub/10"
+                                >
+                                    <span class="text-xs font-bold text-uu-dark"
+                                        >啟用贊助功能模組</span
+                                    >
+                                    <label
+                                        class="relative inline-flex items-center cursor-pointer"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            id="sys-donate-enabled"
+                                            class="sr-only peer"
+                                            checked
+                                        />
+                                        <div
+                                            class="w-11 h-6 bg-uu-sub/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-uu-sub/30 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-uu-main"
+                                        >
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t border-uu-sub/20">
+                            <button
+                                id="save-sys-btn"
+                                class="w-full bg-uu-dark text-white py-4 rounded-full text-xs font-black tracking-[0.3em] shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2"
+                            >
+                                <span id="save-btn-text"
+                                    >SAVE CONFIGURATION</span
+                                >
+                                <span
+                                    id="save-btn-loader"
+                                    class="hidden w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                                ></span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <Footer />
+</Layout>
+
+<script>
+    import { auth, db } from "../../lib/firebase";
+    import { onAuthStateChanged } from "firebase/auth";
+    import { doc, getDoc, setDoc } from "firebase/firestore";
+
+    const loading = document.getElementById("auth-loading");
+    const dashboard = document.getElementById("admin-dashboard");
+    const emailSpan = document.getElementById("admin-email");
+
+    // --- Tab Logic ---
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    const tabContents = document.querySelectorAll(".tab-content");
+
+    tabBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const tabId = btn.getAttribute("data-tab");
+
+            // Switch Buttons
+            tabBtns.forEach((b) => {
+                b.classList.remove(
+                    "active",
+                    "bg-uu-main",
+                    "text-white",
+                    "shadow-sm"
+                );
+                b.classList.add(
+                    "text-uu-main/60",
+                    "hover:bg-uu-sub/10",
+                    "hover:text-uu-main"
+                );
+            });
+            btn.classList.add(
+                "active",
+                "bg-uu-main",
+                "text-white",
+                "shadow-sm"
+            );
+            btn.classList.remove(
+                "text-uu-main/60",
+                "hover:bg-uu-sub/10",
+                "hover:text-uu-main"
+            );
+
+            // Switch Content
+            tabContents.forEach((c) => c.classList.add("hidden"));
+            document.getElementById(`tab-${tabId}`)?.classList.remove("hidden");
+        });
+    });
+
+    // --- Auth Check ---
+    onAuthStateChanged(auth, async (user) => {
+        if (user && user.email === "jing180804@gmail.com") {
+            if (emailSpan) emailSpan.textContent = user.email;
+
+            // Fetch System Config once authorized
+            fetchSystemConfig();
+
+            loading?.classList.add("opacity-0");
+            setTimeout(() => {
+                loading?.classList.add("hidden");
+                dashboard?.classList.remove("hidden");
+                dashboard?.classList.add("opacity-100");
+            }, 300);
+        } else {
+            // Un-authorized
+            window.location.href = "/user";
+        }
+    });
+
+    // --- System Settings Firestore Logic ---
+    const sysDonateName = document.getElementById(
+        "sys-donate-name"
+    ) as HTMLInputElement;
+    const sysDonateUrl = document.getElementById(
+        "sys-donate-url"
+    ) as HTMLInputElement;
+    const sysDonateMsg = document.getElementById(
+        "sys-donate-msg"
+    ) as HTMLTextAreaElement;
+    const sysDonateEnabled = document.getElementById(
+        "sys-donate-enabled"
+    ) as HTMLInputElement;
+    const saveSysBtn = document.getElementById("save-sys-btn");
+    const saveBtnText = document.getElementById("save-btn-text");
+    const saveBtnLoader = document.getElementById("save-btn-loader");
+
+    async function fetchSystemConfig() {
+        try {
+            const docRef = doc(db, "site_config", "donation_settings");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (sysDonateName)
+                    sysDonateName.value = data.platform_name || "";
+                if (sysDonateUrl) sysDonateUrl.value = data.link_url || "";
+                if (sysDonateMsg) sysDonateMsg.value = data.message || "";
+                if (sysDonateEnabled)
+                    sysDonateEnabled.checked = data.enabled ?? true;
+            }
+        } catch (err) {
+            console.error("Error fetching config:", err);
+        }
+    }
+
+    saveSysBtn?.addEventListener("click", async () => {
+        if (!saveBtnText || !saveBtnLoader) return;
+
+        saveBtnText.textContent = "SAVING...";
+        saveBtnLoader.classList.remove("hidden");
+        saveSysBtn.setAttribute("disabled", "true");
+
+        try {
+            await setDoc(doc(db, "site_config", "donation_settings"), {
+                platform_name: sysDonateName.value,
+                link_url: sysDonateUrl.value,
+                message: sysDonateMsg.value,
+                enabled: sysDonateEnabled.checked,
+            });
+
+            saveBtnText.textContent = "SAVED SUCCESS!";
+            setTimeout(() => {
+                saveBtnText.textContent = "SAVE CONFIGURATION";
+            }, 2000);
+        } catch (err) {
+            alert("Save failed: " + err);
+            saveBtnText.textContent = "ERROR";
+        } finally {
+            saveBtnLoader.classList.add("hidden");
+            saveSysBtn.removeAttribute("disabled");
+        }
+    });
+
+    // --- MD Upload & Drag/Drop ---
+    const dropzone = document.getElementById("md-dropzone");
+    const mdInput = document.getElementById(
+        "md-file-input"
+    ) as HTMLInputElement;
+    const mdEditor = document.getElementById(
+        "md-content"
+    ) as HTMLTextAreaElement;
+    const slugInput = document.getElementById("post-slug") as HTMLInputElement;
+
+    dropzone?.addEventListener("click", () => mdInput.click());
+    dropzone?.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropzone.classList.add("border-uu-main", "bg-uu-main/5");
+    });
+    dropzone?.addEventListener("dragleave", () => {
+        dropzone.classList.remove("border-uu-main", "bg-uu-main/5");
+    });
+    dropzone?.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropzone.classList.remove("border-uu-main", "bg-uu-main/5");
+        const file = e.dataTransfer?.files[0];
+        if (file && file.name.endsWith(".md")) handleMd(file);
+    });
+    mdInput?.addEventListener("change", () => {
+        if (mdInput.files?.[0]) handleMd(mdInput.files[0]);
+    });
+
+    function handleMd(file: File) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            mdEditor.value = e.target?.result as string;
+            // Suggest slug
+            const base = file.name.replace(".md", "");
+            slugInput.value = base.toLowerCase().replace(/\s+/g, "-");
+        };
+        reader.readAsText(file);
+    }
+
+    // --- Image Processing ---
+    const imageInput = document.getElementById(
+        "image-input"
+    ) as HTMLInputElement;
+    const imageQueue = document.getElementById("image-queue");
+
+    imageInput?.addEventListener("change", async () => {
+        const files = imageInput.files;
+        if (!files) return;
+        for (const file of Array.from(files)) {
+            const processed = await processImage(file);
+            renderImagePreview(processed, file.name);
+        }
+    });
+
+    async function processImage(
+        file: File
+    ): Promise<{ url: string; type: string; w: number; h: number }> {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d")!;
+                    let tw, th, itype;
+
+                    if (img.width > img.height) {
+                        // Landscape -> Crop to 1200x630
+                        itype = "Landscape";
+                        tw = 1200;
+                        th = 630;
+                        const ratio = 1200 / 630;
+                        let sw, sh, sx, sy;
+                        if (img.width / img.height > ratio) {
+                            sh = img.height;
+                            sw = img.height * ratio;
+                            sx = (img.width - sw) / 2;
+                            sy = 0;
+                        } else {
+                            sw = img.width;
+                            sh = img.width / ratio;
+                            sx = 0;
+                            sy = (img.height - sh) / 2;
+                        }
+                        canvas.width = tw;
+                        canvas.height = th;
+                        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, tw, th);
+                    } else if (img.height > img.width) {
+                        // Portrait -> Fixed H1200
+                        itype = "Portrait";
+                        th = 1200;
+                        tw = (img.width * 1200) / img.height;
+                        canvas.width = tw;
+                        canvas.height = th;
+                        ctx.drawImage(img, 0, 0, tw, th);
+                    } else {
+                        // Square -> 1200x1200
+                        itype = "Square";
+                        tw = 1200;
+                        th = 1200;
+                        canvas.width = tw;
+                        canvas.height = th;
+                        ctx.drawImage(img, 0, 0, tw, th);
+                    }
+                    resolve({
+                        url: canvas.toDataURL("image/jpeg", 0.9),
+                        type: itype,
+                        w: Math.round(tw),
+                        h: Math.round(th),
+                    });
+                };
+                img.src = e.target?.result as string;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function renderImagePreview(
+        data: { url: string; type: string; w: number; h: number },
+        name: string
+    ) {
+        if (!imageQueue) return;
+        const card = document.createElement("div");
+        card.className =
+            "bg-white border border-uu-sub/20 rounded-2xl p-4 flex gap-4 items-start group relative";
+
+        // Use aspect ratio based on type
+        let aspect = "aspect-video"; // 1200x630
+        if (data.type === "Portrait") aspect = "aspect-[3/4]";
+        if (data.type === "Square") aspect = "aspect-square";
+
+        card.innerHTML = `
+            <div class="w-16 ${aspect} rounded-lg overflow-hidden bg-uu-sub/10 flex-shrink-0 border border-uu-sub/10">
+                <img src="${data.url}" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-[9px] font-black bg-uu-main/10 text-uu-main px-1.5 py-0.5 rounded">${data.type}</span>
+                    <span class="text-[9px] text-uu-main/40 uppercase font-mono">${data.w} × ${data.h}</span>
+                </div>
+                <p class="text-[10px] font-bold text-uu-dark truncate mb-2">${name}</p>
+                <input type="text" placeholder="YYMMDD-slug-01" class="w-full bg-uu-base/10 border-none rounded-lg px-2 py-1.5 text-[10px] italic focus:ring-1 focus:ring-uu-main/30" />
+            </div>
+            <button class="absolute top-2 right-2 text-uu-main/20 hover:text-uu-dark opacity-0 group-hover:opacity-100 transition-opacity" onclick="this.parentElement.remove()">
+                <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+        `;
+        imageQueue.appendChild(card);
+    }
+</script>
+
+<style>
+    /* Reuse User Dashboard Styles */
+    .dashboard-layout {
+        display: grid;
+        grid-template-columns: 288px minmax(0, 1fr);
+        gap: 2.5rem;
+        align-items: start;
+        width: 100%;
+    }
+    .dashboard-sidebar {
+        width: 288px;
+        position: sticky;
+        top: 6rem;
+    }
+    .dashboard-content {
+        min-width: 0;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 767px) {
+        .dashboard-layout {
+            display: flex;
+            flex-direction: column;
+        }
+        .dashboard-sidebar {
+            width: 100%;
+            position: static;
+        }
+    }
+
+    /* Scrollbar for editor */
+    #md-content::-webkit-scrollbar {
+        width: 6px;
+    }
+    #md-content::-webkit-scrollbar-thumb {
+        background: rgba(26, 26, 26, 0.1);
+        border-radius: 10px;
+    }
+</style>
