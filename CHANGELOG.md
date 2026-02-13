@@ -234,4 +234,61 @@ All notable changes to this project will be documented in this file.
 #### Side effects
 - None anticipated.
 
-**中文說明：留言管理模組深度開發。實作實時 Firestore 篩選邏輯（分流最新、所有、隱藏、回收），支援「UU (站長)」嵌套回覆功能與已讀標記 Inbox 系統。統一全站按鈕樣式並完善回收桶永久刪除機制。同時完成介面全面中文化、備份資料庫安全規則，並優化側邊欄登出功能。**
+
+### [2026-02-13.16] - UI Standardization & Componentization
+
+#### Summary of changes
+- Created a standardized `PrimaryButton` component to ensure visual consistency for all primary actions across the site.
+- Integrated `PrimaryButton` into Admin and User dashboards, replacing legacy hard-coded button styles.
+- Implemented the "Author Settings" functional module (profile & bio management) in the Admin dashboard.
+- Resolved a critical "500 Internal Server Error" caused by code squashing during automated edits.
+- Implemented real-time nickname update logic in the User Dashboard.
+
+#### Technical details
+- Developed `src/components/PrimaryButton.astro`:
+    - Encapsulates: `bg-uu-main`, `rounded-full`, `tracking-[0.3em]`, `uppercase`, and animated loaders.
+    - Props-driven: Supports `id`, `text`, `icon`, `showLoader`, and custom IDs for dynamic text/loader manipulation.
+- Refactored `src/pages/admin/index.astro`:
+    - Integrated `PrimaryButton` for "SYNC TO GITHUB", "SAVE SETTINGS" (Author), and "SAVE CONFIGURATION" (System).
+    - Re-implemented the "Author Settings" tab with Markdown preview/editor and Firestore sync (`site_config/about_me`).
+- Refactored `src/pages/user/index.astro`:
+    - Integrated `PrimaryButton` for profile updates.
+    - Added Firestore integration for the `users` collection to store and retrieve custom nicknames linked to Firebase UIDs.
+- Re-stabilized page structures in both dashboards to prevent future syntax-related server errors.
+
+#### Affected files
+- `src/components/PrimaryButton.astro` (New file)
+- `src/pages/admin/index.astro`
+- `src/pages/user/index.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None anticipated.
+
+
+### [2026-02-13.17] - Dashboard Layout Refactoring & Vertical Rhythm
+
+#### Summary of changes
+- Refactored the "System Settings" module into a full-width dashboard layout to match the high-fidelity aesthetic of the Content Editor.
+- Enforced absolute height consistency for the `PrimaryButton` component.
+- Standardized vertical spacing (`pt-8`) and container widths across all admin and user dashboard sections.
+
+#### Technical details
+- Updated `src/components/PrimaryButton.astro` with a hard-coded `h-14` class to eliminate rendering variance across browsers.
+- Redesigned the "System Settings" tab in `src/pages/admin/index.astro`:
+    - Switched from a centered `max-w-md` layout to a full-width responsive grid/card system.
+    - Integrated status toggles into the section header for improved information density.
+    - Applied `shadow-inner` and `bg-uu-base/10` to input fields for consistent tactile feedback.
+- Unified the vertical rhythm by setting a global `pt-8` padding for all primary action button containers in both Admin and User views.
+
+#### Affected files
+- `src/components/PrimaryButton.astro`
+- `src/pages/admin/index.astro`
+- `src/pages/user/index.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None anticipated.
+
+**中文說明：最終佈局統整。將「全站設定」模組重構為與編輯器一致的全寬儀表板風格，並透過固定 PrimaryButton 高度與統一全站 pt-8 間距，解決了按鈕大小不一的問題。**
+

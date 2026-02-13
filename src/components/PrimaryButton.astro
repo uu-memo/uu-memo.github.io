@@ -1,0 +1,41 @@
+---
+/**
+ * PrimaryButton - The standard high-fidelity action button for UU MEMO.
+ * Used for key administrative and user actions (Save, Sync, Update).
+ */
+interface Props {
+    id?: string;
+    text: string;
+    icon?: string;
+    showLoader?: boolean;
+    loaderId?: string;
+    textId?: string;
+    className?: string; // Additional custom classes
+}
+
+const {
+    id,
+    text,
+    icon,
+    showLoader = false,
+    loaderId,
+    textId,
+    className = "",
+} = Astro.props;
+---
+
+<button
+    id={id}
+    class={`w-full h-14 bg-uu-main hover:bg-uu-dark text-white py-4 rounded-full text-xs font-black tracking-[0.3em] shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 uppercase ${className}`}
+>
+    {icon && <span class="material-symbols-outlined text-base">{icon}</span>}
+    <span id={textId}>{text}</span>
+    {
+        showLoader && (
+            <span
+                id={loaderId}
+                class="hidden w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+            />
+        )
+    }
+</button>

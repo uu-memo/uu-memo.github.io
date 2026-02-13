@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import PrimaryButton from "../../components/PrimaryButton.astro";
 ---
 
 <Layout title="User Dashboard | UU MEMO">
@@ -254,12 +255,13 @@ import Footer from "../../components/Footer.astro";
                                 </p>
                             </div>
 
-                            <div class="pt-4">
-                                <button
-                                    class="w-full bg-uu-dark text-white text-[11px] font-black py-4 rounded-full hover:bg-uu-main transition-all shadow-md active:scale-95 tracking-[0.25em] h-12 flex items-center justify-center uppercase"
-                                >
-                                    SAVE & UPDATE
-                                </button>
+                            <div class="pt-8">
+                                <PrimaryButton
+                                    id="profile-save-btn"
+                                    text="SAVE & UPDATE"
+                                    showLoader={true}
+                                    loaderId="profile-save-loader"
+                                />
                             </div>
                         </div>
                     </div>
@@ -272,12 +274,13 @@ import Footer from "../../components/Footer.astro";
 </Layout>
 
 <script>
-    import { auth, googleProvider } from "../../lib/firebase";
+    import { auth, googleProvider, db } from "../../lib/firebase";
     import {
         signInWithPopup,
         signOut,
         onAuthStateChanged,
     } from "firebase/auth";
+    import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 
     const loginBtn = document.getElementById("google-login-btn");
     const logoutBtn = document.getElementById("logout-btn");
@@ -316,7 +319,11 @@ import Footer from "../../components/Footer.astro";
         });
     }
 
-    onAuthStateChanged(auth, (user) => {
+    const displayNameInput = document.getElementById("display-name-input") as HTMLInputElement;
+    const profileSaveBtn = document.getElementById("profile-save-btn");
+    const profileSaveLoader = document.getElementById("profile-save-loader");
+
+    onAuthStateChanged(auth, async (user) => {
         if (loadingSection) {
             loadingSection.style.opacity = "0";
             setTimeout(() => loadingSection.classList.add("hidden"), 300);
@@ -332,6 +339,17 @@ import Footer from "../../components/Footer.astro";
             if (userAvatar && user.photoURL) {
                 userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover">`;
             }
+
+            // Fetch custom nickname from Firestore
+            try {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists() && displayNameInput) {
+                    displayNameInput.value = userDoc.data().nickname || user.displayName || "";
+                } else if (displayNameInput) {
+                    displayNameInput.value = user.displayName || "";
+                }
+            } catch (e) { console.error(e); }
+
             userDashboard?.classList.remove("hidden");
             setTimeout(() => userDashboard?.classList.add("opacity-100"), 50);
             loginSection?.classList.add("hidden");
@@ -342,6 +360,29 @@ import Footer from "../../components/Footer.astro";
                 loginSection?.classList.remove("translate-y-4");
             }, 50);
             userDashboard?.classList.add("hidden");
+        }
+    });
+
+    profileSaveBtn?.addEventListener("click", async () => {
+        const user = auth.currentUser;
+        if (!user || !displayNameInput || !profileSaveLoader) return;
+
+        profileSaveLoader.classList.remove("hidden");
+        profileSaveBtn.setAttribute("disabled", "true");
+
+        try {
+            await setDoc(doc(db, "users", user.uid), {
+                nickname: displayNameInput.value,
+                email: user.email,
+                updated_at: serverTimestamp()
+            }, { merge: true });
+            
+            alert("名稱已更新！");
+        } catch (e) {
+            alert("更新失敗: " + e);
+        } finally {
+            profileSaveLoader.classList.add("hidden");
+            profileSaveBtn.removeAttribute("disabled");
         }
     });
 
