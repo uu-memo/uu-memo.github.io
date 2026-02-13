@@ -222,47 +222,94 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                 </section>
 
                 <!-- Profile -->
-                <section
-                    id="tab-profile"
-                    class="tab-content hidden w-full flex-1 flex flex-col p-10"
-                >
-                    <div
-                        class="flex items-center gap-3.5 mb-10 pb-6 border-b border-uu-sub/20"
-                    >
-                        <div
-                            class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main"
-                        >
-                            <span class="material-symbols-outlined">badge</span>
+                <section id="tab-profile" class="tab-content hidden w-full flex-1 flex flex-col p-10">
+                    <div class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main">
+                                <span class="material-symbols-outlined">badge</span>
+                            </div>
+                            <h3 class="font-bold text-xl text-uu-dark">個人帳號設定</h3>
                         </div>
-                        <h3 class="font-bold text-xl text-uu-dark">名稱設定</h3>
                     </div>
 
-                    <div class="w-full flex-1 flex flex-col justify-center">
-                        <div class="w-full max-w-md mx-auto space-y-8">
-                            <div class="space-y-3">
-                                <label
-                                    class="block text-[10px] font-black tracking-[0.2em] text-uu-main/40 uppercase"
-                                    >Display Nickname</label
-                                >
-                                <input
-                                    type="text"
-                                    id="display-name-input"
-                                    class="w-full bg-uu-base/20 border border-uu-sub/30 rounded-xl px-5 py-4 text-uu-dark focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner text-base"
-                                    placeholder="您的顯示名稱"
-                                />
-                                <p class="text-[11px] text-uu-main/40 italic">
-                                    ※ 此名稱將公開顯示於所有留言中
-                                </p>
+                    <div class="space-y-10">
+                        <!-- Module 1: Nickname Settings -->
+                        <div class="bg-white border border-uu-sub/20 rounded-2xl p-8 space-y-8 shadow-sm">
+                            <div class="flex items-center gap-3 pb-4 border-b border-uu-sub/10">
+                                <div class="w-8 h-8 rounded-lg bg-uu-main/5 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-uu-main text-sm">edit_note</span>
+                                </div>
+                                <h4 class="text-xs font-black text-uu-dark uppercase tracking-widest">基本資料設定 (Nickname)</h4>
                             </div>
 
-                            <div class="pt-8">
-                                <PrimaryButton
-                                    id="profile-save-btn"
-                                    text="SAVE & UPDATE"
-                                    showLoader={true}
-                                    loaderId="profile-save-loader"
-                                />
+                            <div class="max-w-md">
+                                <div class="space-y-3">
+                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block">Display Nickname (顯示名稱)</label>
+                                    <input
+                                        type="text"
+                                        id="display-name-input"
+                                        class="w-full bg-uu-base/20 border border-uu-sub/30 rounded-xl px-5 py-4 text-uu-dark focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner text-base"
+                                        placeholder="您的顯示名稱"
+                                    />
+                                    <p class="text-[10px] text-uu-main/40 italic mt-2">
+                                        ※ 此名稱將公開顯示於您在網站上的所有留言中
+                                    </p>
+                                </div>
                             </div>
+                        </div>
+
+                        <!-- Module 2: Avatar Selection -->
+                        <div class="bg-white border border-uu-sub/20 rounded-2xl p-8 space-y-8 shadow-sm">
+                            <div class="flex items-center gap-3 pb-4 border-b border-uu-sub/10">
+                                <div class="w-8 h-8 rounded-lg bg-uu-main/5 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-uu-main text-sm">mood</span>
+                                </div>
+                                <h4 class="text-xs font-black text-uu-dark uppercase tracking-widest">虛擬頭像選擇 (Avatar Icon)</h4>
+                            </div>
+
+                            <div class="space-y-6">
+                                <p class="text-[11px] text-uu-main/60 leading-relaxed max-w-lg">
+                                    如果您不希望使用 Google 原始頭像，可以從下方挑選一個與您心情契合的 Icon 做為替代。
+                                </p>
+
+                                <div class="grid grid-cols-5 gap-6 max-w-sm" id="avatar-grid">
+                                    <!-- Option: Original Google Photo -->
+                                    <button 
+                                        class="avatar-option group transition-all duration-300 flex flex-col items-center"
+                                        data-icon="original"
+                                        title="使用 Google 原始照片"
+                                    >
+                                        <div class="w-12 h-12 rounded-2xl bg-uu-base/20 border border-uu-sub/10 flex items-center justify-center text-uu-main/40 group-hover:bg-uu-sub/10 group-hover:text-uu-main transition-all relative overflow-hidden">
+                                            <span class="material-symbols-outlined text-2xl">account_circle</span>
+                                            <div class="absolute inset-0 bg-uu-main/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                        </div>
+                                    </button>
+
+                                    {[
+                                        "face", "cruelty_free", "potted_plant", "smart_toy", "auto_awesome",
+                                        "palette", "rocket_launch", "local_florist", "bedroom_baby", "person"
+                                    ].map((icon) => (
+                                        <button 
+                                            class="avatar-option group transition-all duration-300 flex flex-col items-center"
+                                            data-icon={icon}
+                                        >
+                                            <div class="w-12 h-12 rounded-2xl bg-uu-base/20 border border-uu-sub/10 flex items-center justify-center text-uu-main/40 group-hover:bg-uu-sub/10 group-hover:text-uu-main transition-all">
+                                                <span class="material-symbols-outlined text-2xl">{icon}</span>
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                                <input type="hidden" id="selected-avatar-input" />
+                            </div>
+                        </div>
+
+                        <div class="pt-4 mt-4">
+                            <PrimaryButton
+                                id="profile-save-btn"
+                                text="SAVE & UPDATE"
+                                showLoader={true}
+                                loaderId="profile-save-loader"
+                            />
                         </div>
                     </div>
                 </section>
@@ -322,6 +369,39 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
     const displayNameInput = document.getElementById("display-name-input") as HTMLInputElement;
     const profileSaveBtn = document.getElementById("profile-save-btn");
     const profileSaveLoader = document.getElementById("profile-save-loader");
+    const avatarOptions = document.querySelectorAll(".avatar-option");
+    const selectedAvatarInput = document.getElementById("selected-avatar-input") as HTMLInputElement;
+
+    // Avatar Selection Interaction
+    avatarOptions.forEach(opt => {
+        opt.addEventListener("click", () => {
+            const icon = opt.getAttribute("data-icon");
+            const user = auth.currentUser;
+            if (selectedAvatarInput) selectedAvatarInput.value = icon || "";
+            
+            // UI Feedback for Grid
+            avatarOptions.forEach(o => {
+                const box = o.querySelector("div");
+                box?.classList.remove("bg-uu-main", "text-white", "scale-110", "shadow-md");
+                box?.classList.add("bg-uu-base/20", "text-uu-main/40");
+            });
+            
+            const selectedBox = opt.querySelector("div");
+            selectedBox?.classList.remove("bg-uu-base/20", "text-uu-main/40");
+            selectedBox?.classList.add("bg-uu-main", "text-white", "scale-110", "shadow-md");
+
+            // Live Preview in Sidebar
+            if (userAvatar) {
+                if (icon === "original" && user?.photoURL) {
+                    userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover">`;
+                    userAvatar.classList.remove("bg-uu-main");
+                } else if (icon !== "original") {
+                    userAvatar.innerHTML = `<span class="material-symbols-outlined text-uu-light text-4xl">${icon}</span>`;
+                    userAvatar.classList.add("bg-uu-main");
+                }
+            }
+        });
+    });
 
     onAuthStateChanged(auth, async (user) => {
         if (loadingSection) {
@@ -336,17 +416,41 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
             }
             if (userName) userName.textContent = user.displayName || "User";
             if (userEmail) userEmail.textContent = user.email;
-            if (userAvatar && user.photoURL) {
-                userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover">`;
-            }
 
-            // Fetch custom nickname from Firestore
+            // Fetch custom profile from Firestore
             try {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists() && displayNameInput) {
-                    displayNameInput.value = userDoc.data().nickname || user.displayName || "";
-                } else if (displayNameInput) {
-                    displayNameInput.value = user.displayName || "";
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    if (displayNameInput) displayNameInput.value = data.nickname || user.displayName || "";
+                    
+                    // Pre-select Saved Avatar
+                    const savedIcon = data.avatar_icon || "original";
+                    if (selectedAvatarInput) selectedAvatarInput.value = savedIcon;
+                    
+                    const savedOpt = document.querySelector(`.avatar-option[data-icon="${savedIcon}"]`) as HTMLElement;
+                    if (savedOpt) {
+                        // Apply active style
+                        const box = savedOpt.querySelector("div");
+                        box?.classList.remove("bg-uu-base/20", "text-uu-main/40");
+                        box?.classList.add("bg-uu-main", "text-white", "scale-110", "shadow-md");
+
+                        // Update Sidebar
+                        if (userAvatar) {
+                            if (savedIcon === "original" && user.photoURL) {
+                                userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover">`;
+                                userAvatar.classList.remove("bg-uu-main");
+                            } else if (savedIcon !== "original") {
+                                userAvatar.innerHTML = `<span class="material-symbols-outlined text-uu-light text-4xl">${savedIcon}</span>`;
+                                userAvatar.classList.add("bg-uu-main");
+                            }
+                        }
+                    }
+                } else {
+                    if (displayNameInput) displayNameInput.value = user.displayName || "";
+                    if (userAvatar && user.photoURL) {
+                        userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover">`;
+                    }
                 }
             } catch (e) { console.error(e); }
 
@@ -371,13 +475,16 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
         profileSaveBtn.setAttribute("disabled", "true");
 
         try {
+            const finalIcon = selectedAvatarInput?.value === "original" ? null : selectedAvatarInput?.value;
             await setDoc(doc(db, "users", user.uid), {
                 nickname: displayNameInput.value,
+                avatar_icon: finalIcon,
                 email: user.email,
                 updated_at: serverTimestamp()
             }, { merge: true });
             
-            alert("名稱已更新！");
+            alert("資料已成功更新！");
+            window.location.reload(); 
         } catch (e) {
             alert("更新失敗: " + e);
         } finally {

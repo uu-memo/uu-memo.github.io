@@ -292,3 +292,38 @@ All notable changes to this project will be documented in this file.
 
 **中文說明：最終佈局統整。將「全站設定」模組重構為與編輯器一致的全寬儀表板風格，並透過固定 PrimaryButton 高度與統一全站 pt-8 間距，解決了按鈕大小不一的問題。**
 
+
+### [2026-02-13.18] - User Dashboard Refactor & Avatar Selection System
+
+#### Summary of changes
+- Refactored User Dashboard Profile section into a segmented, full-width layout matching Admin dashboard aesthetics.
+- Implemented a custom avatar selection system allowing users to choose from 10 Material Symbols icons or revert to their Google account photo.
+- Added real-time avatar preview in the sidebar during selection.
+
+#### Technical details
+- Redesigned `src/pages/user/index.astro` Profile tab:
+    - Split into two independent white card modules: "Basic Profile Settings" and "Avatar Selection".
+    - Removed centered `max-w-md` constraint in favor of full-width responsive cards.
+    - Created a 5-column icon grid (11 options total: 1 original + 10 symbols).
+- Avatar selection logic:
+    - Clicking an icon updates both the hidden input value and provides immediate visual feedback (scale, color change).
+    - Live preview updates the sidebar avatar in real-time without requiring save.
+    - "Original" option (represented by `account_circle` icon) allows users to switch back to Google profile photo.
+- Firestore integration:
+    - Stores selected icon in `users/{uid}/avatar_icon` field.
+    - `null` or `"original"` value triggers display of Google account photo.
+    - Pre-loads saved preference on login and applies visual selection state.
+- UI refinements:
+    - Removed icon name labels for cleaner appearance.
+    - Fixed grid to 5 columns (`grid-cols-5`) for consistent layout.
+    - Applied project color scheme strictly (`uu-main`, `uu-sub`, `uu-base`).
+
+#### Affected files
+- `src/pages/user/index.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- Page reloads after saving profile to ensure avatar synchronization across all UI elements.
+
+**中文說明：使用者儀表板重構與頭像系統。將個人設定頁面改為分段式全寬佈局，並新增虛擬頭像選擇功能，提供 10 個 Material Symbols 圖示供使用者挑選，同時保留切換回 Google 原始照片的選項。選取時會即時預覽於側邊欄，儲存後同步至 Firestore。**
+
