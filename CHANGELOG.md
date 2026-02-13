@@ -98,6 +98,16 @@ All notable changes to this project will be documented in this file.
 - Configured automatic redirect to `/admin` (future route) for authorized admin email `jing180804@gmail.com`.
 - Connected Header user icons to the `/user` dashboard for both desktop and mobile views.
 
+#### Affected files
+- `package.json` (Added `firebase` dependency)
+- `src/lib/firebase.js` (New file)
+- `src/pages/user/index.astro` (New file)
+
+#### Side effects
+- Admin users will be redirected to `/admin`, which currently returns 404 until created.
+
+**中文說明：實作 Firebase Google 登入功能，建立包含書籤、留言與個人資料管理的使用者儀表板 (`/user`)，並針對特定信箱設置管理員後台自動跳轉邏輯。**
+
 ### [2026-02-13.1] - Branding & Visual Assets Update
 
 #### Summary of changes
@@ -120,79 +130,6 @@ All notable changes to this project will be documented in this file.
 - None anticipated.
 
 **中文說明：更新網站 Favicon 圖標，並將首頁作者介紹區的頭像替換為真實圖片文件。**
-
-#### Affected files
-- `package.json` (Added `firebase` dependency)
-- `src/lib/firebase.js` (New file)
-- `src/pages/user/index.astro` (New file)
-
-#### Side effects
-- Admin users will be redirected to `/admin`, which currently returns 404 until created.
-
-**中文說明：實作 Firebase Google 登入功能，建立包含書籤、留言與個人資料管理的使用者儀表板 (`/user`)，並針對特定信箱設置管理員後台自動跳轉邏輯。**
-
-### [2026-02-13.2] - User Dashboard UI Overhaul & Fixes
-
-#### Summary of changes
-- Rebuilt the User Dashboard with a modern, responsive sidebar layout.
-- Fixed mobile navigation issues and click-through bugs in the Header.
-- Replaced "Logout account" text with a functional icon for a cleaner UI.
-- Implemented smooth transitions and a loading overlay to prevent layout flickering on refresh.
-
-#### Technical details
-- Updated `src/components/Header.astro` with higher `z-index` and expanded click targets for mobile user icons.
-- Redesigned `src/pages/user/index.astro` to use a `flex-col lg:flex-row` layout, placing navigation on the left for desktop users.
-- Added a full-screen loading overlay in `src/pages/user/index.astro` that fades out once auth state is confirmed.
-- Replaced the logout button with a `material-symbols-outlined` icon wrapped in a styled button.
-- Integrated `opacity` and `translate` transitions to all major sections for a premium feel.
-
-#### Affected files
-- `src/components/Header.astro`
-- `src/pages/user/index.astro`
-
-#### Side effects
-- None anticipated.
-
-**中文說明：重構使用者頁面為現代化側邊欄佈局，提升電腦版大感官；修復手機版登入按鈕點擊失效與重新整理時畫面閃爍問題，並將登出文字改為簡潔圖示。**
-
-### [2026-02-13.3] - Dashboard Layout Refinement
-
-#### Summary of changes
-- Standardized the dimensions and positioning of content cards to prevent layout shifts.
-- Consolidated user profile, navigation, and logout into a unified sidebar structure.
-- Moved the logout button to the bottom of the navigation menu with a distinct icon+text style.
-- Centered user profile information within its container for better visual balance.
-
-#### Technical details
-- Refactored `src/pages/user/index.astro` to use a `flex-col lg:flex-row` main container with a fixed-width (`lg:w-72`) sidebar.
-- Set `min-h-[500px]` and consistent padding for all tab content containers to ensure stability.
-- Implemented `mt-auto` on the logout button to pin it to the bottom of the sidebar flex container.
-- Added a confirmation dialog before logout to prevent accidental clicks.
-
-### [2026-02-13.4] - Brand Consistency Fix
-
-#### Summary of changes
-- Removed the red hover effect from the logout button to strictly adhere to the project's color palette.
-- Replaced non-standard colors with `uu-main` and `uu-sub/10`.
-
-#### Technical details
-- Updated `src/pages/user/index.astro` to change the logout button's `hover` classes from red variants to `hover:text-uu-main`, `hover:bg-uu-sub/10`, and `hover:border-uu-sub/30`.
-
-#### Affected files
-- `src/pages/user/index.astro`
-
-#### Side effects
-- None anticipated.
-
-**中文說明：移除登出按鈕的紅色 Hover 效果，確保專案色調完全符合既有定義（uu-main/uu-sub）。**
-
-#### Affected files
-- `src/pages/user/index.astro`
-
-#### Side effects
-- None anticipated.
-
-**中文說明：優化儀表板佈局，固定內容卡片尺寸以防止跳動；將個人資料、導航與登出功能整合至統一側邊欄（手機版為垂直堆疊），並將使用者資訊置中對齊。**
 
 ### [2026-02-13.9] - Final Dashboard UI Stabilization & Language Alignment
 
@@ -220,6 +157,22 @@ All notable changes to this project will be documented in this file.
 
 **中文說明：最終儀表板穩定化處理。透過建立 body → main → dashboard 的完整 100% 寬度鍊，徹底解決因為容器寬度隨內容縮放而產生的跳動。同步將介面文字語系改回繁體中文，並將設定頁面標題統一為「名稱設定」。**
 
+### [2026-02-13.10] - Site-wide Container Width Stabilization
 
+#### Summary of changes
+- Synchronized the physical width of all content-heavy pages (About, Contact, Terms, and Post Details).
+- Resolved an issue where pages with short content (e.g., Contact) would shrink horizontally due to parent Flexbox constraints.
+- Ensured a consistent reading area of `max-w-4xl` (896px) across all single-column pages.
 
+#### Technical details
+- Applied `w-full` and `self-stretch` to the `<main>` element in `src/pages/[slug].astro` and `src/pages/posts/[...slug].astro`.
+- This ensures that even when content length is minimal, the container fills its parent and respects the `max-w-4xl` limit, preventing unpredictable shrinking.
 
+#### Affected files
+- `src/pages/[slug].astro`
+- `src/pages/posts/[...slug].astro`
+
+#### Side effects
+- None anticipated.
+
+**中文說明：全站內容頁面寬度穩定化。透過在主容器加上 `w-full` 與 `self-stretch`，解決了內容較短的頁面（如：「與我聯繫」）會因此縮窄的問題，確保關於我、聯繫、條款與文章頁面的視覺寬度始終保持一致。**
