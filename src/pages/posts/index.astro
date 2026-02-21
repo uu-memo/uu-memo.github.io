@@ -70,15 +70,17 @@ categories.sort((a, b) => {
                     data-category={(Array.isArray(post.data.category) ? post.data.category.join(' ') : (post.data.category || '')).toLowerCase()}
                     data-tags={(post.data.tags || []).join(' ').toLowerCase()} 
                 >
-                    {post.data.heroImage ? (
-                        <div class="aspect-[16/10] bg-uu-sub/20 relative overflow-hidden shrink-0">
-                            <img src={post.data.heroImage} alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                        </div>
-                    ) : (
-                        <div class="aspect-[16/10] bg-uu-sub/20 flex items-center justify-center text-uu-main/20 shrink-0">
-                            <span class="material-symbols-outlined text-5xl">image</span>
-                        </div>
-                    )}
+                    <a href={`/posts/${post.id}`} class="block overflow-hidden shrink-0">
+                        {post.data.heroImage ? (
+                            <div class="aspect-[16/10] bg-uu-sub/20 relative">
+                                <img src={post.data.heroImage} alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            </div>
+                        ) : (
+                            <div class="aspect-[16/10] bg-uu-sub/20 flex items-center justify-center text-uu-main/20">
+                                <span class="material-symbols-outlined text-5xl">image</span>
+                            </div>
+                        )}
+                    </a>
                     <div class="p-6 flex flex-col flex-1">
                         <div class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium flex justify-between items-center">
                             <span>{post.data.pubDate.toLocaleDateString('zh-TW')}</span>
@@ -97,14 +99,12 @@ categories.sort((a, b) => {
                         
                         <!-- Tags in Grid Card -->
                         {post.data.tags && post.data.tags.length > 0 && (
-                            <div class="flex flex-wrap gap-1.5 mb-4">
+                            <div class="flex flex-wrap gap-1.5 mt-auto">
                                 {post.data.tags.slice(0, 3).map(tag => (
-                                    <span class="text-[10px] px-2 py-0.5 bg-uu-sub/10 rounded-md text-uu-main/70">#{tag}</span>
+                                    <span class="text-[10px] px-2 py-0.5 bg-uu-sub/10 rounded-md text-uu-main/70 cursor-default">#{tag}</span>
                                 ))}
                             </div>
                         )}
-
-                        <a href={`/posts/${post.id}`} class="btn-text text-sm font-bold self-start mt-auto">看更多</a>
                     </div>
                 </article>
             ))}

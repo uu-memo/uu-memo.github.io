@@ -402,3 +402,33 @@ All notable changes to this project will be documented in this file.
 
 **中文說明：實作雲端書籤系統與真實分享功能。透過 Firestore 儲存使用者的收藏清單，並在各文章頁面提供即時的收藏按鈕與原生分享介面（支援手機原生分享與桌面端複製連結）。同時優化了書籤頁面，使其能動態顯示已收藏的文章列表，並解決了區域網路無法連線測試的問題。**
 
+
+### [2026-02-21] - FIX: UI Refinement & Bookmark Stability
+
+#### Summary of changes
+- Completely removed all remaining "Read More" (看更多) buttons from the homepage and listing pages as requested.
+- Fixed the "No Reaction" issue with bookmarks caused by Astro View Transitions skipping script execution.
+- Improved the Bookmarks page rendering logic and fixed Firebase module import issues.
+- Updated Firestore security rules configuration to support user bookmarks.
+
+#### Technical details
+- **UI Refinement**:
+    - Removed redundant `btn-text` links in `src/pages/index.astro`.
+    - Wrapped horizontal card images in `<a>` tags to match the new "all-clickable" design pattern.
+- **View Transitions Fix**:
+    - Wrapped client-side scripts in `astro:page-load` listeners in both `[...slug].astro` and `bookmarks/index.astro`.
+    - This ensures event listeners are correctly attached even when a user navigates between pages without a full browser reload.
+- **Data Passing**:
+    - Replaced `define:vars` with `data-posts` attribute serialization in `bookmarks/index.astro` to allow standard ES Module imports to work correctly alongside server-provided data.
+- **Security & Deployment**:
+    - Prepared `firebase.json` and updated `firestore.rules`.
+    - Note: Manual deployment via `npx firebase deploy --only firestore:rules` is required to apply permission updates.
+
+#### Affected files
+- `src/pages/index.astro`
+- `src/pages/posts/[...slug].astro`
+- `src/pages/bookmarks/index.astro`
+- `firebase.json`
+- `CHANGELOG.md`
+
+**中文說明：修復介面與書籤穩定性。徹底移除首頁殘留的「看更多」按鈕，並將圖片改為可點選連結。解決了因 Astro View Transitions 導致導覽後書籤按鈕失效的問題，並修正了書籤頁面的資料傳遞邏輯，確保 Firebase 功能在所有頁面切換情況下皆能正常運行。**

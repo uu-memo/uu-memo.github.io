@@ -28,8 +28,9 @@ import Footer from "../components/Footer.astro";
                     <div class="space-y-8">
                         <!-- Horizontal Card 1 -->
                         <article class="flex flex-col md:flex-row gap-6 group">
-                            <div
-                                class="w-full md:w-72 aspect-[16/10] bg-uu-sub/30 rounded-lg overflow-hidden shrink-0"
+                            <a
+                                href="/posts/first-post"
+                                class="w-full md:w-72 aspect-[16/10] bg-uu-sub/30 rounded-lg overflow-hidden shrink-0 block"
                             >
                                 <div
                                     class="w-full h-full bg-[#eaddce] flex items-center justify-center text-uu-main/20"
@@ -39,7 +40,7 @@ import Footer from "../components/Footer.astro";
                                         >image</span
                                     >
                                 </div>
-                            </div>
+                            </a>
                             <div class="flex flex-col justify-center">
                                 <div
                                     class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium flex items-center gap-1"
@@ -55,18 +56,14 @@ import Footer from "../components/Footer.astro";
                                     class="text-xl font-bold mb-3 group-hover:text-uu-dark transition-colors"
                                 >
                                     <a href="/posts/first-post"
-                                        >在城市的夾縫中尋找陽光，關於春天的第一次散步</a>
+                                        >在城市的夾縫中尋找陽光，關於春天的第一次散步</a
+                                    >
                                 </h3>
                                 <p
                                     class="text-sm leading-relaxed opacity-70 line-clamp-2 mb-4"
                                 >
                                     清晨的空氣還帶著一絲涼意，但路邊的櫻花枝頭已經隱約可見飽滿的芽。這是我來到這個城市的第三個春天，依然對這些微小的變化感到驚喜...
                                 </p>
-                                <a
-                                    href="/posts/first-post"
-                                    class="btn-text text-sm font-bold self-start"
-                                    >看更多</a
-                                >
                             </div>
                         </article>
 
@@ -77,8 +74,9 @@ import Footer from "../components/Footer.astro";
                             class="flex flex-col md:flex-row gap-6 group"
                             lang="ja"
                         >
-                            <div
-                                class="w-full md:w-72 aspect-[16/10] bg-uu-sub/30 rounded-lg overflow-hidden shrink-0"
+                            <a
+                                href="/posts/tokyo-cafe"
+                                class="w-full md:w-72 aspect-[16/10] bg-uu-sub/30 rounded-lg overflow-hidden shrink-0 block"
                             >
                                 <div
                                     class="w-full h-full bg-[#e6ded5] flex items-center justify-center text-uu-main/20"
@@ -88,7 +86,7 @@ import Footer from "../components/Footer.astro";
                                         >image</span
                                     >
                                 </div>
-                            </div>
+                            </a>
                             <div class="flex flex-col justify-center">
                                 <div
                                     class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium flex items-center gap-1"
@@ -104,18 +102,14 @@ import Footer from "../components/Footer.astro";
                                     class="text-xl font-bold mb-3 group-hover:text-uu-dark transition-colors"
                                 >
                                     <a href="/posts/tokyo-cafe"
-                                        >東京の静かな午後、古い喫茶店で見つけた物語。</a>
+                                        >東京の静かな午後、古い喫茶店で見つけた物語。</a
+                                    >
                                 </h3>
                                 <p
                                     class="text-sm leading-relaxed opacity-70 line-clamp-2 mb-4"
                                 >
                                     神保町の裏通りにある小さな喫茶店。そこには、時間が止まったような静寂がありました。一杯のコーヒーと、誰かが残した古い本...
                                 </p>
-                                <a
-                                    href="/posts/tokyo-cafe"
-                                    class="btn-text text-sm font-bold self-start"
-                                    >看更多</a
-                                >
                             </div>
                         </article>
                     </div>
@@ -147,31 +141,33 @@ import Footer from "../components/Footer.astro";
                         <article
                             class="bg-uu-light rounded-2xl overflow-hidden border border-uu-sub group shadow-sm hover:shadow-md transition-shadow"
                         >
-                            <div class="aspect-[16/9] bg-uu-sub/20 relative">
+                            <a href="/posts/first-post">
                                 <div
-                                    class="absolute inset-0 flex items-center justify-center text-uu-main/20"
+                                    class="aspect-[16/9] bg-uu-sub/20 relative"
                                 >
-                                    <span
-                                        class="material-symbols-outlined text-4xl"
-                                        >photo_library</span
+                                    <div
+                                        class="absolute inset-0 flex items-center justify-center text-uu-main/20"
                                     >
+                                        <span
+                                            class="material-symbols-outlined text-4xl"
+                                            >photo_library</span
+                                        >
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                             <div class="p-6">
                                 <h3
                                     class="text-lg font-bold mb-3 group-hover:text-uu-dark transition-colors"
                                 >
-                                    <a href="#"
-                                        >那些年我們一起讀過的詩集：關於孤獨與陪伴</a>
+                                    <a href="/posts/first-post"
+                                        >那些年我們一起讀過的詩集：關於孤獨與陪伴</a
+                                    >
                                 </h3>
                                 <p
                                     class="text-sm opacity-70 line-clamp-3 mb-6 leading-relaxed"
                                 >
                                     書架上的那本詩集已經有些發黃，但每一次翻開，都能在字裡行間找到當時的自己。詩不是為了解答生活，而是為了安慰靈魂。
                                 </p>
-                                <a href="#" class="btn-text text-sm font-bold"
-                                    >看更多</a
-                                >
                             </div>
                         </article>
 
@@ -179,31 +175,33 @@ import Footer from "../components/Footer.astro";
                         <article
                             class="bg-uu-light rounded-2xl overflow-hidden border border-uu-sub group shadow-sm hover:shadow-md transition-shadow"
                         >
-                            <div class="aspect-[16/9] bg-uu-sub/20 relative">
+                            <a href="/posts/first-post">
                                 <div
-                                    class="absolute inset-0 flex items-center justify-center text-uu-main/20"
+                                    class="aspect-[16/9] bg-uu-sub/20 relative"
                                 >
-                                    <span
-                                        class="material-symbols-outlined text-4xl"
-                                        >photo_library</span
+                                    <div
+                                        class="absolute inset-0 flex items-center justify-center text-uu-main/20"
                                     >
+                                        <span
+                                            class="material-symbols-outlined text-4xl"
+                                            >photo_library</span
+                                        >
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                             <div class="p-6">
                                 <h3
                                     class="text-lg font-bold mb-3 group-hover:text-uu-dark transition-colors"
                                 >
-                                    <a href="#"
-                                        >給未來的自己：在繁瑣日常中保持溫度的五個練習</a>
+                                    <a href="/posts/first-post"
+                                        >給未來的自己：在繁瑣日常中保持溫度的五個練習</a
+                                    >
                                 </h3>
                                 <p
                                     class="text-sm opacity-70 line-clamp-3 mb-6 leading-relaxed"
                                 >
                                     生活是由無數個微小的瞬間組成的。如何從瑣事中抽離，看見隱藏在日常之下的光？這是我給自己設計的五個生活練習。
                                 </p>
-                                <a href="#" class="btn-text text-sm font-bold"
-                                    >看更多</a
-                                >
                             </div>
                         </article>
                     </div>
