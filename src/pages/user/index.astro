@@ -467,372 +467,304 @@ const postsJson = allPosts.map((post: any) => ({
         orderBy,
     } from "firebase/firestore";
 
-    const loginBtn = document.getElementById("google-login-btn");
-    const logoutBtn = document.getElementById("logout-btn");
-    const loadingSection = document.getElementById("auth-loading");
-    const loginSection = document.getElementById("login-section");
-    const userDashboard = document.getElementById("user-dashboard");
+    function initUserDashboard() {
+        const loginBtn = document.getElementById("google-login-btn");
+        const logoutBtn = document.getElementById("logout-btn");
+        const loadingSection = document.getElementById("auth-loading");
+        const loginSection = document.getElementById("login-section");
+        const userDashboard = document.getElementById("user-dashboard");
 
-    const userAvatar = document.getElementById("user-avatar");
-    const userName = document.getElementById("user-name");
-    const userEmail = document.getElementById("user-email");
+        const userAvatar = document.getElementById("user-avatar");
+        const userName = document.getElementById("user-name");
+        const userEmail = document.getElementById("user-email");
 
-    const tabBtns = document.querySelectorAll(".tab-btn");
-    const tabContents = document.querySelectorAll(".tab-content");
+        const tabBtns = document.querySelectorAll(".tab-btn");
+        const tabContents = document.querySelectorAll(".tab-content");
 
-    if (loginBtn) {
-        loginBtn.addEventListener("click", async () => {
-            try {
-                await signInWithPopup(auth, googleProvider);
-            } catch (error) {
-                console.error("Login failed:", error);
-                alert("登入失敗，請稍後再試。");
-            }
-        });
-    }
+        const profileSaveBtn = document.getElementById("profile-save-btn");
+        const profileSaveLoader = document.getElementById(
+            "profile-save-loader"
+        );
+        const displayNameInput = document.getElementById(
+            "display-name-input"
+        ) as HTMLInputElement;
+        const selectedAvatarInput = document.getElementById(
+            "selected-avatar-input"
+        ) as HTMLInputElement;
 
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", async () => {
-            try {
-                if (confirm("確定要登出帳號嗎？")) {
-                    await signOut(auth);
-                    window.location.reload();
+        const avatarOptions = document.querySelectorAll(".avatar-option");
+
+        if (loginBtn) {
+            loginBtn.onclick = async () => {
+                try {
+                    await signInWithPopup(auth, googleProvider);
+                } catch (e) {
+                    console.error("Login failed:", e);
                 }
-            } catch (error) {
-                console.error("Logout failed:", error);
+            };
+        }
+
+        if (logoutBtn) {
+            logoutBtn.onclick = async () => {
+                try {
+                    await signOut(auth);
+                    window.location.href = "/";
+                } catch (e) {
+                    console.error("Logout failed:", e);
+                }
+            };
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Admin redirect
+                if (user.email === "jing180804@gmail.com") {
+                    window.location.href = "/admin";
+                    return;
+                }
+
+                if (userName) userName.textContent = user.displayName;
+                if (userEmail) userEmail.textContent = user.email;
+
+                // Load custom profile data
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        const data = userDoc.data();
+                        if (data.nickname && userName)
+                            userName.textContent = data.nickname;
+                        if (displayNameInput)
+                            displayNameInput.value =
+                                data.nickname || user.displayName || "";
+                        if (data.avatar_icon) {
+                            if (userAvatar) {
+                                userAvatar.innerHTML = `<span class="material-symbols-outlined text-4xl text-uu-main">${data.avatar_icon}</span>`;
+                            }
+                            if (selectedAvatarInput)
+                                selectedAvatarInput.value = data.avatar_icon;
+
+                            // Highlight selected avatar
+                            avatarOptions.forEach((opt) => {
+                                if (
+                                    opt.getAttribute("data-icon") ===
+                                    data.avatar_icon
+                                ) {
+                                    opt.querySelector(
+                                        ".icon-box"
+                                    )?.classList.add(
+                                        "bg-uu-sub/40",
+                                        "border-uu-main",
+                                        "text-uu-main"
+                                    );
+                                }
+                            });
+                        } else if (user.photoURL && userAvatar) {
+                            userAvatar.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover" />`;
+                        }
+                    } else if (user.photoURL && userAvatar) {
+                        userAvatar.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover" />`;
+                        if (displayNameInput)
+                            displayNameInput.value = user.displayName || "";
+                    }
+                } catch (e) {
+                    console.error("Error fetching user profile:", e);
+                }
+
+                loadingSection?.classList.add("opacity-0");
+                setTimeout(() => loadingSection?.classList.add("hidden"), 300);
+                userDashboard?.classList.remove("hidden");
+                setTimeout(
+                    () => userDashboard?.classList.add("opacity-100"),
+                    50
+                );
+                loginSection?.classList.add("hidden");
+
+                // Bookmarks Logic
+                const bookmarksTab = document.getElementById("tab-bookmarks");
+                const bookmarksGrid = document.getElementById(
+                    "dashboard-bookmarks-grid"
+                );
+                const bookmarksLoading = document.getElementById(
+                    "dashboard-bookmarks-loading"
+                );
+                const bookmarksEmpty = document.getElementById(
+                    "dashboard-bookmarks-empty"
+                );
+                const postsJson = JSON.parse(
+                    bookmarksTab?.getAttribute("data-posts") || "[]"
+                );
+
+                if (bookmarksGrid && bookmarksLoading && bookmarksEmpty) {
+                    try {
+                        const q = query(
+                            collection(db, "users", user.uid, "bookmarks"),
+                            orderBy("timestamp", "desc")
+                        );
+                        const querySnapshot = await getDocs(q);
+                        const bookmarkedIds = querySnapshot.docs.map(
+                            (doc) => doc.id
+                        );
+
+                        if (bookmarkedIds.length === 0) {
+                            bookmarksLoading.classList.add("hidden");
+                            bookmarksEmpty.classList.remove("hidden");
+                        } else {
+                            const bookmarkedPosts = postsJson.filter((p: any) =>
+                                bookmarkedIds.includes(p.id)
+                            );
+                            bookmarkedPosts.sort(
+                                (a: any, b: any) =>
+                                    bookmarkedIds.indexOf(a.id) -
+                                    bookmarkedIds.indexOf(b.id)
+                            );
+
+                            bookmarksGrid.innerHTML = bookmarkedPosts
+                                .map(
+                                    (post: any) => `
+                                <article class="bg-white rounded-xl overflow-hidden border border-uu-sub/30 group hover:shadow-md transition-all flex flex-col h-full">
+                                    <a href="/posts/${
+                                        post.id
+                                    }" class="aspect-video bg-uu-sub/20 relative overflow-hidden shrink-0 block">
+                                        ${
+                                            post.heroImage
+                                                ? `<img src="${post.heroImage}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />`
+                                                : `<div class="w-full h-full flex items-center justify-center text-uu-main/20"><span class="material-symbols-outlined text-4xl">image</span></div>`
+                                        }
+                                    </a>
+                                    <div class="p-5 flex flex-col flex-1">
+                                        <div class="text-[9px] tracking-widest text-uu-main/40 mb-2 font-black uppercase flex justify-between">
+                                            <span>${new Date(
+                                                post.pubDate
+                                            ).toLocaleDateString(
+                                                "zh-TW"
+                                            )}</span>
+                                            <span>${
+                                                Array.isArray(post.category)
+                                                    ? post.category[0]
+                                                    : post.category || "LIFE"
+                                            }</span>
+                                        </div>
+                                        <h4 class="text-sm font-bold mb-2 group-hover:text-uu-dark transition-colors line-clamp-1">
+                                            <a href="/posts/${post.id}">${
+                                        post.title
+                                    }</a>
+                                        </h4>
+                                        <p class="text-[11px] opacity-60 line-clamp-2 leading-relaxed mb-4 flex-1">
+                                            ${post.description}
+                                        </p>
+                                        <a href="/posts/${
+                                            post.id
+                                        }" class="text-[10px] font-black text-uu-main hover:text-uu-dark transition-colors flex items-center gap-1 uppercase tracking-tighter">
+                                            閱讀全文
+                                            <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                                        </a>
+                                    </div>
+                                </article>
+                            `
+                                )
+                                .join("");
+
+                            bookmarksLoading.classList.add("hidden");
+                            bookmarksGrid.classList.remove("hidden");
+                        }
+                    } catch (e) {
+                        console.error("Dashboard bookmarks error:", e);
+                        bookmarksLoading.classList.add("hidden");
+                        bookmarksEmpty.classList.remove("hidden");
+                    }
+                }
+            } else {
+                loadingSection?.classList.add("opacity-0");
+                setTimeout(() => loadingSection?.classList.add("hidden"), 300);
+                loginSection?.classList.remove("hidden");
+                setTimeout(() => {
+                    loginSection?.classList.add("opacity-100");
+                    loginSection?.classList.remove("translate-y-4");
+                }, 50);
+                userDashboard?.classList.add("hidden");
             }
         });
-    }
 
-    const displayNameInput = document.getElementById(
-        "display-name-input"
-    ) as HTMLInputElement;
-    const profileSaveBtn = document.getElementById("profile-save-btn");
-    const profileSaveLoader = document.getElementById("profile-save-loader");
-    const avatarOptions = document.querySelectorAll(".avatar-option");
-    const selectedAvatarInput = document.getElementById(
-        "selected-avatar-input"
-    ) as HTMLInputElement;
-    const resetToGoogleBtn = document.getElementById("reset-to-google-btn");
-
-    // Reset to Google Original Data
-    resetToGoogleBtn?.addEventListener("click", async () => {
-        const user = auth.currentUser;
-        if (!user) return;
-
-        if (
-            confirm(
-                "確定要恢復為 Google 帳號原始資料嗎？這將清除您的自訂名稱與頭像。"
-            )
-        ) {
+        profileSaveBtn?.addEventListener("click", async () => {
+            const user = auth.currentUser;
+            if (!user || !displayNameInput || !profileSaveLoader) return;
+            profileSaveLoader.classList.remove("hidden");
             try {
-                // Clear custom data from Firestore
                 await setDoc(
                     doc(db, "users", user.uid),
                     {
-                        nickname: null,
-                        avatar_icon: null,
-                        email: user.email,
+                        nickname: displayNameInput.value,
+                        avatar_icon: selectedAvatarInput?.value || null,
                         updated_at: serverTimestamp(),
                     },
                     { merge: true }
                 );
-
-                alert("已恢復為 Google 原始資料！");
-                window.location.reload();
-            } catch (e) {
-                alert("重置失敗: " + e);
-            }
-        }
-    });
-
-    // Avatar Selection Interaction
-    avatarOptions.forEach((opt) => {
-        opt.addEventListener("click", () => {
-            const icon = opt.getAttribute("data-icon");
-            const user = auth.currentUser;
-            if (selectedAvatarInput) selectedAvatarInput.value = icon || "";
-
-            // UI Feedback for Grid
-            avatarOptions.forEach((o) => {
-                const box = o.querySelector(".icon-box");
-                box?.classList.remove(
-                    "bg-uu-main",
-                    "text-white",
-                    "scale-110",
-                    "shadow-md"
-                );
-                box?.classList.add("bg-uu-base/20", "text-uu-main/40");
-            });
-
-            const selectedBox = opt.querySelector(".icon-box");
-            selectedBox?.classList.remove("bg-uu-base/20", "text-uu-main/40");
-            selectedBox?.classList.add(
-                "bg-uu-main",
-                "text-white",
-                "scale-110",
-                "shadow-md"
-            );
-
-            // Live Preview in Sidebar
-            if (userAvatar && icon) {
-                userAvatar.innerHTML = `<span class="material-symbols-outlined text-uu-light text-4xl">${icon}</span>`;
-                userAvatar.classList.add("bg-uu-main");
-            }
-        });
-    });
-
-    onAuthStateChanged(auth, async (user) => {
-        if (loadingSection) {
-            loadingSection.style.opacity = "0";
-            setTimeout(() => loadingSection.classList.add("hidden"), 300);
-        }
-
-        if (user) {
-            if (user.email === "jing180804@gmail.com") {
-                window.location.href = "/admin";
-                return;
-            }
-            if (userName) userName.textContent = user.displayName || "User";
-            if (userEmail) userEmail.textContent = user.email;
-
-            // Fetch custom profile from Firestore
-            try {
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists()) {
-                    const data = userDoc.data();
-                    if (displayNameInput)
-                        displayNameInput.value =
-                            data.nickname || user.displayName || "";
-
-                    // Pre-select Saved Avatar
-                    const savedIcon = data.avatar_icon;
-                    if (savedIcon && selectedAvatarInput) {
-                        selectedAvatarInput.value = savedIcon;
-
-                        const savedOpt = document.querySelector(
-                            `.avatar-option[data-icon="${savedIcon}"]`
-                        ) as HTMLElement;
-                        if (savedOpt) {
-                            // Apply active style
-                            const box = savedOpt.querySelector(".icon-box");
-                            box?.classList.remove(
-                                "bg-uu-base/20",
-                                "text-uu-main/40"
-                            );
-                            box?.classList.add(
-                                "bg-uu-main",
-                                "text-white",
-                                "scale-110",
-                                "shadow-md"
-                            );
-
-                            // Update Sidebar
-                            if (userAvatar) {
-                                userAvatar.innerHTML = `<span class="material-symbols-outlined text-uu-light text-4xl">${savedIcon}</span>`;
-                                userAvatar.classList.add("bg-uu-main");
-                            }
-                        }
-                    } else {
-                        // Use Google photo if no custom avatar
-                        if (userAvatar && user.photoURL) {
-                            userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover">`;
-                            userAvatar.classList.remove("bg-uu-main");
-                        }
-                    }
-                } else {
-                    if (displayNameInput)
-                        displayNameInput.value = user.displayName || "";
-                    if (userAvatar && user.photoURL) {
-                        userAvatar.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="w-full h-full object-cover">`;
-                    }
-                }
+                alert("個人資料已更新！");
             } catch (e) {
                 console.error(e);
+                alert("更新失敗");
+            } finally {
+                profileSaveLoader.classList.add("hidden");
             }
+        });
 
-            userDashboard?.classList.remove("hidden");
-            setTimeout(() => userDashboard?.classList.add("opacity-100"), 50);
-            loginSection?.classList.add("hidden");
-
-            // --- Dashboard Bookmarks Logic ---
-            const bookmarksTab = document.getElementById("tab-bookmarks");
-            const bookmarksGrid = document.getElementById(
-                "dashboard-bookmarks-grid"
-            );
-            const bookmarksLoading = document.getElementById(
-                "dashboard-bookmarks-loading"
-            );
-            const bookmarksEmpty = document.getElementById(
-                "dashboard-bookmarks-empty"
-            );
-            const postsJson = JSON.parse(
-                bookmarksTab?.getAttribute("data-posts") || "[]"
-            );
-
-            if (bookmarksGrid && bookmarksLoading && bookmarksEmpty) {
-                try {
-                    const q = query(
-                        collection(db, "users", user.uid, "bookmarks"),
-                        orderBy("timestamp", "desc")
+        tabBtns.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                tabBtns.forEach((b) => {
+                    b.classList.remove(
+                        "active",
+                        "bg-uu-main",
+                        "text-white",
+                        "shadow-sm"
                     );
-                    const querySnapshot = await getDocs(q);
-                    const bookmarkedIds = querySnapshot.docs.map(
-                        (doc) => doc.id
+                    b.classList.add(
+                        "text-uu-main/60",
+                        "hover:bg-uu-sub/10",
+                        "hover:text-uu-main"
                     );
-
-                    if (bookmarkedIds.length === 0) {
-                        bookmarksLoading.classList.add("hidden");
-                        bookmarksEmpty.classList.remove("hidden");
-                    } else {
-                        // Filter and Sort local posts
-                        const bookmarkedPosts = postsJson.filter(
-                            (p: { id: string }) => bookmarkedIds.includes(p.id)
-                        );
-                        bookmarkedPosts.sort(
-                            (a: { id: string }, b: { id: string }) =>
-                                bookmarkedIds.indexOf(a.id) -
-                                bookmarkedIds.indexOf(b.id)
-                        );
-
-                        bookmarksGrid.innerHTML = bookmarkedPosts
-                            .map(
-                                (post: {
-                                    id: string;
-                                    heroImage?: string;
-                                    title: string;
-                                    pubDate: string;
-                                    description: string;
-                                    category?: string | string[];
-                                }) => `
-                            <article class="bg-white rounded-xl overflow-hidden border border-uu-sub/30 group hover:shadow-md transition-all flex flex-col h-full">
-                                <a href="/posts/${
-                                    post.id
-                                }" class="aspect-video bg-uu-sub/20 relative overflow-hidden shrink-0 block">
-                                    ${
-                                        post.heroImage
-                                            ? `<img src="${post.heroImage}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />`
-                                            : `<div class="w-full h-full flex items-center justify-center text-uu-main/20"><span class="material-symbols-outlined text-4xl">image</span></div>`
-                                    }
-                                </a>
-                                <div class="p-5 flex flex-col flex-1">
-                                    <div class="text-[9px] tracking-widest text-uu-main/40 mb-2 font-black uppercase flex justify-between">
-                                        <span>${new Date(
-                                            post.pubDate
-                                        ).toLocaleDateString("zh-TW")}</span>
-                                        <span>${
-                                            Array.isArray(post.category)
-                                                ? post.category[0]
-                                                : post.category || "LIFE"
-                                        }</span>
-                                    </div>
-                                    <h4 class="text-sm font-bold mb-2 group-hover:text-uu-dark transition-colors line-clamp-1">
-                                        <a href="/posts/${post.id}">${
-                                    post.title
-                                }</a>
-                                    </h4>
-                                    <p class="text-[11px] opacity-60 line-clamp-2 leading-relaxed mb-4 flex-1">
-                                        ${post.description}
-                                    </p>
-                                    <a href="/posts/${
-                                        post.id
-                                    }" class="text-[10px] font-black text-uu-main hover:text-uu-dark transition-colors flex items-center gap-1 uppercase tracking-tighter">
-                                        Read More
-                                        <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                                    </a>
-                                </div>
-                            </article>
-                        `
-                            )
-                            .join("");
-
-                        bookmarksLoading.classList.add("hidden");
-                        bookmarksGrid.classList.remove("hidden");
-                    }
-                } catch (e) {
-                    console.error("Dashboard bookmarks error:", e);
-                    bookmarksLoading.classList.add("hidden");
-                    bookmarksEmpty.classList.remove("hidden");
-                }
-            }
-            // --- End Bookmarks Logic ---
-        } else {
-            loginSection?.classList.remove("hidden");
-            setTimeout(() => {
-                loginSection?.classList.add("opacity-100");
-                loginSection?.classList.remove("translate-y-4");
-            }, 50);
-            userDashboard?.classList.add("hidden");
-        }
-    });
-
-    profileSaveBtn?.addEventListener("click", async () => {
-        const user = auth.currentUser;
-        if (!user || !displayNameInput || !profileSaveLoader) return;
-
-        profileSaveLoader.classList.remove("hidden");
-        profileSaveBtn.setAttribute("disabled", "true");
-
-        try {
-            await setDoc(
-                doc(db, "users", user.uid),
-                {
-                    nickname: displayNameInput.value,
-                    avatar_icon: selectedAvatarInput?.value || null,
-                    email: user.email,
-                    updated_at: serverTimestamp(),
-                },
-                { merge: true }
-            );
-
-            alert("資料已成功更新！");
-            window.location.reload();
-        } catch (e) {
-            alert("更新失敗: " + e);
-        } finally {
-            profileSaveLoader.classList.add("hidden");
-            profileSaveBtn.removeAttribute("disabled");
-        }
-    });
-
-    tabBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            tabBtns.forEach((b) => {
-                b.classList.remove(
+                });
+                btn.classList.add(
                     "active",
                     "bg-uu-main",
                     "text-white",
                     "shadow-sm"
                 );
-                b.classList.add(
+                btn.classList.remove(
                     "text-uu-main/60",
                     "hover:bg-uu-sub/10",
                     "hover:text-uu-main"
                 );
+                tabContents.forEach((c) => c.classList.add("hidden"));
+                const tabId = btn.getAttribute("data-tab");
+                const targetContent = document.getElementById(`tab-${tabId}`);
+                if (targetContent) targetContent.classList.remove("hidden");
             });
-            btn.classList.add(
-                "active",
-                "bg-uu-main",
-                "text-white",
-                "shadow-sm"
-            );
-            btn.classList.remove(
-                "text-uu-main/60",
-                "hover:bg-uu-sub/10",
-                "hover:text-uu-main"
-            );
-
-            tabContents.forEach((c) => {
-                c.classList.add("hidden");
-            });
-
-            const tabId = btn.getAttribute("data-tab");
-            const targetContent = document.getElementById(`tab-${tabId}`);
-            if (targetContent) {
-                targetContent.classList.remove("hidden");
-            }
         });
-    });
+
+        avatarOptions.forEach((opt) => {
+            opt.addEventListener("click", () => {
+                avatarOptions.forEach((o) =>
+                    o
+                        .querySelector(".icon-box")
+                        ?.classList.remove(
+                            "bg-uu-sub/40",
+                            "border-uu-main",
+                            "text-uu-main"
+                        )
+                );
+                opt.querySelector(".icon-box")?.classList.add(
+                    "bg-uu-sub/40",
+                    "border-uu-main",
+                    "text-uu-main"
+                );
+                const icon = opt.getAttribute("data-icon");
+                if (selectedAvatarInput && icon)
+                    selectedAvatarInput.value = icon;
+            });
+        });
+    }
+
+    document.addEventListener("astro:page-load", initUserDashboard);
 </script>
 
 <style>

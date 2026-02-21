@@ -245,6 +245,6 @@ const postsJson = allPosts.map((post) => ({
         grid.classList.add("grid");
     }
 
-    initBookmarks();
+    // Run on every page load (initial and navigation)
     document.addEventListener("astro:page-load", initBookmarks);
 </script>
