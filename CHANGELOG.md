@@ -480,3 +480,29 @@ All notable changes to this project will be documented in this file.
 - `CHANGELOG.md`
 
 **中文說明：實作會員中心同步與強化書籤視覺反饋。現在「會員中心」的書籤分頁能即時顯示收藏的文章清單。同時大幅強化了文章頁面的收藏按鈕視覺，當文章被收藏時會顯示深色實心樣式，並優化了後端邏輯與日誌追蹤，確保各頁面狀態同步且穩定。**
+
+### [2026-02-21] - FEAT: Enhanced Markdown Rendering & Script Stabilization
+
+#### Summary of changes
+- Redesigned Markdown table rendering for better readability and aesthetics.
+- Enabled Astro `ClientRouter` (ViewTransitions) for smoother navigation and reliable script execution.
+- Fixed an issue where article action buttons (Bookmark, Share, Link) were non-responsive.
+- Synchronized User Dashboard scripts with the new client-side routing lifecycle.
+
+#### Technical details
+- **Markdown Tables**:
+    - Added custom CSS in `global.css` for `.prose table`, including rounded borders, sticky-like headers, and zebra stripes.
+    - Implemented responsive horizontal scrolling for tables on mobile devices.
+- **Navigation & Lifecycle**:
+    - Integrated `ClientRouter` in `Layout.astro` to enable `astro:page-load` events.
+    - Standardized all interactive scripts to use `astro:page-load` instead of standard `DOMContentLoaded`.
+    - Fixed Frontmatter syntax in `Layout.astro` and `user/index.astro`.
+
+#### Affected files
+- `src/layouts/Layout.astro`
+- `src/pages/user/index.astro`
+- `src/styles/global.css`
+- `CHANGELOG.md`
+
+**中文說明：強化 Markdown 渲染與腳本穩定性修復。重新設計了文章中的表格樣式，加入圓角邊框、標題背景與條紋裝飾，並優化了行動版橫向捲動。同時開啟了 Astro 的 ClientRouter 功能，確保導覽後的各項功能（書籤、分享、個人資料更新）都能穩定運作且擁有流暢的切換動畫。**
+
