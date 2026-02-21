@@ -291,8 +291,8 @@ const categories = Array.isArray(post.data.category)
         });
     }
 
-    // Run on first load
-    initArticleActions();
-    // Run on navigation
-    document.addEventListener('astro:page-load', initArticleActions);
+    // Run on every page load (initial and navigation)
+    document.addEventListener('astro:page-load', () => {
+        initArticleActions();
+    });
 </script>

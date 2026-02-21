@@ -432,3 +432,27 @@ All notable changes to this project will be documented in this file.
 - `CHANGELOG.md`
 
 **中文說明：修復介面與書籤穩定性。徹底移除首頁殘留的「看更多」按鈕，並將圖片改為可點選連結。解決了因 Astro View Transitions 導致導覽後書籤按鈕失效的問題，並修正了書籤頁面的資料傳遞邏輯，確保 Firebase 功能在所有頁面切換情況下皆能正常運行。**
+
+### [2026-02-21] - FIX: Instant Login & Bookmark Button Reliability
+
+#### Summary of changes
+- Integrated "Instant Login" directly into the Bookmarks page, removing the intermediate redirect.
+- Fixed the Bookmark (收藏) button responsiveness in article pages by refining the View Transitions event lifecycle.
+- Improved the authentication state logic to ensure consistent UI across page navigations.
+
+#### Technical details
+- **Bookmarks Page**:
+    - Embedded the Google Login card directly into the unauthenticated state of `/bookmarks`.
+    - Implemented `signInWithPopup` within the page script for a seamless login experience.
+- **Article Actions**:
+    - Cleaned up the `astro:page-load` event listener to prevent redundant handler registration.
+    - Verified `onAuthStateChanged` integration to ensure the bookmark status is checked on every page entry.
+- **Workflow**:
+    - Synchronized latest changes to the remote repository.
+
+#### Affected files
+- `src/pages/bookmarks/index.astro`
+- `src/pages/posts/[...slug].astro`
+- `CHANGELOG.md`
+
+**中文說明：實作即時登入與書籤按鈕穩定性修復。將登入組件直接嵌入書籤頁面，使用者不再需要跳轉頁面即可登入。同時修正了文章頁面書籤按鈕失效的問題，優化了 Astro View Transitions 下的腳本執行邏輯，確保導覽後各項功能依然穩定運作。**
