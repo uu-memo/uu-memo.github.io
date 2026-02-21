@@ -456,3 +456,27 @@ All notable changes to this project will be documented in this file.
 - `CHANGELOG.md`
 
 **中文說明：實作即時登入與書籤按鈕穩定性修復。將登入組件直接嵌入書籤頁面，使用者不再需要跳轉頁面即可登入。同時修正了文章頁面書籤按鈕失效的問題，優化了 Astro View Transitions 下的腳本執行邏輯，確保導覽後各項功能依然穩定運作。**
+
+### [2026-02-21] - FEAT: User Dashboard Synchronization & Enhanced UI Feedback
+
+#### Summary of changes
+- Synchronized the "My Bookmarks" tab in the User Dashboard with real-time Firestore data.
+- Significantly improved the visual feedback for the Bookmark button in article pages.
+- Standardized the bookmarking logic across the Article Page and User Dashboard.
+
+#### Technical details
+- **User Dashboard**:
+    - Implemented real-time bookmark fetching in `src/pages/user/index.astro`.
+    - Mirroring the main Bookmarks page logic to show bookmarked articles directly in the dashboard.
+- **Improved UI Feedback**:
+    - Updated `updateBookmarkUI` in `[...slug].astro` to use a high-contrast dark background and filled bookmark icon when an article is saved.
+    - Added extensive console logging to track authentication and Firestore interaction lifecycle.
+- **Workflow**:
+    - Committed and pushed all changes to ensure GitHub Actions triggers the latest build.
+
+#### Affected files
+- `src/pages/user/index.astro`
+- `src/pages/posts/[...slug].astro`
+- `CHANGELOG.md`
+
+**中文說明：實作會員中心同步與強化書籤視覺反饋。現在「會員中心」的書籤分頁能即時顯示收藏的文章清單。同時大幅強化了文章頁面的收藏按鈕視覺，當文章被收藏時會顯示深色實心樣式，並優化了後端邏輯與日誌追蹤，確保各頁面狀態同步且穩定。**

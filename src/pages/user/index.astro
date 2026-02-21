@@ -1,8 +1,21 @@
 ---
+import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import PrimaryButton from "../../components/PrimaryButton.astro";
+
+// Fetch all posts to have their metadata available for bookmarks
+const allPosts = await getCollection("posts");
+const postsJson = allPosts.map((post: any) => ({
+    id: post.id,
+    title: post.data.title,
+    description: post.data.description,
+    pubDate: post.data.pubDate,
+    heroImage: post.data.heroImage,
+    category: post.data.category,
+    tags: post.data.tags,
+}));
 ---
 
 <Layout title="User Dashboard | UU MEMO">
@@ -175,29 +188,55 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                 <!-- Bookmarks -->
                 <section
                     id="tab-bookmarks"
-                    class="tab-content w-full flex-1 flex flex-col items-center justify-center text-center p-10"
+                    class="tab-content w-full flex-1 p-8"
+                    data-posts={JSON.stringify(postsJson)}
                 >
                     <div
-                        class="w-16 h-16 bg-uu-sub/10 rounded-full flex items-center justify-center mb-6"
+                        id="dashboard-bookmarks-loading"
+                        class="py-20 text-center"
                     >
-                        <span
-                            class="material-symbols-outlined text-3xl text-uu-sub"
-                            >bookmark</span
+                        <div
+                            class="w-10 h-10 border-4 border-uu-sub border-t-uu-main rounded-full animate-spin mx-auto mb-4"
+                        >
+                        </div>
+                        <p class="text-uu-main/60 text-sm tracking-widest">
+                            LOADING BOOKMARKS...
+                        </p>
+                    </div>
+
+                    <div
+                        id="dashboard-bookmarks-empty"
+                        class="hidden py-20 text-center"
+                    >
+                        <div
+                            class="w-16 h-16 bg-uu-sub/10 rounded-full flex items-center justify-center mb-6 mx-auto"
+                        >
+                            <span
+                                class="material-symbols-outlined text-3xl text-uu-sub"
+                                >bookmark_border</span
+                            >
+                        </div>
+                        <h3 class="text-xl font-bold text-uu-dark mb-3">
+                            安靜的收藏夾
+                        </h3>
+                        <p
+                            class="text-uu-main/60 mb-8 max-w-xs mx-auto text-sm leading-relaxed"
+                        >
+                            在這裡，你可以找回那些曾經觸動過你的生活碎片。
+                        </p>
+                        <a
+                            href="/posts"
+                            class="btn-text text-sm font-bold tracking-widest"
+                            >去逛逛文章 →</a
                         >
                     </div>
-                    <h3 class="text-xl font-bold text-uu-dark mb-3">
-                        安靜的收藏夾
-                    </h3>
-                    <p
-                        class="text-uu-main/60 mb-8 max-w-xs mx-auto text-sm leading-relaxed"
+
+                    <div
+                        id="dashboard-bookmarks-grid"
+                        class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6"
                     >
-                        在這裡，你可以找回那些曾經觸動過你的生活碎片。
-                    </p>
-                    <a
-                        href="/posts"
-                        class="btn-text text-sm font-bold tracking-widest"
-                        >去逛逛文章 →</a
-                    >
+                        <!-- Dynamic Content -->
+                    </div>
                 </section>
 
                 <!-- Comments -->
@@ -417,7 +456,16 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
         signOut,
         onAuthStateChanged,
     } from "firebase/auth";
-    import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+    import {
+        doc,
+        getDoc,
+        setDoc,
+        serverTimestamp,
+        collection,
+        getDocs,
+        query,
+        orderBy,
+    } from "firebase/firestore";
 
     const loginBtn = document.getElementById("google-login-btn");
     const logoutBtn = document.getElementById("logout-btn");
@@ -606,6 +654,108 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
             userDashboard?.classList.remove("hidden");
             setTimeout(() => userDashboard?.classList.add("opacity-100"), 50);
             loginSection?.classList.add("hidden");
+
+            // --- Dashboard Bookmarks Logic ---
+            const bookmarksTab = document.getElementById("tab-bookmarks");
+            const bookmarksGrid = document.getElementById(
+                "dashboard-bookmarks-grid"
+            );
+            const bookmarksLoading = document.getElementById(
+                "dashboard-bookmarks-loading"
+            );
+            const bookmarksEmpty = document.getElementById(
+                "dashboard-bookmarks-empty"
+            );
+            const postsJson = JSON.parse(
+                bookmarksTab?.getAttribute("data-posts") || "[]"
+            );
+
+            if (bookmarksGrid && bookmarksLoading && bookmarksEmpty) {
+                try {
+                    const q = query(
+                        collection(db, "users", user.uid, "bookmarks"),
+                        orderBy("timestamp", "desc")
+                    );
+                    const querySnapshot = await getDocs(q);
+                    const bookmarkedIds = querySnapshot.docs.map(
+                        (doc) => doc.id
+                    );
+
+                    if (bookmarkedIds.length === 0) {
+                        bookmarksLoading.classList.add("hidden");
+                        bookmarksEmpty.classList.remove("hidden");
+                    } else {
+                        // Filter and Sort local posts
+                        const bookmarkedPosts = postsJson.filter(
+                            (p: { id: string }) => bookmarkedIds.includes(p.id)
+                        );
+                        bookmarkedPosts.sort(
+                            (a: { id: string }, b: { id: string }) =>
+                                bookmarkedIds.indexOf(a.id) -
+                                bookmarkedIds.indexOf(b.id)
+                        );
+
+                        bookmarksGrid.innerHTML = bookmarkedPosts
+                            .map(
+                                (post: {
+                                    id: string;
+                                    heroImage?: string;
+                                    title: string;
+                                    pubDate: string;
+                                    description: string;
+                                    category?: string | string[];
+                                }) => `
+                            <article class="bg-white rounded-xl overflow-hidden border border-uu-sub/30 group hover:shadow-md transition-all flex flex-col h-full">
+                                <a href="/posts/${
+                                    post.id
+                                }" class="aspect-video bg-uu-sub/20 relative overflow-hidden shrink-0 block">
+                                    ${
+                                        post.heroImage
+                                            ? `<img src="${post.heroImage}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />`
+                                            : `<div class="w-full h-full flex items-center justify-center text-uu-main/20"><span class="material-symbols-outlined text-4xl">image</span></div>`
+                                    }
+                                </a>
+                                <div class="p-5 flex flex-col flex-1">
+                                    <div class="text-[9px] tracking-widest text-uu-main/40 mb-2 font-black uppercase flex justify-between">
+                                        <span>${new Date(
+                                            post.pubDate
+                                        ).toLocaleDateString("zh-TW")}</span>
+                                        <span>${
+                                            Array.isArray(post.category)
+                                                ? post.category[0]
+                                                : post.category || "LIFE"
+                                        }</span>
+                                    </div>
+                                    <h4 class="text-sm font-bold mb-2 group-hover:text-uu-dark transition-colors line-clamp-1">
+                                        <a href="/posts/${post.id}">${
+                                    post.title
+                                }</a>
+                                    </h4>
+                                    <p class="text-[11px] opacity-60 line-clamp-2 leading-relaxed mb-4 flex-1">
+                                        ${post.description}
+                                    </p>
+                                    <a href="/posts/${
+                                        post.id
+                                    }" class="text-[10px] font-black text-uu-main hover:text-uu-dark transition-colors flex items-center gap-1 uppercase tracking-tighter">
+                                        Read More
+                                        <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                                    </a>
+                                </div>
+                            </article>
+                        `
+                            )
+                            .join("");
+
+                        bookmarksLoading.classList.add("hidden");
+                        bookmarksGrid.classList.remove("hidden");
+                    }
+                } catch (e) {
+                    console.error("Dashboard bookmarks error:", e);
+                    bookmarksLoading.classList.add("hidden");
+                    bookmarksEmpty.classList.remove("hidden");
+                }
+            }
+            // --- End Bookmarks Logic ---
         } else {
             loginSection?.classList.remove("hidden");
             setTimeout(() => {

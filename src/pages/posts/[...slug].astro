@@ -212,33 +212,41 @@ const categories = Array.isArray(post.data.category)
         function updateBookmarkUI(isBookmarked: boolean) {
             if (!bookmarkBtn) return;
             const icon = bookmarkBtn.querySelector('.material-symbols-outlined');
+            console.log(`[Bookmark] Updating UI. Bookmarked: ${isBookmarked}`);
+            
             if (icon) {
                 icon.textContent = isBookmarked ? 'bookmark' : 'bookmark_border';
                 if (isBookmarked) {
-                    bookmarkBtn.classList.add('text-uu-main');
-                    bookmarkBtn.classList.remove('text-uu-main/60');
+                    bookmarkBtn.classList.remove('text-uu-main/60', 'hover:bg-uu-sub/20', 'text-uu-main');
+                    bookmarkBtn.classList.add('bg-uu-dark', 'text-white', 'shadow-sm');
                 } else {
-                    bookmarkBtn.classList.remove('text-uu-main');
-                    bookmarkBtn.classList.add('text-uu-main/60');
+                    bookmarkBtn.classList.remove('bg-uu-dark', 'text-white', 'shadow-sm');
+                    bookmarkBtn.classList.add('text-uu-main/60', 'hover:bg-uu-sub/20');
                 }
             }
         }
 
         // Check initial bookmark status
         onAuthStateChanged(auth, async (user) => {
+            console.log("[Auth] State changed:", user ? `User ${user.uid}` : "No user");
             if (user && postId) {
                 try {
                     const docRef = doc(db, "users", user.uid, "bookmarks", postId);
                     const docSnap = await getDoc(docRef);
+                    console.log("[Bookmark] Checked status:", docSnap.exists());
                     updateBookmarkUI(docSnap.exists());
                 } catch (e) {
-                    console.error("Error checking bookmark:", e);
+                    console.error("[Bookmark] Check failed:", e);
                 }
+            } else {
+                updateBookmarkUI(false);
             }
         });
 
         bookmarkBtn?.addEventListener('click', async () => {
             const user = auth.currentUser;
+            console.log("[Bookmark] Clicked. Current user:", user ? user.uid : "None");
+            
             if (!user) {
                 alert('請先登入以收藏文章');
                 window.location.href = '/user';
@@ -253,6 +261,7 @@ const categories = Array.isArray(post.data.category)
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     await deleteDoc(docRef);
+                    console.log("[Bookmark] Deleted:", postId);
                     updateBookmarkUI(false);
                 } else {
                     await setDoc(docRef, {
@@ -260,10 +269,11 @@ const categories = Array.isArray(post.data.category)
                         id: postId,
                         timestamp: serverTimestamp()
                     });
+                    console.log("[Bookmark] Added:", postId);
                     updateBookmarkUI(true);
                 }
             } catch (e) {
-                console.error("Bookmark action failed:", e);
+                console.error("[Bookmark] Action failed:", e);
                 alert("操作失敗，請稍後再試。");
             }
         });
