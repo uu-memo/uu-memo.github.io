@@ -106,4 +106,15 @@
   .active\:scale-95:active {
     transform: scale(0.95);
   }
+
+  /* Bookmark Active State */
+  .is-bookmarked {
+    background-color: var(--color-uu-dark) !important;
+    color: white !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .is-bookmarked .material-symbols-outlined {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
+  }
 }
