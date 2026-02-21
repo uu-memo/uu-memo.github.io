@@ -40,7 +40,7 @@ const categories = Array.isArray(post.data.category)
                 <div class="text-xs font-mono tracking-widest text-uu-main/60 mb-4 flex flex-wrap gap-2">
                     <span>{post.data.pubDate.toLocaleDateString('zh-TW')}</span>
                     <span>/</span>
-                    {categories.map((cat, index) => (
+                    {categories.map((cat: string, index: number) => (
                         <>
                             <a href={`/posts?q=${cat}`} class="hover:text-uu-main hover:underline transition-colors">{cat}</a>
                             {index < categories.length - 1 && <span>,</span>}
@@ -78,7 +78,7 @@ const categories = Array.isArray(post.data.category)
             <!-- Tags Section -->
             {tags.length > 0 && (
                 <div class="mt-12 pt-8 border-t border-uu-sub flex flex-wrap gap-3">
-                    {tags.map(tag => (
+                    {tags.map((tag: string) => (
                         <a href={`/posts?tag=${tag}`} class="px-4 py-2 bg-uu-sub/20 hover:bg-uu-main hover:text-white rounded-lg text-sm transition-colors cursor-pointer">
                             #{tag}
                         </a>
@@ -88,10 +88,20 @@ const categories = Array.isArray(post.data.category)
 
             <!-- Post Actions (Bookmark, Share, Copy Link) -->
             <div class="mt-8 flex justify-end gap-2">
-                <button class="w-10 h-10 flex items-center justify-center rounded-full text-uu-main/60 hover:bg-uu-sub/20 hover:text-uu-main transition-colors" title="收藏文章">
+                <button 
+                    id="bookmark-btn" 
+                    class="w-10 h-10 flex items-center justify-center rounded-full text-uu-main/60 hover:bg-uu-sub/20 hover:text-uu-main transition-colors" 
+                    title="收藏文章"
+                    data-post-id={post.id}
+                    data-post-title={post.data.title}
+                >
                     <span class="material-symbols-outlined">bookmark_border</span>
                 </button>
-                <button class="w-10 h-10 flex items-center justify-center rounded-full text-uu-main/60 hover:bg-uu-sub/20 hover:text-uu-main transition-colors" title="分享文章">
+                <button 
+                    id="share-btn" 
+                    class="w-10 h-10 flex items-center justify-center rounded-full text-uu-main/60 hover:bg-uu-sub/20 hover:text-uu-main transition-colors" 
+                    title="分享文章"
+                >
                     <span class="material-symbols-outlined">share</span>
                 </button>
                 <button class="w-10 h-10 flex items-center justify-center rounded-full text-uu-main/60 hover:bg-uu-sub/20 hover:text-uu-main transition-colors" title="複製連結" onclick="navigator.clipboard.writeText(window.location.href); alert('連結已複製！')">
@@ -147,3 +157,97 @@ const categories = Array.isArray(post.data.category)
     </main>
     <Footer />
 </Layout>
+
+<script>
+    import { auth, db } from "../../lib/firebase";
+    import { onAuthStateChanged } from "firebase/auth";
+    import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
+
+    const bookmarkBtn = document.getElementById('bookmark-btn');
+    const shareBtn = document.getElementById('share-btn');
+    const postId = bookmarkBtn?.getAttribute('data-post-id');
+    const postTitle = bookmarkBtn?.getAttribute('data-post-title');
+
+    function updateBookmarkUI(isBookmarked: boolean) {
+        if (!bookmarkBtn) return;
+        const icon = bookmarkBtn.querySelector('.material-symbols-outlined');
+        if (icon) {
+            icon.textContent = isBookmarked ? 'bookmark' : 'bookmark_border';
+            if (isBookmarked) {
+                bookmarkBtn.classList.add('text-uu-main');
+                bookmarkBtn.classList.remove('text-uu-main/60');
+            } else {
+                bookmarkBtn.classList.remove('text-uu-main');
+                bookmarkBtn.classList.add('text-uu-main/60');
+            }
+        }
+    }
+
+    // Check initial bookmark status
+    onAuthStateChanged(auth, async (user) => {
+        if (user && postId) {
+            try {
+                const docRef = doc(db, "users", user.uid, "bookmarks", postId);
+                const docSnap = await getDoc(docRef);
+                updateBookmarkUI(docSnap.exists());
+            } catch (e) {
+                console.error("Error checking bookmark:", e);
+            }
+        }
+    });
+
+    bookmarkBtn?.addEventListener('click', async () => {
+        const user = auth.currentUser;
+        if (!user) {
+            alert('請先登入以收藏文章');
+            window.location.href = '/user';
+            return;
+        }
+
+        if (!postId) return;
+
+        const docRef = doc(db, "users", user.uid, "bookmarks", postId);
+        
+        try {
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                await deleteDoc(docRef);
+                updateBookmarkUI(false);
+            } else {
+                await setDoc(docRef, {
+                    title: postTitle,
+                    id: postId,
+                    timestamp: serverTimestamp()
+                });
+                updateBookmarkUI(true);
+            }
+        } catch (e) {
+            console.error("Bookmark action failed:", e);
+            alert("操作失敗，請稍後再試。");
+        }
+    });
+
+    shareBtn?.addEventListener('click', async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: document.title,
+                    text: '分享這篇有趣的 UU MEMO 文章！',
+                    url: window.location.href
+                });
+            } catch (err) {
+                if ((err as Error).name !== 'AbortError') {
+                    console.error('Share failed:', err);
+                }
+            }
+        } else {
+            // Fallback: Copy to clipboard
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                alert('連結已複製到剪貼簿！');
+            } catch (err) {
+                console.error('Copy failed:', err);
+            }
+        }
+    });
+</script>

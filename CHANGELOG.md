@@ -367,3 +367,38 @@ All notable changes to this project will be documented in this file.
 
 **中文說明：頭像系統優化與 Google 重置功能。將「恢復原始資料」功能從頭像網格中獨立出來，改為專屬按鈕並放置於基本資料模組中，點擊後可一鍵清除自訂名稱與頭像。頭像選擇區擴增至 15 個 Icon，並採用響應式網格自動調整尺寸，確保一行固定 5 個且視覺比例協調。同時移除輸入欄位與按鈕的寬度限制，實現滿版佈局。**
 
+### [2026-02-21] - Cloud Bookmark System & Realized Sharing Feature
+
+#### Summary of changes
+- Implemented a persistent cloud bookmark system using Firestore.
+- Added a "real-time" article sharing feature with Native Web Share API.
+- Fixed local network access issue by binding the dev server to `0.0.0.0`.
+- Revamped the Bookmarks page to display dynamic content based on user data.
+
+#### Technical details
+- **Cloud Bookmarks**:
+    - Integrated Firestore to store user bookmarks at `users/{uid}/bookmarks/{postId}`.
+    - Updated `[...slug].astro` with client-side scripts to toggle bookmark status.
+    - Added visual feedback (filled vs. border icon) synchronized with user's cloud data.
+- **Bookmarks Page Overhaul**:
+    - Replaced static placeholder with a dynamic grid that filters posts by bookmarked IDs.
+    - Implemented loading and empty states for better UX.
+    - Used `define:vars` to pass post metadata safely from server to client.
+- **Realized Sharing**:
+    - Leveraged `navigator.share` for native mobile sharing experience.
+    - Provided a robust clipboard fallback for desktop browsers.
+- **Environment & DX**:
+    - Updated dev server configuration to allow external access via local network IP.
+    - Resolved TypeScript lint errors related to implicit `any` types in post mapping.
+
+#### Affected files
+- `src/pages/posts/[...slug].astro`
+- `src/pages/bookmarks/index.astro`
+- `CHANGELOG.md`
+- `package.json`
+
+#### Side effects
+- Users must be logged in to use the bookmarking feature; anonymous users are redirected to the login page.
+
+**中文說明：實作雲端書籤系統與真實分享功能。透過 Firestore 儲存使用者的收藏清單，並在各文章頁面提供即時的收藏按鈕與原生分享介面（支援手機原生分享與桌面端複製連結）。同時優化了書籤頁面，使其能動態顯示已收藏的文章列表，並解決了區域網路無法連線測試的問題。**
+

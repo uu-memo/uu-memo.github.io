@@ -1,14 +1,188 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+
+// Fetch all posts to have their metadata available
+const allPosts = await getCollection("posts");
+const postsJson = allPosts.map((post) => ({
+    id: post.id,
+    title: post.data.title,
+    description: post.data.description,
+    pubDate: post.data.pubDate,
+    heroImage: post.data.heroImage,
+    category: post.data.category,
+    tags: post.data.tags,
+}));
 ---
-<Layout title='我的書籤 - UU MEMO'>
-<Header />
-<main class='max-w-6xl mx-auto px-6 py-24 min-h-[60vh] flex flex-col items-center justify-center text-center opacity-60'>
-<span class='material-symbols-outlined text-6xl mb-4 text-uu-sub'>bookmark_border</span>
-<h2 class='text-xl font-bold mb-2'>我的書籤</h2>
-<p>尚無收藏的文章</p>
-</main>
-<Footer />
+
+<Layout title="我的書籤 - UU MEMO">
+    <Header />
+    <main class="max-w-6xl mx-auto px-6 py-12 md:py-20 min-h-[70vh]">
+        <div class="flex items-center gap-4 mb-12 border-b border-uu-sub pb-6">
+            <span class="material-symbols-outlined text-3xl text-uu-main"
+                >bookmarks</span
+            >
+            <h1 class="text-3xl font-bold text-uu-main">我的書籤</h1>
+        </div>
+
+        <!-- Auth State Message -->
+        <div
+            id="auth-check"
+            class="py-20 text-center bg-uu-light rounded-2xl border border-uu-sub shadow-sm"
+        >
+            <span class="material-symbols-outlined text-5xl mb-4 text-uu-sub"
+                >account_circle</span
+            >
+            <p class="text-uu-main/60 mb-6">請先登入以查看您的個人書籤</p>
+            <a
+                href="/user"
+                class="inline-block bg-uu-main text-white px-8 py-3 rounded-full text-sm font-bold hover:bg-uu-dark transition-all active:scale-95"
+                >前往登入</a
+            >
+        </div>
+
+        <!-- Loading State -->
+        <div id="bookmarks-loading" class="hidden py-20 text-center">
+            <div
+                class="w-10 h-10 border-4 border-uu-sub border-t-uu-main rounded-full animate-spin mx-auto mb-4"
+            >
+            </div>
+            <p class="text-uu-main/60 text-sm tracking-widest">
+                LOADING BOOKMARKS...
+            </p>
+        </div>
+
+        <!-- Empty State -->
+        <div
+            id="bookmarks-empty"
+            class="hidden py-20 text-center bg-uu-light rounded-2xl border border-uu-sub shadow-sm"
+        >
+            <span class="material-symbols-outlined text-5xl mb-4 text-uu-sub"
+                >bookmark_border</span
+            >
+            <p class="text-uu-main/60">目前還沒有收藏的文章。</p>
+            <a
+                href="/posts"
+                class="inline-block mt-6 text-uu-main underline text-sm hover:text-uu-dark"
+                >去看看文章</a
+            >
+        </div>
+
+        <!-- Bookmarks Grid -->
+        <div
+            id="bookmarks-grid"
+            class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
+            <!-- Dynamic Content -->
+        </div>
+    </main>
+    <Footer />
 </Layout>
+
+<script define:vars={{ postsJson }}>
+    import { auth, db } from "../../lib/firebase";
+    import { onAuthStateChanged } from "firebase/auth";
+    import { collection, getDocs, query, orderBy } from "firebase/firestore";
+
+    const authCheck = document.getElementById("auth-check");
+    const loadingState = document.getElementById("bookmarks-loading");
+    const emptyState = document.getElementById("bookmarks-empty");
+    const gridState = document.getElementById("bookmarks-grid");
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            authCheck?.classList.add("hidden");
+            loadingState?.classList.remove("hidden");
+
+            try {
+                // Fetch saved bookmark IDs from Firestore
+                const q = query(
+                    collection(db, "users", user.uid, "bookmarks"),
+                    orderBy("timestamp", "desc")
+                );
+                const querySnapshot = await getDocs(q);
+                const bookmarkedIds = querySnapshot.docs.map((doc) => doc.id);
+
+                if (bookmarkedIds.length === 0) {
+                    loadingState?.classList.add("hidden");
+                    emptyState?.classList.remove("hidden");
+                } else {
+                    renderBookmarks(bookmarkedIds);
+                }
+            } catch (e) {
+                console.error("Error fetching bookmarks:", e);
+                loadingState?.classList.add("hidden");
+                emptyState?.classList.remove("hidden");
+            }
+        } else {
+            authCheck?.classList.remove("hidden");
+            loadingState?.classList.add("hidden");
+            emptyState?.classList.add("hidden");
+            gridState?.classList.add("hidden");
+        }
+    });
+
+    function renderBookmarks(ids) {
+        if (!gridState) return;
+
+        // Filter local posts by bookmarked IDs
+        const bookmarkedPosts = postsJson.filter((post) =>
+            ids.includes(post.id)
+        );
+
+        // Sort by the order in the IDs array (which is desc by timestamp)
+        bookmarkedPosts.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+
+        gridState.innerHTML = bookmarkedPosts
+            .map(
+                (post) => `
+            <article class="bg-uu-light rounded-2xl overflow-hidden border border-uu-sub group shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
+                ${
+                    post.heroImage
+                        ? `
+                    <div class="aspect-[16/10] bg-uu-sub/20 relative overflow-hidden shrink-0">
+                        <img src="${post.heroImage}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                `
+                        : `
+                    <div class="aspect-[16/10] bg-uu-sub/20 flex items-center justify-center text-uu-main/20 shrink-0">
+                        <span class="material-symbols-outlined text-5xl">image</span>
+                    </div>
+                `
+                }
+                <div class="p-6 flex flex-col flex-1">
+                    <div class="text-[10px] tracking-widest text-uu-main/60 mb-2 font-medium flex justify-between items-center">
+                        <span>${new Date(post.pubDate).toLocaleDateString(
+                            "zh-TW"
+                        )}</span>
+                        <span class="text-uu-main/80 uppercase">${
+                            Array.isArray(post.category)
+                                ? post.category[0]
+                                : post.category || "LIFE"
+                        }</span>
+                    </div>
+                    <h3 class="text-lg font-bold mb-3 group-hover:text-uu-dark transition-colors line-clamp-2">
+                        <a href="/posts/${post.id}">${post.title}</a>
+                    </h3>
+                    <p class="text-sm opacity-70 line-clamp-2 mb-4 leading-relaxed flex-1">
+                        ${post.description}
+                    </p>
+                    <a href="/posts/${
+                        post.id
+                    }" class="text-sm font-bold self-start mt-auto text-uu-main hover:text-uu-dark transition-colors flex items-center gap-1">
+                        閱讀全文
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </a>
+                </div>
+            </article>
+        `
+            )
+            .join("");
+
+        loadingState?.classList.add("hidden");
+        gridState.classList.remove("hidden");
+        gridState.classList.add("grid");
+    }
+</script>
