@@ -4,12 +4,22 @@
  */
 
 function doPost(e) {
+  const props = PropertiesService.getScriptProperties();
+  const SECRET_TOKEN = props.getProperty('GAS_SECRET_TOKEN'); // 請在 GAS「專案設定」->「指令碼屬性」中設定此值
+  
   try {
     const data = JSON.parse(e.postData.contents);
-    const { name, email, subject, message } = data;
+    const { name, email, subject, message, token } = data;
     
-    // 設定目標信箱與寄件者別名
-    // 注意：uu-memo@outlook.com 必須已在您的 Gmail 設定中的「透過以下地址傳送郵件」完成設定
+    // 1. 金鑰驗證 (Security Check)
+    if (!SECRET_TOKEN || token !== SECRET_TOKEN) {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "error",
+        message: "Unauthorized: Invalid token"
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    // 2. 設定目標信箱與寄件者別名
     const targetEmail = "uu-memo@outlook.com";
     const aliasEmail = "uu-memo@outlook.com";
     
@@ -19,7 +29,6 @@ function doPost(e) {
                       `主旨：${subject}\n` +
                       `訊息內容：\n${message}`;
                       
-    // 使用 GmailApp 以支援進階參數 (from)
     GmailApp.sendEmail(targetEmail, `[UU MEMO] 新的聯絡訊息：${subject}`, emailBody, {
       from: aliasEmail,
       replyTo: email
@@ -27,7 +36,7 @@ function doPost(e) {
     
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
-      message: "Email sent via alias"
+      message: "Email sent successfully"
     })).setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
@@ -39,7 +48,7 @@ function doPost(e) {
 }
 
 /**
- * 中文說明：此 GAS 指令碼負責接收聯絡表單資料。
- * 特別使用 GmailApp.sendEmail 並指定 'from' 參數，
- * 以確保信件是透過您的別名帳號 (uu-memo@outlook.com) 寄出。
+ * 中文說明：此 GAS 指令碼已加入安全性驗證。
+ * 會比對請求中的 token 與 GAS 內部的 'GAS_SECRET_TOKEN' 是否一致。
+ * 請務必在 GAS 的「指令碼屬性」中新增該變數以啟用保護。
  */

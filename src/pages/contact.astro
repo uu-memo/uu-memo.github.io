@@ -113,8 +113,8 @@ import PrimaryButton from "../components/PrimaryButton.astro";
     import { db } from "../lib/firebase";
     import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
-    const GAS_URL =
-        "https://script.google.com/macros/s/AKfycbzIF6fuTnS-CPWBMe3UiVd3EtSKtj5CSde6BlPHGPVY6msOGJQupcY4L5QbmPHtKmdeGA/exec";
+    const GAS_URL = import.meta.env.PUBLIC_GAS_URL;
+    const GAS_SECRET = import.meta.env.PUBLIC_GAS_SECRET;
 
     function initContactForm() {
         const form = document.getElementById("contact-form") as HTMLFormElement;
@@ -128,6 +128,14 @@ import PrimaryButton from "../components/PrimaryButton.astro";
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
 
+            if (!GAS_URL) {
+                console.error("Missing GAS_URL configuration.");
+                if (statusText)
+                    statusText.textContent = "系統設定錯誤，請聯繫管理員。";
+                statusDiv?.classList.remove("hidden");
+                return;
+            }
+
             submitBtn.setAttribute("disabled", "true");
             loader?.classList.remove("hidden");
             if (statusDiv) statusDiv.classList.add("hidden");
@@ -138,6 +146,7 @@ import PrimaryButton from "../components/PrimaryButton.astro";
                 email: formData.get("email"),
                 subject: formData.get("subject"),
                 message: formData.get("message"),
+                token: GAS_SECRET, // Add secret token to payload
                 timestamp: serverTimestamp(),
             };
 
