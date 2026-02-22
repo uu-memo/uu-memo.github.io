@@ -284,7 +284,7 @@ npm run build
 
 直接輸入 URL 也會自動轉換：https://www.example.com
 
-或電子郵件：example@email.com
+或電子郵件：uu-memo@outlook.com
 
 ### 圖片
 

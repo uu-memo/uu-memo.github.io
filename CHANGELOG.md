@@ -506,3 +506,36 @@ All notable changes to this project will be documented in this file.
 
 **中文說明：強化 Markdown 渲染與腳本穩定性修復。重新設計了文章中的表格樣式，加入圓角邊框、標題背景與條紋裝飾，並優化了行動版橫向捲動。同時開啟了 Astro 的 ClientRouter 功能，確保導覽後的各項功能（書籤、分享、個人資料更新）都能穩定運作且擁有流暢的切換動畫。**
 
+### [2026-02-22] - MAINT: Brand Identity & Contact Update
+
+#### Summary of changes
+- Updated the "About Me" page avatar to use the official source (`uu-memo.png`).
+- Migrated all project-wide contact and system emails to `uu-memo@outlook.com`.
+- Updated administrative access controls and default author metadata to reflect the new identity.
+
+#### Technical details
+- **Visuals**:
+    - Modified `src/content/pages/about.md` to replace the placeholder icon with `uu-memo.png`.
+- **Identity & Auth**:
+    - Replaced `contact@uu.memo` and `jing180804@gmail.com` with `uu-memo@outlook.com` in:
+        - `src/pages/index.astro` (sidebar)
+        - `src/pages/user/index.astro` (admin redirect check)
+        - `src/pages/admin/index.astro` (credentials verification & seed data)
+        - `src/content/pages/contact.md`
+        - `src/content/pages/terms.md`
+- **Quality of Life**:
+    - Fixed a TypeScript implicit 'any' error in `admin/index.astro`.
+
+#### Affected files
+- `src/content/pages/about.md`
+- `src/content/pages/contact.md`
+- `src/content/pages/terms.md`
+- `src/pages/index.astro`
+- `src/pages/user/index.astro`
+- `src/pages/admin/index.astro`
+- `src/content/posts/markdown-style.md`
+- `CHANGELOG.md`
+
+**中文說明：站點身分與聯繫資訊更新。將「關於我」頁面的佔位頭像更換為正式原始檔案 (`uu-memo.png`)。同時將全站所有聯繫信箱、系統管理員判定信箱統一更新為 `uu-memo@outlook.com`。**
+
+

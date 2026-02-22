@@ -539,7 +539,7 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
 
     // --- Auth Check ---
     onAuthStateChanged(auth, async (user) => {
-        if (user && user.email === "jing180804@gmail.com") {
+        if (user && user.email === "uu-memo@outlook.com") {
             if (emailSpan) emailSpan.textContent = user.email;
 
             // Fetch Data
@@ -646,7 +646,7 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                 if (authorMdEditor) authorMdEditor.value = data.content || "";
                 if (authorDisplayContent) {
                     authorDisplayContent.innerHTML = data.content ? 
-                        data.content.split('\n').map(line => `<p>${line}</p>`).join('') : 
+                        data.content.split('\n').map((line: string) => `<p>${line}</p>`).join('') : 
                         '<p class="text-uu-main/30 italic">尚無內容，請點擊編輯...</p>';
                 }
             }
@@ -1050,7 +1050,7 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
         try {
             await addDoc(collection(db, "comments"), {
                 author_name: "UU (站長)",
-                author_email: "jing180804@gmail.com",
+                author_email: "uu-memo@outlook.com",
                 author_avatar: "/uu-memo.png",
                 content: content,
                 post_slug: postSlug,

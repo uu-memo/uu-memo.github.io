@@ -23,4 +23,4 @@ description: "UU MEMO 隱私條款"
 
 ## 聯絡我們
 
-若有任何疑問，請透過 contact@uu.memo 與我們聯繫。
+若有任何疑問，請透過 uu-memo@outlook.com 與我們聯繫。
