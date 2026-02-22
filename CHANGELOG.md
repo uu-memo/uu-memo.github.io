@@ -538,4 +538,31 @@ All notable changes to this project will be documented in this file.
 
 **中文說明：站點身分與聯繫資訊更新。將「關於我」頁面的佔位頭像更換為正式原始檔案 (`uu-memo.png`)。同時將全站所有聯繫信箱、系統管理員判定信箱統一更新為 `uu-memo@outlook.com`。**
 
+### [2026-02-22] - FEAT: Dynamic Contact Form & Email Notification
+
+#### Summary of changes
+- Replaced the static `contact.md` page with a dynamic `contact.astro` form.
+- Implemented automatic data storage to Firestore (`messages` collection).
+- Integrated Google Apps Script for real-time email notifications to `uu-memo@outlook.com`.
+- Updated Firestore security rules to allow anonymous form submissions while protecting administrative access.
+
+#### Technical details
+- **Frontend**:
+    - Created `src/pages/contact.astro` using project UI tokens and `PrimaryButton` component.
+    - Added Client-side validation and submission logic with `astro:page-load` compatibility.
+- **Backend/Integration**:
+    - Configured `firestore.rules` to permit `create` operations on the `messages` collection.
+    - Setup POST request to GAS for email forwarding.
+- **Maintenance**:
+    - Removed deprecated `src/content/pages/contact.md`.
+
+#### Affected files
+- `src/pages/contact.astro` [NEW]
+- `src/content/pages/contact.md` [DELETE]
+- `firestore.rules`
+- `CHANGELOG.md`
+
+**中文說明：實作動態聯繫表單與郵件通知。將原有的靜態聯繫頁面升級為功能完整的互動表單，提交後會自動存入 Firestore 資料庫並透過 Google Apps Script 即時發送郵件通知至管理員信箱。**
+
+
 

@@ -1,0 +1,179 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import PrimaryButton from "../components/PrimaryButton.astro";
+---
+
+<Layout title="合作聯繫 | UU MEMO">
+    <Header />
+    <main
+        class="max-w-4xl mx-auto px-6 py-12 md:py-20 min-h-[70vh] w-full self-stretch"
+    >
+        <article
+            class="bg-uu-light rounded-2xl p-8 md:p-12 shadow-sm border border-uu-sub"
+        >
+            <header class="mb-12 text-center">
+                <h1 class="text-3xl font-bold text-uu-main mb-4 tracking-tight">
+                    合作聯繫
+                </h1>
+                <p class="text-uu-main/60 text-sm">
+                    如果您有任何合作提案或建議，歡迎填寫下表與我聯繫。
+                </p>
+            </header>
+
+            <form id="contact-form" class="space-y-6 max-w-2xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label
+                            for="name"
+                            class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest pl-1"
+                            >Your Name</label
+                        >
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            required
+                            class="w-full bg-uu-base/20 border border-uu-sub/30 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-uu-main transition-all placeholder:text-uu-main/20"
+                            placeholder="您的姓名"
+                        />
+                    </div>
+                    <div class="space-y-2">
+                        <label
+                            for="email"
+                            class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest pl-1"
+                            >Email Address</label
+                        >
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            class="w-full bg-uu-base/20 border border-uu-sub/30 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-uu-main transition-all placeholder:text-uu-main/20"
+                            placeholder="your@email.com"
+                        />
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label
+                        for="subject"
+                        class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest pl-1"
+                        >Subject</label
+                    >
+                    <input
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        required
+                        class="w-full bg-uu-base/20 border border-uu-sub/30 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-uu-main transition-all placeholder:text-uu-main/20"
+                        placeholder="主旨"
+                    />
+                </div>
+
+                <div class="space-y-2">
+                    <label
+                        for="message"
+                        class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest pl-1"
+                        >Message</label
+                    >
+                    <textarea
+                        id="message"
+                        name="message"
+                        rows="6"
+                        required
+                        class="w-full bg-uu-base/20 border border-uu-sub/30 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-uu-main transition-all placeholder:text-uu-main/20 resize-none"
+                        placeholder="請輸入您的訊息內容..."></textarea>
+                </div>
+
+                <div class="pt-4">
+                    <PrimaryButton
+                        id="submit-btn"
+                        text="SEND MESSAGE"
+                        icon="send"
+                        showLoader={true}
+                        loaderId="submit-loader"
+                    />
+                </div>
+
+                <div id="form-status" class="hidden animate-fade-in">
+                    <p
+                        class="text-center text-sm font-bold text-uu-main bg-uu-sub/20 py-4 rounded-xl"
+                    >
+                    </p>
+                </div>
+            </form>
+        </article>
+    </main>
+    <Footer />
+</Layout>
+
+<script>
+    import { db } from "../lib/firebase";
+    import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+
+    const GAS_URL =
+        "https://script.google.com/macros/s/AKfycbzIF6fuTnS-CPWBMe3UiVd3EtSKtj5CSde6BlPHGPVY6msOGJQupcY4L5QbmPHtKmdeGA/exec";
+
+    function initContactForm() {
+        const form = document.getElementById("contact-form") as HTMLFormElement;
+        const submitBtn = document.getElementById("submit-btn");
+        const loader = document.getElementById("submit-loader");
+        const statusDiv = document.getElementById("form-status");
+        const statusText = statusDiv?.querySelector("p");
+
+        if (!form || !submitBtn) return;
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            submitBtn.setAttribute("disabled", "true");
+            loader?.classList.remove("hidden");
+            if (statusDiv) statusDiv.classList.add("hidden");
+
+            const formData = new FormData(form);
+            const data = {
+                name: formData.get("name"),
+                email: formData.get("email"),
+                subject: formData.get("subject"),
+                message: formData.get("message"),
+                timestamp: serverTimestamp(),
+            };
+
+            try {
+                // 1. Save to Firestore
+                await addDoc(collection(db, "messages"), data);
+
+                // 2. Send to GAS (Email forward)
+                // We don't wait for this to succeed to show "Success" to user, but we try
+                try {
+                    await fetch(GAS_URL, {
+                        method: "POST",
+                        mode: "no-cors",
+                        cache: "no-cache",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(data),
+                    });
+                } catch (gasError) {
+                    console.error("GAS error:", gasError);
+                }
+
+                form.reset();
+                if (statusText)
+                    statusText.textContent = "訊息已成功送出，我會盡快回覆您！";
+                statusDiv?.classList.remove("hidden");
+            } catch (error) {
+                console.error("Submit error:", error);
+                if (statusText)
+                    statusText.textContent = "送出失敗，請稍後再試。";
+                statusDiv?.classList.remove("hidden");
+            } finally {
+                submitBtn.removeAttribute("disabled");
+                loader?.classList.add("hidden");
+            }
+        });
+    }
+
+    document.addEventListener("astro:page-load", initContactForm);
+</script>
