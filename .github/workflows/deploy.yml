@@ -18,6 +18,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Install, build, and upload your site
         uses: withastro/action@v2
+        env:
+          PUBLIC_GAS_URL: ${{ secrets.PUBLIC_GAS_URL }}
+          PUBLIC_GAS_SECRET: ${{ secrets.PUBLIC_GAS_SECRET }}
 
   deploy:
     needs: build
