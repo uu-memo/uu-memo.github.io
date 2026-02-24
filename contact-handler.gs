@@ -19,8 +19,8 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
-    // 2. 設定目標信箱
-    const targetEmail = "uu-memo@outlook.com";
+    // 2. 設定目標信箱 (改為寄給自己，以確保 100% 收到)
+    const targetEmail = Session.getEffectiveUser().getEmail();
     
     const emailBody = `您有一則新的聯絡訊息：\n\n` +
                       `姓名：${name}\n` +
