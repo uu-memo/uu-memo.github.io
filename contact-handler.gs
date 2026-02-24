@@ -19,9 +19,8 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
-    // 2. 設定目標信箱與寄件者別名
+    // 2. 設定目標信箱
     const targetEmail = "uu-memo@outlook.com";
-    const aliasEmail = "uu-memo@outlook.com";
     
     const emailBody = `您有一則新的聯絡訊息：\n\n` +
                       `姓名：${name}\n` +
@@ -29,8 +28,8 @@ function doPost(e) {
                       `主旨：${subject}\n` +
                       `訊息內容：\n${message}`;
                       
+    // 直接發送，不指定別名以避免授權問題
     GmailApp.sendEmail(targetEmail, `[UU MEMO] 新的聯絡訊息：${subject}`, emailBody, {
-      from: aliasEmail,
       replyTo: email
     });
     

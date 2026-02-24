@@ -151,21 +151,34 @@ import PrimaryButton from "../components/PrimaryButton.astro";
             };
 
             try {
+                console.log("[Contact] Submitting to Firestore...");
                 // 1. Save to Firestore
                 await addDoc(collection(db, "messages"), data);
+                console.log("[Contact] Firestore save successful.");
 
                 // 2. Send to GAS (Email forward)
-                // We don't wait for this to succeed to show "Success" to user, but we try
-                try {
-                    await fetch(GAS_URL, {
-                        method: "POST",
-                        mode: "no-cors",
-                        cache: "no-cache",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(data),
-                    });
-                } catch (gasError) {
-                    console.error("GAS error:", gasError);
+                if (GAS_URL) {
+                    console.log("[Contact] Sending to GAS: " + GAS_URL);
+                    try {
+                        // We use no-cors because GAS doesn't handle CORS preflight easily.
+                        // This means we can't read the response, but the request will go through.
+                        await fetch(GAS_URL, {
+                            method: "POST",
+                            mode: "no-cors",
+                            cache: "no-cache",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(data),
+                        });
+                        console.log(
+                            "[Contact] GAS request sent (Opaque response)."
+                        );
+                    } catch (gasError) {
+                        console.error("[Contact] GAS fetch failed:", gasError);
+                    }
+                } else {
+                    console.warn(
+                        "[Contact] GAS_URL is missing, skipping email notification."
+                    );
                 }
 
                 form.reset();
@@ -173,9 +186,10 @@ import PrimaryButton from "../components/PrimaryButton.astro";
                     statusText.textContent = "訊息已成功送出，我會盡快回覆您！";
                 statusDiv?.classList.remove("hidden");
             } catch (error) {
-                console.error("Submit error:", error);
+                console.error("[Contact] Submission error:", error);
                 if (statusText)
-                    statusText.textContent = "送出失敗，請稍後再試。";
+                    statusText.textContent =
+                        "送出失敗，請檢查網路連線或稍後再試。";
                 statusDiv?.classList.remove("hidden");
             } finally {
                 submitBtn.removeAttribute("disabled");

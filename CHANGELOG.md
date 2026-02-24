@@ -562,7 +562,27 @@ All notable changes to this project will be documented in this file.
 - `firestore.rules`
 - `CHANGELOG.md`
 
-**中文說明：實作動態聯繫表單與郵件通知。將原有的靜態聯繫頁面升級為功能完整的互動表單，提交後會自動存入 Firestore 資料庫並透過 Google Apps Script 即時發送郵件通知至管理員信箱。**
+### [2026-02-24] - FIX: Contact Form Email Delivery & Error Handling
+
+#### Summary of changes
+- Resolved email delivery issues by removing restricted Gmail aliases from the GAS script.
+- Improved contact form debug logging to track environment variable status.
+- Fixed false-positive success messages in the contact form UI when environment configuration is missing.
+
+#### Technical details
+- **GAS Script**:
+    - Updated `contact-handler.gs` to send emails directly from the authenticated account, bypassing alias authorization errors.
+- **Frontend**:
+    - Enhanced `src/pages/contact.astro` with detailed console logging for Firestore and GAS submission steps.
+    - Added explicit checks for `GAS_URL` to prevent silent failures.
+
+#### Affected files
+- `contact-handler.gs`
+- `src/pages/contact.astro`
+- `CHANGELOG.md`
+
+**中文說明：修復聯繫表單郵件寄送與前端回饋邏輯。移除了 GAS 腳本中造成授權錯誤的別名設定，並強化前端的偵錯日誌，確保在環境變數缺失時能正確提示，避免誤報成功。**
+
 
 
 
