@@ -129,12 +129,19 @@ import PrimaryButton from "../components/PrimaryButton.astro";
             e.preventDefault();
 
             if (!GAS_URL) {
-                console.error("Missing GAS_URL configuration.");
+                console.error("[Contact] Missing GAS_URL configuration.");
                 if (statusText)
                     statusText.textContent = "系統設定錯誤，請聯繫管理員。";
                 statusDiv?.classList.remove("hidden");
                 return;
             }
+
+            console.log(
+                "[Contact] Testing GAS_SECRET visibility:",
+                GAS_SECRET
+                    ? "defined (" + GAS_SECRET.length + " chars)"
+                    : "undefined"
+            );
 
             submitBtn.setAttribute("disabled", "true");
             loader?.classList.remove("hidden");
@@ -160,17 +167,16 @@ import PrimaryButton from "../components/PrimaryButton.astro";
                 if (GAS_URL) {
                     console.log("[Contact] Sending to GAS: " + GAS_URL);
                     try {
-                        // We use no-cors because GAS doesn't handle CORS preflight easily.
-                        // This means we can't read the response, but the request will go through.
+                        // 使用 text/plain 避免觸發 CORS 預檢，提高 GAS 穿透率
                         await fetch(GAS_URL, {
                             method: "POST",
                             mode: "no-cors",
                             cache: "no-cache",
-                            headers: { "Content-Type": "application/json" },
+                            headers: { "Content-Type": "text/plain" },
                             body: JSON.stringify(data),
                         });
                         console.log(
-                            "[Contact] GAS request sent (Opaque response)."
+                            "[Contact] GAS request sent via text/plain."
                         );
                     } catch (gasError) {
                         console.error("[Contact] GAS fetch failed:", gasError);

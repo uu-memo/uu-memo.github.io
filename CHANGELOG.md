@@ -583,6 +583,40 @@ All notable changes to this project will be documented in this file.
 
 **中文說明：修復聯繫表單郵件寄送與前端回饋邏輯。移除了 GAS 腳本中造成授權錯誤的別名設定，並強化前端的偵錯日誌，確保在環境變數缺失時能正確提示，避免誤報成功。**
 
+### [2026-02-24.3] - FEAT: Contact Handler Robustness & Health Check
 
+#### Summary of changes
+- Added a `doGet` endpoint to the contact handler for easy service availability testing.
+- Implemented stricter payload validation and enhanced error reporting.
+- Refined the HTML email template for maximum mobile and desktop compatibility.
 
+#### Technical details
+- Added `doGet` function in `contact-handler.gs` returning JSON status and timestamp.
+- Integrated explicit `e.postData` existence check to prevent silent internal crashes.
+- Improved CSS in the HTML template (e.g., `font-size` refinements and link colors).
+- Standardized all JSON response formats for easier frontend parsing.
 
+#### Affected files
+- `contact-handler.gs`
+- `CHANGELOG.md`
+
+#### Side effects
+- Requires a "New Version" deployment in GAS to enable the `doGet` endpoint.
+
+**中文說明：強化聯絡表單處理程式的健壯性與健康檢查功能。新增 `doGet` 介面方便測試連通性，加入更嚴格的資料驗證邏輯，並微調了通知郵件的 HTML 樣式以確保在各式設備上的最佳顯示效果。**
+
+### [2026-02-25] - FIX: Contact Form Target Email Override
+
+#### Summary of changes
+- Updated the Google Apps Script contact handler to use a configurable target email address.
+
+#### Technical details
+- Modified `contact-handler.gs` to check for `TARGET_EMAIL` in `PropertiesService`.
+- Implemented a fallback mechanism to route emails to `wj209ing@gmail.com` if the property is undefined.
+- Replaced the dynamic `Session.getEffectiveUser().getEmail()` call to prevent routing issues when the script runner isn't the intended recipient.
+
+#### Affected files
+- `contact-handler.gs`
+
+**中文說明：修復聯絡表單收件人問題。將 GAS 腳本原本動態取得執行者信箱的邏輯，改為優先讀取 `TARGET_EMAIL` 環境變數，若未設定則預設發送至 `wj209ing@gmail.com`，確保信件準確送達。**
+```
