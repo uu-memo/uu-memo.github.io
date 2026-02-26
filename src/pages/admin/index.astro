@@ -537,29 +537,36 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
         });
     });
 
-    // --- Auth Check ---
+    // --- Auth Check (Admin Trap Logic) ---
     onAuthStateChanged(auth, async (user) => {
-        // 管理員 ID 綁定與 Email 雙重驗證
-        const ADMIN_EMAIL = "uu-memo@outlook.com";
-        
-        if (user && user.email === ADMIN_EMAIL) {
-            console.log("[Admin] Access granted for UID:", user.uid);
-            if (emailSpan) emailSpan.textContent = user.email;
+        if (user) {
+            try {
+                // 嘗試讀取「權限陷阱」文件：如果不是管理員，Firestore 會直接報錯
+                const credentialRef = doc(db, "admin_vault", "credentials");
+                await getDoc(credentialRef);
+                
+                // 成功讀取，代表擁有管理員權限
+                console.log("[System] Admin Privilege Verified.");
+                if (emailSpan) emailSpan.textContent = "Authorized Administrator";
 
-            // Fetch Data
-            fetchSystemConfig();
-            fetchAuthorConfig();
-            initCommentsModule();
+                // Fetch Data
+                fetchSystemConfig();
+                fetchAuthorConfig();
+                initCommentsModule();
 
-            loading?.classList.add("opacity-0");
-            setTimeout(() => {
-                loading?.classList.add("hidden");
-                dashboard?.classList.remove("hidden");
-                dashboard?.classList.add("opacity-100");
-            }, 300);
+                loading?.classList.add("opacity-0");
+                setTimeout(() => {
+                    loading?.classList.add("hidden");
+                    dashboard?.classList.remove("hidden");
+                    dashboard?.classList.add("opacity-100");
+                }, 300);
+            } catch (err) {
+                // 讀取失敗（可能是 403 Forbidden），踢出後台
+                console.error("[Auth] Access Denied: Insufficient Privileges.");
+                window.location.href = "/user";
+            }
         } else {
-            // Un-authorized
-            console.warn("[Admin] Unauthorized access attempt:", user?.email);
+            // 未登入，踢回登入頁
             window.location.href = "/user";
         }
     });

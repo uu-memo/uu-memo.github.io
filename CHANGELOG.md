@@ -640,3 +640,21 @@ All notable changes to this project will be documented in this file.
 - `CHANGELOG.md`
 
 **中文說明：修復聯絡表單收件人地址並同步驗證金鑰。將預設收件信箱更新為 `uu-memo@outlook.com`，並確保 GAS 腳本的驗證邏輯與環境變數一致，同時提供完整的後台設定教學。**
+
+### [2026-02-27] - SECURITY: Admin Identity Obfuscation & Transfer
+
+#### Summary of changes
+- Transferred full administrative privileges to `jing180804@gmail.com`.
+- Implemented **Admin Permission Trap** to obfuscate verification logic from the frontend.
+- Hardened Firestore Security Rules by removing explicit email strings from public access logic.
+
+#### Technical details
+- Updated `firestore.rules` with a restricted `admin_vault` collection accessible only by the new admin.
+- Modified `admin/index.astro` to use permission-based routing instead of hardcoded email checks.
+- Anonymized UI elements to prevent "Target Reconnaissance" attacks.
+
+#### Affected files
+- `firestore.rules`
+- `src/pages/admin/index.astro`
+
+**中文說明：安全性加固。將權限移至新 Gmail 帳號，並移除前端所有硬編碼的 Email，改用 Firestore 權限陷阱進行匿名驗證，防範針對性攻擊。**
