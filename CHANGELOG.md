@@ -619,4 +619,21 @@ All notable changes to this project will be documented in this file.
 - `contact-handler.gs`
 
 **中文說明：修復聯絡表單收件人問題。將 GAS 腳本原本動態取得執行者信箱的邏輯，改為優先讀取 `TARGET_EMAIL` 環境變數，若未設定則預設發送至 `wj209ing@gmail.com`，確保信件準確送達。**
-```
+
+### [2026-02-26] - FIX: Contact Handler Recipient & Validation Alignment
+
+#### Summary of changes
+- Updated the default recipient email in the contact handler to `uu-memo@outlook.com`.
+- Aligned internal secret validation logic with environment variables.
+- Improved documentation for GAS manual configuration.
+
+#### Technical details
+- Modified `contact-handler.gs` default `targetEmail` to match the project's official Outlook address.
+- Verified that the `PUBLIC_GAS_SECRET` from `.env` matches the expected `token` in the payload.
+- Added instructions for the administrator to update "Script Properties" in the GAS console.
+
+#### Affected files
+- `contact-handler.gs`
+- `CHANGELOG.md`
+
+**中文說明：修復聯絡表單收件人地址並同步驗證金鑰。將預設收件信箱更新為 `uu-memo@outlook.com`，並確保 GAS 腳本的驗證邏輯與環境變數一致，同時提供完整的後台設定教學。**

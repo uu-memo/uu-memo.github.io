@@ -35,10 +35,10 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
-    // 2. 設定目的地 (優先讀取環境變數，若無則使用預設信箱)
+    // 2. 設定目的地 (優先讀取環境變數，若無則使用目前主要信箱)
     let targetEmail = props.getProperty('TARGET_EMAIL');
     if (!targetEmail) {
-      targetEmail = 'wj209ing@gmail.com';
+      targetEmail = 'uu-memo@outlook.com';
     }
     
     // 3. 構建郵件內容
