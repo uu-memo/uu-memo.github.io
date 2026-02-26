@@ -539,7 +539,11 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
 
     // --- Auth Check ---
     onAuthStateChanged(auth, async (user) => {
-        if (user && user.email === "uu-memo@outlook.com") {
+        // 管理員 ID 綁定與 Email 雙重驗證
+        const ADMIN_EMAIL = "uu-memo@outlook.com";
+        
+        if (user && user.email === ADMIN_EMAIL) {
+            console.log("[Admin] Access granted for UID:", user.uid);
             if (emailSpan) emailSpan.textContent = user.email;
 
             // Fetch Data
@@ -555,6 +559,7 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
             }, 300);
         } else {
             // Un-authorized
+            console.warn("[Admin] Unauthorized access attempt:", user?.email);
             window.location.href = "/user";
         }
     });
@@ -727,11 +732,7 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
         reader.readAsText(file);
     }
 
-    // --- Image Processing ---
-    const imageInput = document.getElementById(
-        "image-input"
-    ) as HTMLInputElement;
-    const imageQueue = document.getElementById("image-queue");
+    let processedImages: any[] = [];
 
     imageInput?.addEventListener("change", async () => {
         const files = imageInput.files;
@@ -744,8 +745,8 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
 
     async function processImage(
         file: File
-    ): Promise<{ url: string; type: string; w: number; h: number }> {
-        return new Promise((resolve) => {
+    ): Promise<{ id: string; url: string; type: string; w: number; h: number }> {
+        const result = await new Promise<{ id: string; url: string; type: string; w: number; h: number }>((resolve) => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = new Image();
@@ -793,6 +794,7 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                         ctx.drawImage(img, 0, 0, tw, th);
                     }
                     resolve({
+                        id: Math.random().toString(36).substr(2, 9),
                         url: canvas.toDataURL("image/jpeg", 0.9),
                         type: itype,
                         w: Math.round(tw),
@@ -803,6 +805,8 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
             };
             reader.readAsDataURL(file);
         });
+        processedImages.push(result);
+        return result;
     }
 
     // --- Comments Management Module ---
@@ -1072,11 +1076,12 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
 
 
     function renderImagePreview(
-        data: { url: string; type: string; w: number; h: number },
+        data: { url: string; type: string; w: number; h: number, id: string },
         name: string
     ) {
         if (!imageQueue) return;
         const card = document.createElement("div");
+        card.id = `img-card-${data.id}`;
         card.className =
             "bg-white border border-uu-sub/20 rounded-2xl p-4 flex gap-4 items-start group relative";
 
@@ -1095,14 +1100,96 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                     <span class="text-[9px] text-uu-main/40 uppercase font-mono">${data.w} × ${data.h}</span>
                 </div>
                 <p class="text-[10px] font-bold text-uu-dark truncate mb-2">${name}</p>
-                <input type="text" placeholder="YYMMDD-slug-01" class="w-full bg-uu-base/10 border-none rounded-lg px-2 py-1.5 text-[10px] italic focus:ring-1 focus:ring-uu-main/30" />
+                <input type="text" data-id="${data.id}" placeholder="YYMMDD-slug-01" class="img-filename-input w-full bg-uu-base/10 border-none rounded-lg px-2 py-1.5 text-[10px] italic focus:ring-1 focus:ring-uu-main/30" />
             </div>
-            <button class="absolute top-2 right-2 text-uu-main/20 hover:text-uu-dark opacity-0 group-hover:opacity-100 transition-opacity" onclick="this.parentElement.remove()">
+            <button class="absolute top-2 right-2 text-uu-main/20 hover:text-uu-dark opacity-0 group-hover:opacity-100 transition-opacity" onclick="removeImage('${data.id}')">
                 <span class="material-symbols-outlined text-sm">close</span>
             </button>
         `;
         imageQueue.appendChild(card);
     }
+
+    (window as any).removeImage = (id: string) => {
+        processedImages = processedImages.filter(img => img.id !== id);
+        document.getElementById(`img-card-${id}`)?.remove();
+    };
+
+    // --- Sync to GitHub Logic ---
+    const finalPushBtn = document.getElementById("final-push-btn");
+
+    finalPushBtn?.addEventListener("click", async () => {
+        const slug = slugInput.value.trim();
+        const content = mdEditor.value.trim();
+        const status = (document.getElementById("post-status") as HTMLSelectElement).value;
+
+        if (!slug || !content) {
+            alert("請填寫 Slug 與 文章內容");
+            return;
+        }
+
+        if (!confirm("確定要將文章與圖片同步至 GitHub 嗎？")) return;
+
+        const btnText = finalPushBtn.querySelector('span:not(.material-symbols-outlined)');
+        const btnIcon = finalPushBtn.querySelector('.material-symbols-outlined');
+        const originalText = btnText?.textContent || "";
+        
+        if (btnText) btnText.textContent = "SYNCING...";
+        finalPushBtn.setAttribute("disabled", "true");
+
+        try {
+            // 1. 同步 Markdown 文章
+            const fileName = `${slug}.md`;
+            const filePath = `src/content/posts/${fileName}`;
+            console.log("[Sync] Uploading Markdown:", filePath);
+            
+            const mdResponse = await fetch(GAS_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify({
+                    action: "upload_file",
+                    path: filePath,
+                    content: btoa(unescape(encodeURIComponent(content))), // Base64 encoding for Unicode
+                    message: `Admin: Create/Update Post "${slug}"`,
+                    branch: "main"
+                })
+            });
+
+            // 2. 同步圖片
+            const imageInputs = document.querySelectorAll(".img-filename-input") as NodeListOf<HTMLInputElement>;
+            for (const imgInput of Array.from(imageInputs)) {
+                const imgId = imgInput.getAttribute("data-id");
+                const customName = imgInput.value.trim();
+                const imageData = processedImages.find(img => img.id === imgId);
+
+                if (imageData && customName) {
+                    const imgPath = `public/images/posts/${customName}.jpg`;
+                    console.log("[Sync] Uploading Image:", imgPath);
+                    // Remove data:image/jpeg;base64, prefix
+                    const base64Content = imageData.url.split(",")[1];
+
+                    await fetch(GAS_URL, {
+                        method: "POST",
+                        mode: "no-cors",
+                        body: JSON.stringify({
+                            action: "upload_file",
+                            path: imgPath,
+                            content: base64Content,
+                            message: `Admin: Upload Image "${customName}" for post ${slug}`,
+                            branch: "main"
+                        })
+                    });
+                }
+            }
+
+            alert("同步請求已送出！請稍候 1-2 分鐘等待 GitHub 建置更新。");
+        } catch (err) {
+            console.error("[Sync] Error:", err);
+            alert("同步失敗，請檢查網路連線或 GAS 設定。");
+        } finally {
+            if (btnText) btnText.textContent = originalText;
+            finalPushBtn.removeAttribute("disabled");
+        }
+    });
 
     // --- Seeding Logic ---
     const seedBtn = document.getElementById("seed-comments-btn");

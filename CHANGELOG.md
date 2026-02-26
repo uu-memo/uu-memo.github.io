@@ -630,6 +630,9 @@ All notable changes to this project will be documented in this file.
 #### Technical details
 - Modified `contact-handler.gs` default `targetEmail` to match the project's official Outlook address (later adjusted back to `wj209ing@gmail.com` per user request).
 - Removed `replyTo` configuration in GAS script to prevent automatic replies to form submitters.
+- Implemented **One-click Sync to GitHub** in the Admin Dashboard, allowing direct upload of Markdown posts and processed images via GAS Bridge.
+- Enhanced **Image Workshop** with a tracking queue, supporting custom filenames and automated cropping (Landscape, Portrait, Square).
+- Integrated Admin UID logging and reinforced access control for `uu-memo@outlook.com`.
 - Added instructions for the administrator to update "Script Properties" in the GAS console.
 
 #### Affected files
