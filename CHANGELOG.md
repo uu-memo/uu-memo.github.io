@@ -628,8 +628,8 @@ All notable changes to this project will be documented in this file.
 - Improved documentation for GAS manual configuration.
 
 #### Technical details
-- Modified `contact-handler.gs` default `targetEmail` to match the project's official Outlook address.
-- Verified that the `PUBLIC_GAS_SECRET` from `.env` matches the expected `token` in the payload.
+- Modified `contact-handler.gs` default `targetEmail` to match the project's official Outlook address (later adjusted back to `wj209ing@gmail.com` per user request).
+- Removed `replyTo` configuration in GAS script to prevent automatic replies to form submitters.
 - Added instructions for the administrator to update "Script Properties" in the GAS console.
 
 #### Affected files

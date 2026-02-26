@@ -85,8 +85,7 @@ function doPost(e) {
     
     // 4. 發送郵件
     GmailApp.sendEmail(targetEmail, `[UU MEMO] 新的聯絡訊息：${subject}`, textBody, {
-      htmlBody: htmlBody,
-      replyTo: email
+      htmlBody: htmlBody
     });
     
     console.log("郵件已成功寄出至: " + targetEmail);
