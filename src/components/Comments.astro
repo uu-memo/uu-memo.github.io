@@ -178,6 +178,12 @@ const { postSlug } = Astro.props;
         triggerBar?.addEventListener("click", () => {
             triggerBar.classList.add("hidden");
             formContainer?.classList.remove("hidden");
+
+            // Auto-switch to User Mode if logged in
+            if (auth.currentUser) {
+                const userTab = document.querySelector('.comment-tab[data-tab="user"]') as HTMLElement;
+                userTab?.click();
+            }
         });
 
         closeBtn?.addEventListener("click", () => {

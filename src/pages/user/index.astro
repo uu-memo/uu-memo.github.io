@@ -242,22 +242,46 @@ const postsJson = allPosts.map((post: any) => ({
                 <!-- Comments -->
                 <section
                     id="tab-comments"
-                    class="tab-content hidden w-full flex-1 flex flex-col items-center justify-center text-center p-10"
+                    class="tab-content hidden w-full flex-1 p-8"
                 >
                     <div
-                        class="w-16 h-16 bg-uu-sub/10 rounded-full flex items-center justify-center mb-6"
+                        id="dashboard-comments-loading"
+                        class="py-20 text-center"
                     >
-                        <span
-                            class="material-symbols-outlined text-3xl text-uu-sub"
-                            >forum</span
+                        <div
+                            class="w-10 h-10 border-4 border-uu-sub border-t-uu-main rounded-full animate-spin mx-auto mb-4"
                         >
+                        </div>
+                        <p class="text-uu-main/60 text-sm tracking-widest">
+                            LOADING COMMENTS...
+                        </p>
                     </div>
-                    <h3 class="text-xl font-bold text-uu-dark mb-3">
-                        留言紀錄
-                    </h3>
-                    <p class="text-uu-main/60 mb-0 text-sm">
-                        您目前尚未在任何文章下發表想法。
-                    </p>
+
+                    <div
+                        id="dashboard-comments-empty"
+                        class="hidden py-20 text-center"
+                    >
+                        <div
+                            class="w-16 h-16 bg-uu-sub/10 rounded-full flex items-center justify-center mb-6 mx-auto"
+                        >
+                            <span
+                                class="material-symbols-outlined text-3xl text-uu-sub"
+                                >forum</span
+                            >
+                        </div>
+                        <h3 class="text-xl font-bold text-uu-dark mb-3">
+                            無欲無求
+                        </h3>
+                        <p
+                            class="text-uu-main/60 mb-8 max-w-xs mx-auto text-sm leading-relaxed"
+                        >
+                            在這裡，你會看見你與這個角落的所有對話軌跡。
+                        </p>
+                    </div>
+
+                    <div id="dashboard-comments-list" class="hidden space-y-6">
+                        <!-- Dynamic Content -->
+                    </div>
                 </section>
 
                 <!-- Profile -->
@@ -465,6 +489,7 @@ const postsJson = allPosts.map((post: any) => ({
         getDocs,
         query,
         orderBy,
+        where,
     } from "firebase/firestore";
 
     function initUserDashboard() {
@@ -671,6 +696,75 @@ const postsJson = allPosts.map((post: any) => ({
                         console.error("Dashboard bookmarks error:", e);
                         bookmarksLoading.classList.add("hidden");
                         bookmarksEmpty.classList.remove("hidden");
+                    }
+                }
+
+                // Comments Logic
+                const commentsList = document.getElementById(
+                    "dashboard-comments-list"
+                );
+                const commentsLoading = document.getElementById(
+                    "dashboard-comments-loading"
+                );
+                const commentsEmpty = document.getElementById(
+                    "dashboard-comments-empty"
+                );
+
+                if (commentsList && commentsLoading && commentsEmpty) {
+                    try {
+                        const q = query(
+                            collection(db, "comments"),
+                            where("author_uid", "==", user.uid),
+                            orderBy("created_at", "desc")
+                        );
+                        const querySnapshot = await getDocs(q);
+
+                        if (querySnapshot.empty) {
+                            commentsLoading.classList.add("hidden");
+                            commentsEmpty.classList.remove("hidden");
+                        } else {
+                            commentsList.innerHTML = querySnapshot.docs
+                                .map((doc) => {
+                                    const c = {
+                                        id: doc.id,
+                                        ...doc.data(),
+                                    } as any;
+                                    const date =
+                                        c.created_at
+                                            ?.toDate()
+                                            .toLocaleDateString("zh-TW") ||
+                                        "Just now";
+                                    const post = postsJson.find(
+                                        (p: any) => p.id === c.post_slug
+                                    );
+                                    const postTitle = post
+                                        ? post.title
+                                        : "未知文章";
+
+                                    return `
+                                    <div class="bg-white p-6 rounded-2xl border border-uu-sub/20 shadow-sm hover:border-uu-main/30 transition-all group text-left">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">Post / 發表於</span>
+                                                <a href="/posts/${c.post_slug}" class="text-[10px] font-bold text-uu-main hover:text-uu-dark hover:underline underline-offset-2 transition-all line-clamp-1">${postTitle}</a>
+                                            </div>
+                                            <span class="text-[10px] font-mono text-uu-main/30">${date}</span>
+                                        </div>
+                                        <p class="text-sm text-uu-dark/80 leading-relaxed line-clamp-3 mb-0">
+                                            ${c.content}
+                                        </p>
+                                    </div>
+                                `;
+                                })
+                                .join("");
+
+                            commentsLoading.classList.add("hidden");
+                            commentsList.classList.remove("hidden");
+                        }
+                    } catch (e) {
+                        console.error("Dashboard comments error:", e);
+                        commentsLoading.classList.add("hidden");
+                        commentsEmpty.classList.remove("hidden");
                     }
                 }
             } else {
