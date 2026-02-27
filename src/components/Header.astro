@@ -187,4 +187,20 @@
             if (isMenuOpen) toggleMenu();
         });
     });
+
+    // --- Admin Link Logic ---
+    import { auth } from "../lib/firebase";
+    import { onAuthStateChanged } from "firebase/auth";
+
+    onAuthStateChanged(auth, (user) => {
+        if (user && user.email === "uu-memo@outlook.com") {
+            const profileLinks = document.querySelectorAll('a[href="/user"]');
+            profileLinks.forEach((link) => {
+                link.setAttribute("href", "/admin");
+                link.setAttribute("title", "管理後台");
+                const span = link.querySelector("span");
+                if (span) span.classList.add("text-uu-main");
+            });
+        }
+    });
 </script>
