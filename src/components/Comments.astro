@@ -1,0 +1,388 @@
+---
+import PrimaryButton from './PrimaryButton.astro';
+
+interface Props {
+    postSlug: string;
+}
+
+const { postSlug } = Astro.props;
+---
+
+<section class="mt-16 max-w-4xl mx-auto" id="comments-section" data-post-slug={postSlug}>
+    <h3 class="text-xl font-bold mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+            <span class="text-uu-dark">留言</span>
+            <span id="comment-count" class="text-[10px] font-black opacity-60 bg-uu-sub/30 px-3 py-1 rounded-full tracking-widest uppercase">載入中...</span>
+        </div>
+        
+        <!-- Tab Switcher (Apple Style) -->
+        <div class="flex bg-uu-sub/20 p-1.5 rounded-2xl w-full sm:w-auto shadow-inner border border-uu-sub/10">
+            <button class="comment-tab active flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-[10px] font-black tracking-[0.2em] uppercase transition-all duration-300 active:scale-95" data-tab="guest">
+                訪客模式
+            </button>
+            <button class="comment-tab flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-[10px] font-black tracking-[0.2em] uppercase transition-all duration-300 active:scale-95" data-tab="user">
+                用戶模式
+            </button>
+        </div>
+    </h3>
+
+    <!-- Guest Tab Content -->
+    <div id="tab-guest-content" class="comment-tab-content bg-white/40 backdrop-blur-sm rounded-[2.5rem] p-8 md:p-12 border border-uu-sub/30 shadow-sm animate-fade-in relative overflow-hidden group">
+        <div class="absolute top-0 right-0 p-8 opacity-[0.03] select-none pointer-events-none group-hover:opacity-[0.05] transition-opacity duration-700">
+            <span class="material-symbols-outlined text-9xl">person_outline</span>
+        </div>
+        
+        <div class="mb-8 flex items-center gap-2.5 text-uu-main/40 bg-uu-base/30 px-4 py-2 rounded-full w-fit">
+            <span class="material-symbols-outlined text-xs">info</span>
+            <p class="text-[9px] font-black uppercase tracking-widest">Guest: 訪客留言將無法在未來進行編輯或管理</p>
+        </div>
+        
+        <div class="flex flex-col gap-6 relative z-10">
+            <div class="space-y-2">
+                <label class="text-[9px] font-black text-uu-main/40 uppercase tracking-[0.2em] ml-2">Nickname / 暱稱</label>
+                <input type="text" id="guest-name" placeholder="輸入您的稱呼" class="w-full bg-white/60 border border-uu-sub/20 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner">
+            </div>
+            
+            <div class="space-y-2">
+                <label class="text-[9px] font-black text-uu-main/40 uppercase tracking-[0.2em] ml-2">Message / 留言內容</label>
+                <textarea id="guest-content" placeholder="分享您的想法..." rows="4" class="w-full bg-white/60 border border-uu-sub/20 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all resize-none shadow-inner min-h-[160px]"></textarea>
+            </div>
+            
+            <div class="pt-2">
+                <PrimaryButton id="submit-guest-comment" text="送出訪客留言" icon="send" />
+            </div>
+        </div>
+    </div>
+
+    <!-- User Tab Content -->
+    <div id="tab-user-content" class="comment-tab-content hidden animate-fade-in">
+        <!-- Not Logged In: Intermediate UI -->
+        <div id="user-login-intermediate" class="bg-white/40 backdrop-blur-sm rounded-[2.5rem] p-10 md:p-16 border border-uu-sub/30 border-dashed text-center flex flex-col items-center justify-center gap-8 group">
+            <div class="w-24 h-24 bg-uu-main/5 rounded-full flex items-center justify-center mb-2 border border-uu-sub/20 group-hover:bg-uu-main/10 transition-colors duration-500">
+                <span class="material-symbols-outlined text-5xl text-uu-main/30">account_circle</span>
+            </div>
+            
+            <div class="max-w-xs space-y-4">
+                <h4 class="text-xl font-bold text-uu-dark tracking-tight">開啟紀錄模式</h4>
+                <p class="text-xs text-uu-main/60 leading-relaxed">登入後，您的留言將與帳號固定連結，並可在「會員中心」同步管理所有發表過的思考碎片。</p>
+            </div>
+            
+            <button id="comment-login-btn" class="flex items-center gap-4 px-8 py-4 bg-white border border-uu-sub/30 hover:border-uu-main rounded-2xl transition-all duration-300 font-bold text-sm shadow-md shadow-uu-main/5 active:scale-95 group/btn">
+                <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" viewBox="0 0 24 24">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+                </svg>
+                <span>透過 Google 繼續</span>
+            </button>
+        </div>
+
+        <!-- Logged In: Comment Box -->
+        <div id="user-comment-form" class="hidden bg-white/40 backdrop-blur-sm rounded-[2.5rem] p-8 md:p-12 border border-uu-sub/30 shadow-sm relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-8 opacity-[0.03] select-none pointer-events-none group-hover:opacity-[0.05] transition-opacity duration-700">
+                <span class="material-symbols-outlined text-9xl">verified_user</span>
+            </div>
+
+            <div class="flex items-center gap-4 mb-8">
+                <div id="user-avatar-mini" class="w-12 h-12 rounded-full bg-uu-sub/20 overflow-hidden flex items-center justify-center border-2 border-white shadow-sm shrink-0">
+                    <span class="material-symbols-outlined text-uu-main/40">person</span>
+                </div>
+                <div class="flex flex-col">
+                   <span id="user-name-display" class="text-sm font-bold text-uu-dark">使用者</span>
+                   <span class="text-[9px] text-uu-main/30 font-black uppercase tracking-[0.2em] mt-0.5">Verified Profile / 已認證用戶</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-6 relative z-10">
+                <div class="space-y-2">
+                    <label class="text-[9px] font-black text-uu-main/40 uppercase tracking-[0.2em] ml-2">Message / 留言內容</label>
+                    <textarea id="user-content" placeholder="在此留下您的想法..." rows="4" class="w-full bg-white/60 border border-uu-sub/20 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all resize-none shadow-inner min-h-[160px]"></textarea>
+                </div>
+                
+                <div class="pt-2">
+                    <PrimaryButton id="submit-user-comment" text="發送正式留言" icon="send" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments List -->
+    <div id="comments-display-list" class="mt-16 space-y-12">
+        <!-- Dynamic content: Comments & Replies -->
+    </div>
+</section>
+
+<script>
+    import { auth, db, googleProvider } from "../lib/firebase";
+    import { signInWithPopup, onAuthStateChanged } from "firebase/auth";
+    import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, doc, getDoc } from "firebase/firestore";
+
+    function initComments() {
+        const section = document.getElementById("comments-section");
+        const postSlug = section?.getAttribute("data-post-slug");
+        if (!section || !postSlug) return;
+
+        const tabs = document.querySelectorAll(".comment-tab");
+        const tabContents = document.querySelectorAll(".comment-tab-content");
+        
+        const loginIntermediate = document.getElementById("user-login-intermediate");
+        const userForm = document.getElementById("user-comment-form");
+        const loginBtn = document.getElementById("comment-login-btn");
+        
+        const avatarMini = document.getElementById("user-avatar-mini");
+        const userNameDisplay = document.getElementById("user-name-display");
+        
+        const submitGuestBtn = document.getElementById("submit-guest-comment");
+        const submitUserBtn = document.getElementById("submit-user-comment");
+
+        const listContainer = document.getElementById("comments-display-list");
+        const countBadge = document.getElementById("comment-count");
+
+        // --- Tab Logic ---
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                tabs.forEach(t => {
+                    t.classList.remove("active", "bg-white", "text-uu-dark", "shadow-sm");
+                    t.classList.add("text-uu-main/40");
+                });
+                tab.classList.add("active", "bg-white", "text-uu-dark", "shadow-sm");
+                tab.classList.remove("text-uu-main/40");
+                
+                tabContents.forEach(c => c.classList.add("hidden"));
+                const tabTarget = tab.getAttribute("data-tab");
+                const targetContent = document.getElementById(`tab-${tabTarget}-content`);
+                if (targetContent) targetContent.classList.remove("hidden");
+            });
+        });
+
+        // --- Auth Monitoring ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                loginIntermediate?.classList.add("hidden");
+                userForm?.classList.remove("hidden");
+                
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    const userData = userDoc.exists() ? userDoc.data() : {};
+                    
+                    if (userNameDisplay) userNameDisplay.textContent = userData.nickname || user.displayName || "使用者";
+                    if (avatarMini) {
+                        if (userData.avatar_icon) {
+                            avatarMini.innerHTML = `<span class="material-symbols-outlined text-2xl text-uu-main leading-none">${userData.avatar_icon}</span>`;
+                        } else if (user.photoURL) {
+                            avatarMini.innerHTML = `<img src="${user.photoURL}" class="w-full h-full object-cover" />`;
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error fetching user bio:", e);
+                }
+            } else {
+                loginIntermediate?.classList.remove("hidden");
+                userForm?.classList.add("hidden");
+            }
+        });
+
+        // --- Auth Actions ---
+        loginBtn?.addEventListener("click", async () => {
+             const originalBtnText = loginBtn.querySelector('span')?.textContent;
+             try {
+                 if (loginBtn.querySelector('span')) loginBtn.querySelector('span')!.textContent = "Connecting...";
+                 await signInWithPopup(auth, googleProvider);
+             } catch (e) {
+                 console.error("Google login error:", e);
+                 if (loginBtn.querySelector('span')) loginBtn.querySelector('span')!.textContent = originalBtnText || "透過 Google 繼續";
+             }
+        });
+
+        // --- Submission Helper ---
+        async function submitComment(data: any) {
+            try {
+                await addDoc(collection(db, "comments"), {
+                    ...data,
+                    post_slug: postSlug,
+                    created_at: serverTimestamp(),
+                    is_hidden: false,
+                    is_deleted: false,
+                    is_read: false
+                });
+                return true;
+            } catch (e) {
+                console.error("Firebase submit error:", e);
+                alert("抱歉，留言暫時無法送出，請檢查網路狀態或稍後再試。");
+                return false;
+            }
+        }
+
+        // --- Guest Post ---
+        submitGuestBtn?.addEventListener("click", async () => {
+            const nameInput = document.getElementById("guest-name") as HTMLInputElement;
+            const contentInput = document.getElementById("guest-content") as HTMLTextAreaElement;
+            const name = nameInput.value.trim();
+            const content = contentInput.value.trim();
+            
+            if (!name || !content) {
+                alert("暱稱與內容皆為必填項目");
+                return;
+            }
+
+            const success = await submitComment({ 
+                author_name: name, 
+                content, 
+                author_email: "guest@uu-memo.com", 
+                author_avatar: "",
+                is_guest: true 
+            });
+
+            if (success) {
+                contentInput.value = "";
+                // Implicit success via real-time update
+            }
+        });
+
+        // --- User Post ---
+        submitUserBtn?.addEventListener("click", async () => {
+            const contentInput = document.getElementById("user-content") as HTMLTextAreaElement;
+            const content = contentInput.value.trim();
+            const user = auth.currentUser;
+            
+            if (!content || !user) return;
+
+            try {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                const userData = userDoc.exists() ? userDoc.data() : {};
+
+                const success = await submitComment({
+                    author_uid: user.uid,
+                    author_name: userData.nickname || user.displayName || "使用者",
+                    author_email: user.email,
+                    author_avatar: userData.avatar_icon || user.photoURL || "",
+                    content: content,
+                    is_guest: false
+                });
+
+                if (success) {
+                    contentInput.value = "";
+                }
+            } catch (e) {
+                console.error("Context fetch error:", e);
+            }
+        });
+
+
+        // --- Real-time Rendering Module ---
+        const q = query(
+            collection(db, "comments"), 
+            where("post_slug", "==", postSlug),
+            where("is_hidden", "==", false),
+            where("is_deleted", "==", false),
+            orderBy("created_at", "asc")
+        );
+
+        onSnapshot(q, (snapshot) => {
+            if (countBadge) countBadge.textContent = snapshot.size.toString();
+            
+            if (snapshot.empty) {
+                if (listContainer) listContainer.innerHTML = `
+                    <div class="py-20 text-center flex flex-col items-center gap-4 opacity-20 hover:opacity-30 transition-opacity">
+                        <span class="material-symbols-outlined text-5xl">auto_stories</span>
+                        <p class="text-xs font-black tracking-[0.3em] uppercase">Be the first to share your thoughts<br>成為第一個分享想法的人</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const allDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            if (listContainer) {
+                listContainer.innerHTML = allDocs
+                    .filter((c: any) => !c.parent_id) // Filter root comments
+                    .map((c: any) => {
+                        const dateObj = c.created_at?.toDate();
+                        const dateFormatted = dateObj ? dateObj.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' }) : "Just now";
+                        const replies = allDocs.filter((r: any) => r.parent_id === c.id);
+                        
+                        // Reliability fix for guest/user distinction
+                        const isGuest = c.is_guest === true;
+                        const isVerifiedUser = c.is_guest === false || (c.author_uid && !c.is_guest);
+
+                        return `
+                            <article class="relative pl-12 sm:pl-16 group/item animate-fade-in">
+                                <!-- Connecting Line -->
+                                ${replies.length > 0 ? `<div class="absolute left-[20px] sm:left-[28px] top-12 bottom-0 w-px bg-uu-sub/20"></div>` : ''}
+                                
+                                <div class="absolute left-0 top-0 w-10 sm:w-14 aspect-square rounded-2xl bg-white border border-uu-sub/20 shadow-sm overflow-hidden flex items-center justify-center shrink-0 z-10 transition-transform group-hover/item:scale-105">
+                                    ${c.author_avatar && (c.author_avatar.startsWith('http') || c.author_avatar.startsWith('/')) 
+                                        ? `<img src="${c.author_avatar}" class="w-full h-full object-cover" />` 
+                                        : c.author_avatar 
+                                            ? `<span class="material-symbols-outlined text-2xl text-uu-main/60">${c.author_avatar}</span>`
+                                            : `<span class="material-symbols-outlined text-2xl text-uu-main/20">account_circle</span>`
+                                    }
+                                </div>
+                                
+                                <div class="flex flex-col gap-2 mb-8">
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="text-sm font-bold text-uu-dark">${c.author_name}</h4>
+                                        ${isVerifiedUser ? `<span class="material-symbols-outlined text-[10px] text-uu-main/50" title="已驗證身份">verified</span>` : ''}
+                                        <span class="text-[9px] text-uu-main/30 font-mono ml-auto uppercase tracking-tighter">${dateFormatted}</span>
+                                    </div>
+                                    <div class="bg-white/50 backdrop-blur-sm border border-uu-sub/10 rounded-2xl p-5 shadow-sm group-hover/item:border-uu-sub/30 transition-all">
+                                        <p class="text-sm text-uu-main/80 leading-relaxed whitespace-pre-wrap">${c.content}</p>
+                                    </div>
+
+                                    <!-- Replies Module -->
+                                    ${replies.length > 0 ? `
+                                        <div class="mt-4 space-y-4">
+                                            ${replies.map((r: any) => {
+                                                const isAdminReply = r.author_email === 'uu-memo@outlook.com' || r.author_avatar === '/uu-memo.png';
+                                                return `
+                                                    <div class="flex gap-4 items-start pl-2">
+                                                        <div class="w-8 h-8 rounded-xl bg-uu-dark shadow-sm overflow-hidden shrink-0 flex items-center justify-center border-2 border-white">
+                                                            ${r.author_avatar && (r.author_avatar.startsWith('http') || r.author_avatar.startsWith('/'))
+                                                                ? `<img src="${r.author_avatar}" class="w-full h-full object-cover" />`
+                                                                : `<span class="material-symbols-outlined text-[12px] text-uu-main/60">person</span>`
+                                                            }
+                                                        </div>
+                                                        <div class="flex-1 min-w-0">
+                                                            <div class="flex items-center gap-2 mb-1">
+                                                                <span class="text-[10px] font-black text-uu-dark uppercase tracking-widest">${r.author_name}</span>
+                                                                ${isAdminReply ? `<span class="bg-uu-main text-white text-[7px] px-1.5 py-0.5 rounded font-black uppercase tracking-tighter">Official</span>` : ''}
+                                                            </div>
+                                                            <div class="bg-uu-sub/10 border border-uu-sub/20 rounded-xl p-3">
+                                                                <p class="text-[11px] text-uu-main/80 leading-relaxed">${r.content}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            }).join('')}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </article>
+                        `;
+                    }).join("");
+            }
+
+        });
+    }
+
+    document.addEventListener("astro:page-load", initComments);
+</script>
+
+<style>
+    .comment-tab.active {
+        background-color: white;
+        color: var(--color-uu-dark);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Custom Scrollbar for list if needed */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+</style>

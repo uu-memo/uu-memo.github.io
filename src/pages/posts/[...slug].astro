@@ -3,6 +3,8 @@ import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import Comments from '../../components/Comments.astro';
+
 
 export async function getStaticPaths() {
 	const posts = await getCollection('posts');
@@ -141,23 +143,9 @@ const categories = Array.isArray(post.data.category)
             )}
         </nav>
 
-        <!-- Comments Section Placeholder -->
-        <section class="mt-16 max-w-4xl mx-auto">
-            <h3 class="text-xl font-bold mb-8 flex items-center gap-4">
-                <span>留言</span>
-                <span class="text-sm font-normal opacity-50 bg-uu-sub/30 px-2 py-1 rounded-full">0</span>
-            </h3>
-            
-            <div class="bg-uu-light rounded-2xl p-8 border border-uu-sub text-center py-12">
-                <span class="material-symbols-outlined text-4xl text-uu-sub mb-4">chat_bubble_outline</span>
-                <p class="text-sm opacity-60 mb-6">還沒有留言，成為第一個留言的人吧！</p>
-                <div class="flex flex-col gap-4 max-w-lg mx-auto">
-                    <input type="text" placeholder="暱稱" class="bg-uu-base border border-uu-sub rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-uu-main w-full">
-                    <textarea placeholder="留言內容..." rows="4" class="bg-uu-base border border-uu-sub rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-uu-main w-full resize-none"></textarea>
-                    <button class="bg-uu-main text-white px-6 py-3 rounded-lg text-sm hover:bg-uu-dark transition-colors w-full font-medium active:scale-95 transform duration-100">送出留言</button>
-                </div>
-            </div>
-        </section>
+        <!-- Comments Section -->
+        <Comments postSlug={post.id} />
+
     </main>
     <Footer />
 </Layout>

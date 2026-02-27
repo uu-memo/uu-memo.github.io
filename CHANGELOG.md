@@ -658,3 +658,32 @@ All notable changes to this project will be documented in this file.
 - `src/pages/admin/index.astro`
 
 **中文說明：安全性加固。將權限移至新 Gmail 帳號，並移除前端所有硬編碼的 Email，改用 Firestore 權限陷阱進行匿名驗證，防範針對性攻擊。**
+
+### [2026-02-27.1] - FEAT: Dual-Mode Comment System (Guest & User)
+
+#### Summary of changes
+- Implemented a segmented comment system with distinct Guest and Logged-in User modes.
+- Added a "Login Intermediate" UI to encourage account creation for better comment management.
+- Integrated persistent storage for comments with author attribution.
+
+#### Technical details
+- Created `src/components/Comments.astro` as a standalone module with tabbed logic.
+- **Guest Mode**: Allows anonymous posting; stores entries with unique identifiers but without edit permissions.
+- **User Mode**:
+    - Leverages Firebase Auth to pre-fill profile data (nickname, avatar).
+    - Links comments to user UIDs for future dashboard management.
+    - Displays a premium "Login with Google" intermediate card for unauthenticated users.
+- Optimized Firestore security rules to permit granular write access for both anonymous and authenticated users.
+- Refined the UI with glassmorphism effects, smooth transitions, and distinct status indicators.
+
+#### Affected files
+- `src/components/Comments.astro` [NEW]
+- `src/pages/posts/[...slug].astro`
+- `firestore.rules`
+- `CHANGELOG.md`
+
+#### Side effects
+- None anticipated.
+
+**中文說明：實作「訪客/用戶」雙模留言系統。新增分頁標籤切換功能，訪客可匿名留言（無法編輯），用戶登入後則能動態帶入個人資料並於未來進行留言管理。針對未登入用戶設計了精美的「Google 登入中繼站」介面，並同步優化了資料庫權限與視覺體驗。**
+
