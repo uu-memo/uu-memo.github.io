@@ -74,7 +74,7 @@ const { postSlug } = Astro.props;
                 
                 <div class="space-y-2">
                     <label class="text-[9px] font-black text-uu-main/40 uppercase tracking-[0.2em] ml-2">Message / 留言內容</label>
-                    <textarea id="guest-content" placeholder="分享您的想法..." rows="4" class="w-full bg-white/60 border border-uu-sub/20 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all resize-none shadow-inner min-h-[160px]"></textarea>
+                    <textarea id="guest-content" placeholder="分享您的想法..." rows="1" class="w-full bg-white/60 border border-uu-sub/20 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all resize-none shadow-inner min-h-[56px] overflow-hidden"></textarea>
                 </div>
                 
                 <div class="pt-2">
@@ -126,7 +126,7 @@ const { postSlug } = Astro.props;
                 <div class="flex flex-col gap-6 relative z-10">
                     <div class="space-y-2">
                         <label class="text-[9px] font-black text-uu-main/40 uppercase tracking-[0.2em] ml-2">Message / 留言內容</label>
-                        <textarea id="user-content" placeholder="在此留下您的想法..." rows="4" class="w-full bg-white/60 border border-uu-sub/20 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all resize-none shadow-inner min-h-[160px]"></textarea>
+                        <textarea id="user-content" placeholder="在此留下您的想法..." rows="1" class="w-full bg-white/60 border border-uu-sub/20 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all resize-none shadow-inner min-h-[56px] overflow-hidden"></textarea>
                     </div>
                     
                     <div class="pt-2">
@@ -184,6 +184,18 @@ const { postSlug } = Astro.props;
             formContainer?.classList.add("hidden");
             triggerBar?.classList.remove("hidden");
         });
+
+        // --- Auto-resize Textarea Logic ---
+        const autoResize = (el: HTMLTextAreaElement) => {
+            el.style.height = 'auto';
+            el.style.height = el.scrollHeight + 'px';
+        };
+
+        const guestTextarea = document.getElementById("guest-content") as HTMLTextAreaElement;
+        const userTextarea = document.getElementById("user-content") as HTMLTextAreaElement;
+
+        guestTextarea?.addEventListener('input', () => autoResize(guestTextarea));
+        userTextarea?.addEventListener('input', () => autoResize(userTextarea));
 
         // --- Tab Logic ---
         tabs.forEach(tab => {
@@ -295,6 +307,7 @@ const { postSlug } = Astro.props;
 
             if (success) {
                 contentInput.value = "";
+                contentInput.style.height = 'auto'; // Reset height
                 formContainer?.classList.add("hidden");
                 triggerBar?.classList.remove("hidden");
             }
@@ -323,6 +336,7 @@ const { postSlug } = Astro.props;
 
                 if (success) {
                     contentInput.value = "";
+                    contentInput.style.height = 'auto'; // Reset height
                     formContainer?.classList.add("hidden");
                     triggerBar?.classList.remove("hidden");
                 }
@@ -398,7 +412,7 @@ const { postSlug } = Astro.props;
                                     
                                     <!-- Main Content -->
                                     <div class="relative">
-                                        <p class="text-sm text-uu-main/80 leading-relaxed whitespace-pre-wrap mb-8 pb-8 ${replies.length > 0 ? 'border-b border-uu-sub/10' : ''}">${c.content}</p>
+                                        <p class="text-sm text-uu-main/80 leading-relaxed whitespace-pre-wrap ${replies.length > 0 ? 'mb-8 pb-8 border-b border-uu-sub/10' : 'mb-0 pb-0'}">${c.content}</p>
                                     </div>
 
                                     <!-- Replies Module (Plan A Recessed Style) -->
