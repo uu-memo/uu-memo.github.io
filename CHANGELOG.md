@@ -703,3 +703,11 @@ All notable changes to this project will be documented in this file.
   - Updated admin reply logic to include `author_uid` and correct `is_guest` status.
 
 *徹底建立「以 UID 為準」的身份識別機制。現在系統在顯示留言時，會強制根據 UID 前往用戶資料表抓取最新暱稱與頭像，解決了歷史留言名稱與最新個人設定不同步的問題。管理員回覆邏輯也同步補上了 UID 識別。*
+
+### 2026-02-27T20:15:00+08:00
+- **Feature**: Added nested replies view to User Dashboard.
+  - Users can now see all replies to their comments directly within the "My Comments" section of the user dashboard.
+  - Implemented dynamic fetching and association of replies based on parent IDs.
+  - Includes explicit "Admin" badge for site owner replies for better clarity.
+
+*在用戶中心的「我的留言」區塊新增了回覆查看功能。用戶現在可以直接看到站長或其他用戶對其留言的回覆，無需回到文章頁面，提升了互動追蹤的便利性。*

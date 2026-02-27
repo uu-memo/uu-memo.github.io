@@ -727,7 +727,21 @@ const postsJson = allPosts.map((post: any) => ({
                                 ...doc.data()
                             } as any));
 
-                            // Client-side sort to avoid requiring a composite index
+                            // Fetch replies to these comments
+                            let allReplies: any[] = [];
+                            const commentIds = userComments.map(c => c.id);
+                            
+                            if (commentIds.length > 0) {
+                                // Chunking IDs for Firestore 'in' query (limit 30)
+                                for (let i = 0; i < commentIds.length; i += 30) {
+                                    const chunk = commentIds.slice(i, i + 30);
+                                    const rq = query(collection(db, "comments"), where("parent_id", "in", chunk));
+                                    const rSnap = await getDocs(rq);
+                                    allReplies = [...allReplies, ...rSnap.docs.map(d => ({ id: d.id, ...d.data() } as any))];
+                                }
+                            }
+
+                            // Client-side sort
                             userComments.sort((a, b) => (b.created_at?.seconds || 0) - (a.created_at?.seconds || 0));
 
                             commentsList.innerHTML = userComments
@@ -743,6 +757,8 @@ const postsJson = allPosts.map((post: any) => ({
                                     const postTitle = post
                                         ? post.title
                                         : "未知文章";
+                                    
+                                    const myReplies = allReplies.filter(r => r.parent_id === c.id);
 
                                     return `
                                     <div class="bg-white p-6 rounded-2xl border border-uu-sub/20 shadow-sm hover:border-uu-main/30 transition-all group text-left">
@@ -753,9 +769,39 @@ const postsJson = allPosts.map((post: any) => ({
                                             </div>
                                             <span class="text-[10px] font-mono text-uu-main/30">${date}</span>
                                         </div>
-                                        <p class="text-sm text-uu-dark/80 leading-relaxed line-clamp-3 mb-0">
-                                            ${c.content}
-                                        </p>
+                                        <div class="space-y-4">
+                                            <p class="text-sm text-uu-dark/80 leading-relaxed line-clamp-3 mb-0">
+                                                ${c.content}
+                                            </p>
+                                            
+                                            ${myReplies.length > 0 ? `
+                                            <div class="mt-4 pt-4 border-t border-uu-sub/10 space-y-3">
+                                                <div class="text-[9px] font-black text-uu-main/30 uppercase tracking-[0.2em] mb-2">Replies / 其他回覆</div>
+                                                ${myReplies.map(r => {
+                                                    const isAdmin = r.author_email === 'uu-memo@outlook.com';
+                                                    return `
+                                                    <div class="flex gap-3 items-start bg-uu-sub/5 p-3 rounded-xl border border-uu-sub/5">
+                                                        <div class="w-6 h-6 rounded-full bg-uu-dark shadow-sm overflow-hidden shrink-0 flex items-center justify-center border border-white">
+                                                            ${r.author_avatar && (r.author_avatar.startsWith('http') || r.author_avatar.startsWith('/')) 
+                                                                ? `<img src="${r.author_avatar}" class="w-full h-full object-cover">` 
+                                                                : r.author_avatar 
+                                                                    ? `<span class="material-symbols-outlined text-[10px] text-white/80">${r.author_avatar}</span>`
+                                                                    : `<span class="material-symbols-outlined text-[10px] text-white/40">person</span>`
+                                                            }
+                                                        </div>
+                                                        <div class="flex-1 min-w-0">
+                                                            <div class="flex items-center gap-2 mb-1">
+                                                                <span class="text-[10px] font-bold text-uu-dark">${r.author_name}</span>
+                                                                ${isAdmin ? `<span class="text-[7px] font-black tracking-widest px-1.5 py-0.5 rounded-md bg-uu-main text-white uppercase scale-90 origin-left">Admin</span>` : ''}
+                                                            </div>
+                                                            <p class="text-[11px] text-uu-main/70 leading-relaxed">${r.content}</p>
+                                                        </div>
+                                                    </div>
+                                                    `;
+                                                }).join('')}
+                                            </div>
+                                            ` : ''}
+                                        </div>
                                     </div>
                                 `;
                                 })
