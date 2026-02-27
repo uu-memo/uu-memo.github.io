@@ -835,16 +835,55 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
             orderBy("created_at", "asc") // Sort by asc so replies appear in order after grouping
         );
  
-        onSnapshot(q, (snapshot) => {
-            allComments = snapshot.docs.map((doc) => ({
+        onSnapshot(q, async (snapshot) => {
+            let fetchedComments = snapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
-            }));
+            } as any));
+            
+            // Dynamically fetch latest profiles for verified users
+            const userUids = [...new Set(fetchedComments.filter((c: any) => !c.is_guest && c.author_uid).map((c: any) => c.author_uid))];
+            if (userUids.length > 0) {
+                try {
+                    const userPromises = userUids.map(uid => getDoc(doc(db, "users", uid as string)));
+                    const userDocs = await Promise.all(userPromises);
+                    const userMap: Record<string, any> = {};
+                    userDocs.forEach(d => {
+                        if (d.exists()) {
+                            userMap[d.id] = d.data();
+                        }
+                    });
+                    
+                    fetchedComments = fetchedComments.map((c: any) => {
+                        if (!c.is_guest && c.author_uid && userMap[c.author_uid]) {
+                            const latestData = userMap[c.author_uid];
+                            if (c.author_email === 'uu-memo@outlook.com') {
+                                return {
+                                    ...c,
+                                    author_name: 'UU (站長)',
+                                    author_avatar: '/uu-memo.png'
+                                };
+                            }
+                            return {
+                                ...c,
+                                author_name: latestData.nickname || c.author_name,
+                                author_avatar: latestData.avatar_icon || c.author_avatar
+                            };
+                        }
+                        return c;
+                    });
+                } catch (e) {
+                    console.error("Failed to fetch latest admin user profiles:", e);
+                }
+            }
+            
+            allComments = fetchedComments;
+
             // Sort local array descending for top-level display, but keep original for nested lookups
             const sortedComments = [...allComments].sort((a,b) => (b.created_at?.seconds || 0) - (a.created_at?.seconds || 0));
             renderComments(sortedComments);
             if (commentStats)
-                commentStats.textContent = `${allComments.filter(c => !c.parent_id).length} 原生留言`;
+                commentStats.textContent = `${allComments.filter((c: any) => !c.parent_id).length} 原生留言`;
         });
 
  
@@ -896,7 +935,12 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                     <div class="flex justify-between items-start mb-4">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center overflow-hidden border border-uu-sub/20">
-                                ${c.author_avatar ? `<img src="${c.author_avatar}" class="w-full h-full object-cover">` : `<span class="material-symbols-outlined text-uu-main/40">person</span>`}
+                                ${c.author_avatar && (c.author_avatar.startsWith('http') || c.author_avatar.startsWith('/')) 
+                                    ? `<img src="${c.author_avatar}" class="w-full h-full object-cover">` 
+                                    : c.author_avatar 
+                                        ? `<span class="material-symbols-outlined text-uu-main/40">${c.author_avatar}</span>`
+                                        : `<span class="material-symbols-outlined text-uu-main/40">person</span>`
+                                }
                             </div>
                             <div>
                                 <h4 class="text-sm font-bold text-uu-dark flex items-center gap-2">
