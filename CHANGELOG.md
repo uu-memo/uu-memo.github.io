@@ -694,3 +694,12 @@ All notable changes to this project will be documented in this file.
   - Modified `/src/pages/user/index.astro` to perform the descending date sort directly on the resolved array elements to prevent database query failures.
 
 *為了解決因缺乏複合索引導致的『用戶看無自己留言』的問題，已將 `user/index.astro` 中的排序改為前端資料整理，確保順利取得符合自身 UID 的資料並按照時間降冪排列。*
+
+### 2026-02-27T19:25:00+08:00
+- **Fix**: Implemented strict UID-based identity resolution for comments and replies.
+  - Modified `Comments.astro` and `admin/index.astro` to prioritize `author_uid` when rendering author names and avatars.
+  - Comments from registered users now fetch the most up-to-date `nickname` and `avatar_icon` from the `users` collection, ignoring outdated data stored in the comment document.
+  - Unified the administrator's identity mapping across all views to ensure consistent label and avatar display.
+  - Updated admin reply logic to include `author_uid` and correct `is_guest` status.
+
+*徹底建立「以 UID 為準」的身份識別機制。現在系統在顯示留言時，會強制根據 UID 前往用戶資料表抓取最新暱稱與頭像，解決了歷史留言名稱與最新個人設定不同步的問題。管理員回覆邏輯也同步補上了 UID 識別。*
