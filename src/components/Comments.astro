@@ -32,7 +32,7 @@ const { postSlug } = Astro.props;
     </div>
 
     <!-- Full Comment Container (Initially Hidden) -->
-    <div id="comment-form-container" class="hidden bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-uu-sub/30 shadow-sm overflow-hidden relative group animate-fade-in mb-16">
+    <div id="comment-form-container" class="hidden bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-uu-sub/30 shadow-sm overflow-hidden relative group animate-fade-in mb-24">
         <!-- Integrated Tab Switcher -->
         <div class="flex items-center justify-between p-3 bg-uu-sub/10 border-b border-uu-sub/20 shadow-inner">
             <div class="flex bg-uu-sub/15 p-1 rounded-2xl w-full max-w-sm border border-uu-sub/5 relative z-20">
@@ -137,8 +137,8 @@ const { postSlug } = Astro.props;
         </div>
     </div>
 
-    <!-- Comments List -->
-    <div id="comments-display-list" class="space-y-0">
+    <!-- Comments List (New Split Metadata Style) -->
+    <div id="comments-display-list" class="space-y-12">
         <!-- Dynamic content: Comments & Replies -->
     </div>
 </section>
@@ -332,7 +332,7 @@ const { postSlug } = Astro.props;
         });
 
 
-        // --- Real-time Rendering Module (Flexbox Alignment) ---
+        // --- Real-time Rendering Module (Split Metadata Style) ---
         const q = query(
             collection(db, "comments"), 
             where("post_slug", "==", postSlug),
@@ -359,59 +359,67 @@ const { postSlug } = Astro.props;
             if (listContainer) {
                 listContainer.innerHTML = allDocs
                     .filter((c: any) => !c.parent_id) // Filter root comments
-                    .map((c: any) => {
+                    .map((c: any, index: number) => {
                         const dateObj = c.created_at?.toDate();
                         const dateFormatted = dateObj ? dateObj.toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' }) : "Just now";
                         const replies = allDocs.filter((r: any) => r.parent_id === c.id);
-                        
                         const isVerifiedUser = c.is_guest === false || (c.author_uid && !c.is_guest);
+                        const commentNumber = (index + 1).toString().padStart(2, '0');
 
                         return `
-                            <article class="flex gap-4 sm:gap-8 group/item animate-fade-in relative items-start">
-                                <!-- Avatar Column (Fixed Aligned) -->
-                                <div class="flex flex-col items-center shrink-0">
-                                    <div class="w-10 sm:w-14 aspect-square rounded-2xl bg-white border border-uu-sub/20 shadow-sm overflow-hidden flex items-center justify-center shrink-0 z-10 transition-transform group-hover/item:scale-105">
-                                        ${c.author_avatar && (c.author_avatar.startsWith('http') || c.author_avatar.startsWith('/')) 
-                                            ? `<img src="${c.author_avatar}" class="w-full h-full object-cover" />` 
-                                            : c.author_avatar 
-                                                ? `<span class="material-symbols-outlined text-2xl text-uu-main/60">${c.author_avatar}</span>`
-                                                : `<span class="material-symbols-outlined text-2xl text-uu-main/20">account_circle</span>`
-                                        }
+                            <article class="bg-white/40 backdrop-blur-md rounded-[2rem] border border-uu-sub/20 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500 animate-fade-in group">
+                                <div class="p-6 sm:p-10">
+                                    <!-- Split Metadata Header -->
+                                    <div class="flex justify-between items-start mb-8">
+                                        <!-- Left: Profile Info -->
+                                        <div class="flex gap-4 items-center">
+                                            <div class="w-12 h-12 rounded-2xl bg-white border border-uu-sub/10 shadow-inner flex items-center justify-center shrink-0 overflow-hidden group-hover:scale-105 transition-transform duration-500">
+                                                ${c.author_avatar && (c.author_avatar.startsWith('http') || c.author_avatar.startsWith('/')) 
+                                                    ? `<img src="${c.author_avatar}" class="w-full h-full object-cover" />` 
+                                                    : c.author_avatar 
+                                                        ? `<span class="material-symbols-outlined text-2xl text-uu-main/60">${c.author_avatar}</span>`
+                                                        : `<span class="material-symbols-outlined text-2xl text-uu-main/20">account_circle</span>`
+                                                }
+                                            </div>
+                                            <div class="flex flex-col gap-0.5">
+                                                <div class="font-bold text-uu-dark text-sm tracking-tight">${c.author_name}</div>
+                                                <div class="text-[9px] font-black tracking-[0.2em] px-2 py-0.5 rounded-full bg-uu-sub/10 w-fit uppercase ${isVerifiedUser ? 'text-uu-main/60' : 'text-uu-main/30'}">
+                                                    ${isVerifiedUser ? 'Verified' : 'Guest'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Right: Metadata (Date & No.) -->
+                                        <div class="text-right flex flex-col items-end gap-1 pt-1">
+                                            <div class="text-[9px] font-mono font-black text-uu-main/10 tracking-widest uppercase">ID#${commentNumber}</div>
+                                            <div class="text-[10px] font-mono text-uu-main/40 tracking-tighter">${dateFormatted}</div>
+                                        </div>
                                     </div>
-                                    <!-- Connecting Line -->
-                                    ${replies.length > 0 ? `<div class="w-px flex-1 bg-uu-sub/20 my-2"></div>` : ''}
-                                </div>
-                                
-                                <!-- Content Column -->
-                                <div class="flex-1 flex flex-col gap-2 pb-12 pt-[10px] sm:pt-[18px]">
-                                    <div class="flex items-center gap-2">
-                                        <h4 class="text-sm font-bold text-uu-dark">${c.author_name}</h4>
-                                        ${isVerifiedUser ? `<span class="material-symbols-outlined text-[10px] text-uu-main/50" title="已驗證身份">verified</span>` : ''}
-                                        <span class="text-[9px] text-uu-main/30 font-mono ml-auto uppercase tracking-tighter">${dateFormatted}</span>
-                                    </div>
-                                    <div class="bg-white/50 backdrop-blur-sm border border-uu-sub/10 rounded-2xl p-5 shadow-sm group-hover/item:border-uu-sub/30 transition-all">
-                                        <p class="text-sm text-uu-main/80 leading-relaxed whitespace-pre-wrap">${c.content}</p>
+                                    
+                                    <!-- Main Content -->
+                                    <div class="relative">
+                                        <p class="text-sm text-uu-main/80 leading-relaxed whitespace-pre-wrap mb-8 pb-8 ${replies.length > 0 ? 'border-b border-uu-sub/10' : ''}">${c.content}</p>
                                     </div>
 
-                                    <!-- Replies Module -->
+                                    <!-- Replies Module (Plan A Recessed Style) -->
                                     ${replies.length > 0 ? `
-                                        <div class="mt-4 space-y-4">
+                                        <div class="space-y-6">
                                             ${replies.map((r: any) => {
                                                 const isAdminReply = r.author_email === 'uu-memo@outlook.com' || r.author_avatar === '/uu-memo.png';
                                                 return `
-                                                    <div class="flex gap-3 sm:gap-4 items-start">
-                                                        <div class="w-8 h-8 rounded-xl bg-uu-dark shadow-sm overflow-hidden shrink-0 flex items-center justify-center border-2 border-white">
+                                                    <div class="flex gap-4 items-start">
+                                                        <div class="w-9 h-9 rounded-xl bg-uu-dark shadow-sm overflow-hidden shrink-0 flex items-center justify-center border-2 border-white group-hover:rotate-3 transition-transform">
                                                             ${r.author_avatar && (r.author_avatar.startsWith('http') || r.author_avatar.startsWith('/'))
                                                                 ? `<img src="${r.author_avatar}" class="w-full h-full object-cover" />`
-                                                                : `<span class="material-symbols-outlined text-[12px] text-uu-main/60">person</span>`
+                                                                : `<span class="material-symbols-outlined text-sm text-uu-main/60">person</span>`
                                                             }
                                                         </div>
                                                         <div class="flex-1 min-w-0">
-                                                            <div class="flex items-center gap-2 mb-1">
+                                                            <div class="flex items-center gap-2 mb-1.5 pt-1">
                                                                 <span class="text-[10px] font-black text-uu-dark uppercase tracking-widest">${r.author_name}</span>
-                                                                ${isAdminReply ? `<span class="bg-uu-main text-white text-[7px] px-1.5 py-0.5 rounded font-black uppercase tracking-tighter">Official</span>` : ''}
+                                                                ${isAdminReply ? `<span class="bg-uu-main text-white text-[7px] px-1.5 py-0.5 rounded font-black uppercase tracking-tighter shadow-sm">Official</span>` : ''}
                                                             </div>
-                                                            <div class="bg-uu-sub/10 border border-uu-sub/20 rounded-xl p-3">
+                                                            <div class="bg-uu-sub/10 border border-uu-sub/5 rounded-2xl p-4 transition-colors group-hover:bg-uu-sub/15">
                                                                 <p class="text-[11px] text-uu-main/80 leading-relaxed">${r.content}</p>
                                                             </div>
                                                         </div>
@@ -439,10 +447,10 @@ const { postSlug } = Astro.props;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
     .animate-fade-in {
-        animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
+        from { opacity: 0; transform: translateY(30px); }
         to { opacity: 1; transform: translateY(0); }
     }
     
