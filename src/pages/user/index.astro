@@ -793,11 +793,11 @@ const postsJson = allPosts.map((post: any) => ({
                     },
                     { merge: true }
                 );
-                alert("個人資料已更新！");
+                // Trigger page reload on successful save to refresh all data on page immediately
+                window.location.reload();
             } catch (e) {
                 console.error(e);
                 alert("更新失敗");
-            } finally {
                 profileSaveLoader.classList.add("hidden");
             }
         });
@@ -852,9 +852,21 @@ const postsJson = allPosts.map((post: any) => ({
                     "text-uu-main"
                 );
                 const icon = opt.getAttribute("data-icon");
-                if (selectedAvatarInput && icon)
+                if (selectedAvatarInput && icon) {
                     selectedAvatarInput.value = icon;
+                    // Live preview update
+                    if (userAvatar) {
+                        userAvatar.innerHTML = `<span class="material-symbols-outlined text-4xl text-uu-light">${icon}</span>`;
+                    }
+                }
             });
+        });
+
+        displayNameInput?.addEventListener("input", (e) => {
+            if (userName) {
+                userName.textContent =
+                    (e.target as HTMLInputElement).value || "User";
+            }
         });
     }
 

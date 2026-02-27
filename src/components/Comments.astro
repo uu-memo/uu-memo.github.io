@@ -374,7 +374,7 @@ const { postSlug } = Astro.props;
             orderBy("created_at", "asc")
         );
 
-        onSnapshot(q, (snapshot) => {
+        onSnapshot(q, async (snapshot) => {
             if (countBadge) countBadge.textContent = snapshot.size.toString();
             
             if (snapshot.empty) {
@@ -387,7 +387,45 @@ const { postSlug } = Astro.props;
                 return;
             }
 
-            const allDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            let allDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+            // Dynamically fetch latest profiles for verified users
+            const userUids = [...new Set(allDocs.filter(c => !c.is_guest && c.author_uid).map(c => c.author_uid))];
+            if (userUids.length > 0) {
+                try {
+                    const userPromises = userUids.map(uid => getDoc(doc(db, "users", uid as string)));
+                    const userDocs = await Promise.all(userPromises);
+                    const userMap: Record<string, any> = {};
+                    userDocs.forEach(d => {
+                        if (d.exists()) {
+                            userMap[d.id] = d.data();
+                        }
+                    });
+                    
+                    // Update allDocs with dynamic user details
+                    allDocs = allDocs.map(c => {
+                        if (!c.is_guest && c.author_uid && userMap[c.author_uid]) {
+                            const latestData = userMap[c.author_uid];
+                            // Admin overrides
+                            if (c.author_email === 'uu-memo@outlook.com') {
+                                return {
+                                    ...c,
+                                    author_name: 'UU (站長)',
+                                    author_avatar: '/uu-memo.png'
+                                };
+                            }
+                            return {
+                                ...c,
+                                author_name: latestData.nickname || c.author_name,
+                                author_avatar: latestData.avatar_icon || c.author_avatar
+                            };
+                        }
+                        return c;
+                    });
+                } catch (e) {
+                    console.error("Failed to fetch latest user profiles:", e);
+                }
+            }
             
             if (listContainer) {
                 listContainer.innerHTML = allDocs
