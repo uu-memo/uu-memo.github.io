@@ -714,8 +714,7 @@ const postsJson = allPosts.map((post: any) => ({
                     try {
                         const q = query(
                             collection(db, "comments"),
-                            where("author_uid", "==", user.uid),
-                            orderBy("created_at", "desc")
+                            where("author_uid", "==", user.uid)
                         );
                         const querySnapshot = await getDocs(q);
 
@@ -723,12 +722,16 @@ const postsJson = allPosts.map((post: any) => ({
                             commentsLoading.classList.add("hidden");
                             commentsEmpty.classList.remove("hidden");
                         } else {
-                            commentsList.innerHTML = querySnapshot.docs
-                                .map((doc) => {
-                                    const c = {
-                                        id: doc.id,
-                                        ...doc.data(),
-                                    } as any;
+                            const userComments = querySnapshot.docs.map((doc) => ({
+                                id: doc.id,
+                                ...doc.data()
+                            } as any));
+
+                            // Client-side sort to avoid requiring a composite index
+                            userComments.sort((a, b) => (b.created_at?.seconds || 0) - (a.created_at?.seconds || 0));
+
+                            commentsList.innerHTML = userComments
+                                .map((c) => {
                                     const date =
                                         c.created_at
                                             ?.toDate()

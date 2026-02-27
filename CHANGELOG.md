@@ -687,3 +687,10 @@ All notable changes to this project will be documented in this file.
 
 **中文說明：實作「訪客/用戶」雙模留言系統。新增分頁標籤切換功能，訪客可匿名留言（無法編輯），用戶登入後則能動態帶入個人資料並於未來進行留言管理。針對未登入用戶設計了精美的「Google 登入中繼站」介面，並同步優化了資料庫權限與視覺體驗。**
 
+
+### 2026-02-27T16:59:00+08:00
+- **Fix**: Resolved issue where user comments were not successfully loading in the personal dashboard due to missing Firestore composite index (author_uid + created_at(desc)).
+  - Implemented client-side sorting for personal comments list `orderBy` fallback.
+  - Modified `/src/pages/user/index.astro` to perform the descending date sort directly on the resolved array elements to prevent database query failures.
+
+*為了解決因缺乏複合索引導致的『用戶看無自己留言』的問題，已將 `user/index.astro` 中的排序改為前端資料整理，確保順利取得符合自身 UID 的資料並按照時間降冪排列。*
