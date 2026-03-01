@@ -342,12 +342,12 @@ const { postSlug } = Astro.props;
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 const userData = userDoc.exists() ? userDoc.data() : {};
 
-                const isAdmin = user.email === "uu-memo@outlook.com";
+                const isAdmin = user.email === "jing180804@gmail.com";
 
                 const success = await submitComment({
                     author_uid: user.uid,
                     author_name: isAdmin ? "UU (站長)" : (userData.nickname || user.displayName || "使用者"),
-                    author_email: user.email,
+                    author_email: isAdmin ? "uu-memo@outlook.com" : user.email,
                     author_avatar: isAdmin ? "/uu-memo.png" : (userData.avatar_icon || user.photoURL || ""),
                     content: content,
                     is_guest: false
@@ -406,8 +406,8 @@ const { postSlug } = Astro.props;
                     allDocs = allDocs.map((c: any) => {
                         const adminUid = 'P9G0w4qEa9gY6ZRY8K8oYVbS7zJ2'; // We should probably get this from context or env but hardcoding for now based on known admin
                         
-                        // Priority 1: Admin Identity (recognized by UID or hardcoded email for safety)
-                        if (c.author_uid === adminUid || c.author_email === 'uu-memo@outlook.com') {
+                        // Priority 1: Admin Identity (recognized by UID or legacy/contact emails)
+                        if (c.author_uid === adminUid || c.author_email === 'uu-memo@outlook.com' || c.author_email === 'jing180804@gmail.com') {
                             return {
                                 ...c,
                                 author_name: 'UU (站長)',

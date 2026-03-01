@@ -193,7 +193,11 @@
     import { onAuthStateChanged } from "firebase/auth";
 
     onAuthStateChanged(auth, (user) => {
-        if (user && user.email === "uu-memo@outlook.com") {
+        if (
+            user &&
+            (user.email === "jing180804@gmail.com" ||
+                user.email === "uu-memo@outlook.com")
+        ) {
             const profileLinks = document.querySelectorAll('a[href="/user"]');
             profileLinks.forEach((link) => {
                 link.setAttribute("href", "/admin");

@@ -859,8 +859,8 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                     fetchedComments = fetchedComments.map((c: any) => {
                         const adminUid = 'P9G0w4qEa9gY6ZRY8K8oYVbS7zJ2';
                         
-                        // Priority 1: Admin Identity
-                        if (c.author_uid === adminUid || c.author_email === 'uu-memo@outlook.com') {
+                        // Priority 1: Admin Identity (UID or verified emails)
+                        if (c.author_uid === adminUid || c.author_email === 'uu-memo@outlook.com' || c.author_email === 'jing180804@gmail.com') {
                             return {
                                 ...c,
                                 author_name: 'UU (站長)',
