@@ -752,6 +752,9 @@ All notable changes to this project will be documented in this file.
 - **Backup**: Enabled Automatic Google Drive Backup.
   - All articles and images synchronized to GitHub are simultaneously backed up to `UU-Memo-Archive` folder in Google Drive.
   - Automatically handles folder creation and classification (`Articles` vs `Media/YYMM`).
+- **Documentation**: Created a comprehensive `OPERATION_GUIDE.md`.
+  - Detailed instructions for drafting, syncing, and emergency maintenance.
+  - Explanation of the "Tag-based" featured article logic.
 - **Homepage Architecture**: Fully dynamic content integration.
   - Replaced hardcoded article placeholders with dynamic loops using Astro Content Collections.
   - Implemented dynamic Sidebar with automated Category Index and frequent Tag Cloud.
