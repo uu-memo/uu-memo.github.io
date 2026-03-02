@@ -112,6 +112,18 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                         </button>
                         <button
                             class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
+                            data-tab="draft"
+                        >
+                            <span class="material-symbols-outlined text-xl"
+                                >auto_fix</span
+                            >
+                            <span
+                                class="text-sm font-bold tracking-widest leading-none"
+                                >草稿工具</span
+                            >
+                        </button>
+                        <button
+                            class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
                             data-tab="comments"
                         >
                             <span class="material-symbols-outlined text-xl"
@@ -287,7 +299,7 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                                 />
                                 <button
                                     onclick="document.getElementById('image-input').click()"
-                                    class="px-4 py-2 bg-uu-dark text-white rounded-lg text-[10px] font-black tracking-widest uppercase hover:bg-uu-main transition-all active:scale-95"
+                                    class="px-4 py-2 bg-uu-sub/10 text-uu-main hover:bg-uu-main hover:text-white rounded-lg text-[10px] font-black tracking-widest uppercase transition-all active:scale-95"
                                     >批次上傳照片</button
                                 >
                             </div>
@@ -306,6 +318,124 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                                 text="SYNC TO GITHUB" 
                                 icon="send"
                             />
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CONTENT: DRAFT TOOL -->
+                <section id="tab-draft" class="tab-content hidden w-full flex-1 flex flex-col p-10">
+                    <div class="flex items-center gap-3.5 mb-8 pb-6 border-b border-uu-sub/20">
+                        <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main">
+                            <span class="material-symbols-outlined">auto_fix</span>
+                        </div>
+                        <h3 class="font-bold text-xl text-uu-dark">文章草稿工具</h3>
+                    </div>
+
+                    <div class="space-y-8 flex-1 overflow-y-auto pr-4 no-scrollbar">
+                        <div class="grid grid-cols-1 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">1. 文章暫定標題或主題方向</label>
+                                <input id="draft-q1" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="請在此填寫">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">2. 目標受眾（這篇文章寫給誰看）</label>
+                                <input id="draft-q2" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="請在此填寫">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">3. 核心觀點與目的</label>
+                                <input id="draft-q3" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="讀完這篇文章，讀者能帶走什麼？">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">4. 關鍵段落與大綱（列出 3-5 個重點）</label>
+                                <textarea id="draft-q4" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all min-h-[120px]" placeholder="- 重點 1：&#10;- 重點 2：&#10;- 重點 3："></textarea>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">5. 個人獨特經驗與細節（文章的靈魂）</label>
+                                <textarea id="draft-q5" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all min-h-[150px]" placeholder="請在此填寫你想放入的具體細節"></textarea>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">6. 行文語氣與風格</label>
+                                <input id="draft-q6" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="預設：輕鬆幽默的個人隨筆">
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">文章短網址 (Slug)</label>
+                                    <input id="draft-slug" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="例如: 2024-trip">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">分類 (Category)</label>
+                                    <input id="draft-cat" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="例如：生活隨筆">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">標籤 (Tags)</label>
+                                    <input id="draft-tags" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="用逗號分隔">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 mt-6 p-6 bg-uu-main/5 rounded-2xl border border-uu-main/10 shadow-inner">
+                            <label class="text-[10px] font-black text-uu-main uppercase tracking-widest flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">settings_suggest</span>
+                                進階：編輯預設指令模板 (Prompt Template)
+                            </label>
+                            <textarea id="draft-template" class="w-full bg-white border border-uu-sub/20 rounded-xl px-4 py-3 text-[11px] focus:outline-none focus:border-uu-main transition-all min-h-[400px] font-mono leading-relaxed" placeholder="在這裡設定你的 Prompt 骨架..."># Role: 部落格作家與內容策略師
+
+請根據我下方提供的【文章草稿表單】資訊，為我撰寫一篇結構完整、引人入勝且具備個人觀點的部落格文章。
+
+## 📥 【文章草稿表單】（User Input）
+
+1. **文章暫定標題或主題方向：** &#123;&#123;q1&#125;&#125;
+2. **目標受眾（這篇文章寫給誰看）：** &#123;&#123;q2&#125;&#125;
+3. **核心觀點與目的（讀完這篇文章，讀者能帶走什麼？）：** &#123;&#123;q3&#125;&#125;
+4. **關鍵段落與大綱（列出 3-5 個重點）：**
+&#123;&#123;q4&#125;&#125;
+5. **個人獨特經驗與細節（必填，這是文章的靈魂）：**
+   &#123;&#123;q5&#125;&#125;
+6. **行文語氣與風格：**
+   &#123;&#123;q6&#125;&#125;
+
+---
+
+## 📤 輸出要求 (Output Requirements)
+
+請嚴格遵守以下規則撰寫文章：
+1. **Markdown 格式**：請使用標準 Markdown 語法排版（包含 H2 ##、H3 ### 標題、粗體、條列式清單、引用區塊、表格等），確保文章層次分明、易於閱讀。
+2. **吸引人的開場**：第一段必須點出痛點或引起共鳴，直接破題，吸引讀者往下看。
+3. **無縫融入個人細節**：請將表單第 5 點的「個人獨特經驗」自然地揉合進文章段落中，不要像是生硬的條列，要帶有「人味」。
+4. **流暢的轉折**：段落之間必須有邏輯連貫的過渡句。
+5. **有力量的結尾**：總結核心觀點，並提供一個 Call to Action（例如：問讀者一個問題、鼓勵他們留言、或分享下一步計畫）。
+
+### 【生成 .md 前綴】
+當我回答完上述問題後，請你「吸收」我的回答，並**直接產出一段完整的 Markdown (.md) 程式碼區塊**。
+
+請嚴格遵守以下輸出格式：
+
+```markdown
+---
+title: "【{{cat}}】幫我想一個吸睛的主題標題"
+description: "請根據文章內容生成約 50 字的溫暖 SEO 摘要"
+publishDate: {{date}}
+category: [{{cat}}]
+tags: [{{tags}}]
+heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
+---
+```</textarea>
+                            <p class="text-[9px] text-uu-main/40 mt-1">您可以使用 <code class="bg-white px-1 py-0.5 rounded shadow-sm border border-uu-sub/10 opacity-80">&#123;&#123;變數&#125;&#125;</code> 來替換上方表單內容，例如：&#123;&#123;q1&#125;&#125;, &#123;&#123;cat&#125;&#125;, &#123;&#123;tags&#125;&#125;</p>
+                        </div>
+
+                        <div class="pt-6">
+                            <PrimaryButton id="generate-draft-btn" text="生成文章草稿 PROMPT" icon="temp_preferences_custom" />
+                        </div>
+
+                        <div id="draft-result-container" class="hidden space-y-4 animate-fade-in pb-10">
+                            <div class="flex items-center justify-between">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">生成的 AI PROMPT</label>
+                                <button id="copy-prompt-btn" class="flex items-center gap-2 px-3 py-1.5 bg-uu-main/10 text-uu-main rounded-lg text-[10px] font-black tracking-widest uppercase hover:bg-uu-main hover:text-white transition-all">
+                                    <span class="material-symbols-outlined text-sm">content_copy</span>
+                                    複製內容
+                                </button>
+                            </div>
+                            <textarea id="draft-result" readonly class="w-full bg-white border border-uu-sub/30 rounded-2xl p-6 text-xs font-mono leading-relaxed h-[400px] focus:outline-none shadow-sm"></textarea>
                         </div>
                     </div>
                 </section>
@@ -497,6 +627,23 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                                 loaderId="save-btn-loader"
                             />
                         </div>
+
+                        <!-- NEW: Build Cleanup Section -->
+                        <div class="bg-red-50/50 border border-red-100 rounded-2xl p-8 space-y-4">
+                            <div class="flex items-center gap-3 mb-2 pb-4 border-b border-red-100">
+                                <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-red-600 text-sm">pests</span>
+                                </div>
+                                <h4 class="text-xs font-black text-red-900 uppercase tracking-widest">故障排除：清除建置錯誤 (Emergency Fix)</h4>
+                            </div>
+                            <p class="text-[10px] text-red-700/70 leading-relaxed font-medium">如果在同步後 GitHub 建置失敗，可能是因為某些草稿檔案格式不正確（例如 <code class="bg-red-100 px-1 rounded">test.md</code>）。點擊下方按鈕將會從 GitHub 遠端強制刪除該損毀檔案。</p>
+                            <div class="pt-2">
+                                <button id="cleanup-build-btn" class="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-red-700 transition-all shadow-lg shadow-red-200">
+                                    <span class="material-symbols-outlined text-sm">delete_forever</span>
+                                    強制刪除 test.md 並修復建置
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </section>
             </div>
@@ -524,6 +671,7 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
     } from "firebase/firestore";
     import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
+    if (typeof window !== "undefined") {
     const GAS_URL =
         "https://script.google.com/macros/s/AKfycbzIF6fuTnS-CPWBMe3UiVd3EtSKtj5CSde6BlPHGPVY6msOGJQupcY4L5QbmPHtKmdeGA/exec";
 
@@ -638,8 +786,7 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                 saveBtnText.textContent = "SAVE CONFIGURATION";
             }, 2000);
         } catch (err) {
-            alert("Save failed: " + err);
-            saveBtnText.textContent = "ERROR";
+            (window as any).showToast("儲存失敗: " + err, 'error');
         } finally {
             saveBtnLoader.classList.add("hidden");
             saveSysBtn.removeAttribute("disabled");
@@ -697,10 +844,11 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
             });
             
             await fetchAuthorConfig();
+            (window as any).showToast("個人介紹已更新", 'success');
             authorEditor?.classList.add("hidden");
             authorPreview?.classList.remove("hidden");
         } catch (err) {
-            alert("儲存失敗: " + err);
+            (window as any).showToast("儲存失敗: " + err, 'error');
         } finally {
             authorSaveLoader.classList.add("hidden");
             authorSaveBtn.removeAttribute("disabled");
@@ -716,6 +864,22 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
         "md-content"
     ) as HTMLTextAreaElement;
     const slugInput = document.getElementById("post-slug") as HTMLInputElement;
+
+    slugInput?.addEventListener("input", (e) => {
+        const dateStr = new Date().toISOString().split('T')[0].substring(2).replace(/-/g, '');
+        const newSlug = (e.target as HTMLInputElement).value.trim();
+        const inputs = document.querySelectorAll('.img-filename-input') as NodeListOf<HTMLInputElement>;
+        inputs.forEach(input => {
+            const currentVal = input.value;
+            const match = currentVal.match(/-(\d+)$/);
+            const num = match ? match[1] : '';
+            if (newSlug) {
+                input.value = num ? `${dateStr}-${newSlug}-${num}` : `${dateStr}-${newSlug}-`;
+            } else {
+                input.value = num ? `${dateStr}-${num}` : `${dateStr}-`;
+            }
+        });
+    });
 
     dropzone?.addEventListener("click", () => mdInput.click());
     dropzone?.addEventListener("dragover", (e) => {
@@ -767,46 +931,36 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                 img.onload = () => {
                     const canvas = document.createElement("canvas");
                     const ctx = canvas.getContext("2d")!;
+                    
+                    const MAX_EDGE = 1600;
                     let tw, th, itype;
 
-                    if (img.width > img.height) {
-                        // Landscape -> Crop to 1200x630
-                        itype = "Landscape";
-                        tw = 1200;
-                        th = 630;
-                        const ratio = 1200 / 630;
-                        let sw, sh, sx, sy;
-                        if (img.width / img.height > ratio) {
-                            sh = img.height;
-                            sw = img.height * ratio;
-                            sx = (img.width - sw) / 2;
-                            sy = 0;
+                    if (img.width >= img.height) {
+                        // Landscape or Square
+                        itype = img.width === img.height ? "Square" : "Landscape";
+                        if (img.width > MAX_EDGE) {
+                            tw = MAX_EDGE;
+                            th = (img.height * MAX_EDGE) / img.width;
                         } else {
-                            sw = img.width;
-                            sh = img.width / ratio;
-                            sx = 0;
-                            sy = (img.height - sh) / 2;
+                            tw = img.width;
+                            th = img.height;
                         }
-                        canvas.width = tw;
-                        canvas.height = th;
-                        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, tw, th);
-                    } else if (img.height > img.width) {
-                        // Portrait -> Fixed H1200
-                        itype = "Portrait";
-                        th = 1200;
-                        tw = (img.width * 1200) / img.height;
-                        canvas.width = tw;
-                        canvas.height = th;
-                        ctx.drawImage(img, 0, 0, tw, th);
                     } else {
-                        // Square -> 1200x1200
-                        itype = "Square";
-                        tw = 1200;
-                        th = 1200;
-                        canvas.width = tw;
-                        canvas.height = th;
-                        ctx.drawImage(img, 0, 0, tw, th);
+                        // Portrait
+                        itype = "Portrait";
+                        if (img.height > MAX_EDGE) {
+                            th = MAX_EDGE;
+                            tw = (img.width * MAX_EDGE) / img.height;
+                        } else {
+                            tw = img.width;
+                            th = img.height;
+                        }
                     }
+
+                    canvas.width = tw;
+                    canvas.height = th;
+                    ctx.drawImage(img, 0, 0, tw, th);
+
                     resolve({
                         id: Math.random().toString(36).substr(2, 9),
                         url: canvas.toDataURL("image/jpeg", 0.9),
@@ -1094,7 +1248,7 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
         try {
             await updateDoc(doc(db, "comments", id), { is_hidden: hide });
         } catch (e) {
-            alert("操作失敗: " + e);
+            (window as any).showToast("操作失敗: " + e, 'error');
         }
     }
 
@@ -1107,13 +1261,13 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
             if (!confirm("確定要將這條留言從資料庫徹底移除嗎？此操作不可恢復。")) return;
             try {
                 await deleteDoc(doc(db, "comments", id));
-            } catch (e) { alert("刪除失敗: " + e); }
+            } catch (e) { (window as any).showToast("刪除失敗: " + e, 'error'); }
         } else {
             // Move to Trash
             if (!confirm("將此留言移至回收桶？")) return;
             try {
                 await updateDoc(doc(db, "comments", id), { is_deleted: true });
-            } catch (e) { alert("移動失敗: " + e); }
+            } catch (e) { (window as any).showToast("移動失敗: " + e, 'error'); }
         }
     }
 
@@ -1135,11 +1289,11 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
             });
             // Mark original as read
             await markAsRead(parentId);
-            alert("回覆已發送");
+            (window as any).showToast("回覆已發送", 'success');
             const form = document.getElementById(`reply-form-${parentId}`);
             form?.classList.add("hidden");
         } catch (e) {
-            alert("發送失敗: " + e);
+            (window as any).showToast("發送失敗: " + e, 'error');
         }
     }
 
@@ -1155,9 +1309,14 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
             "bg-white border border-uu-sub/20 rounded-2xl p-4 flex gap-4 items-start group relative";
 
         // Use aspect ratio based on type
-        let aspect = "aspect-video"; // 1200x630
+        let aspect = "aspect-auto";
+        if (data.type === "Landscape") aspect = "aspect-video"; 
         if (data.type === "Portrait") aspect = "aspect-[3/4]";
         if (data.type === "Square") aspect = "aspect-square";
+
+        const dateStr = new Date().toISOString().split('T')[0].substring(2).replace(/-/g, '');
+        const currentSlug = slugInput?.value.trim() || "";
+        const prefix = currentSlug ? `${dateStr}-${currentSlug}-` : `${dateStr}-`;
 
         card.innerHTML = `
             <div class="w-16 ${aspect} rounded-lg overflow-hidden bg-uu-sub/10 flex-shrink-0 border border-uu-sub/10">
@@ -1169,7 +1328,7 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                     <span class="text-[9px] text-uu-main/40 uppercase font-mono">${data.w} × ${data.h}</span>
                 </div>
                 <p class="text-[10px] font-bold text-uu-dark truncate mb-2">${name}</p>
-                <input type="text" data-id="${data.id}" placeholder="YYMMDD-slug-01" class="img-filename-input w-full bg-uu-base/10 border-none rounded-lg px-2 py-1.5 text-[10px] italic focus:ring-1 focus:ring-uu-main/30" />
+                <input type="text" data-id="${data.id}" placeholder="${dateStr}-slug-01" value="${prefix}" class="img-filename-input w-full bg-uu-base/10 shadow-inner border shadow-sm border-uu-sub/30 rounded-lg px-2 py-1.5 text-[11px] font-mono focus:outline-none focus:ring-1 focus:ring-uu-main/50 transition-all font-bold text-uu-dark" />
             </div>
             <button class="absolute top-2 right-2 text-uu-main/20 hover:text-uu-dark opacity-0 group-hover:opacity-100 transition-opacity" onclick="removeImage('${data.id}')">
                 <span class="material-symbols-outlined text-sm">close</span>
@@ -1192,11 +1351,13 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
         const status = (document.getElementById("post-status") as HTMLSelectElement).value;
 
         if (!slug || !content) {
-            alert("請填寫 Slug 與 文章內容");
+            (window as any).showToast("請填寫 Slug 與 文章內容", 'info');
             return;
         }
 
         if (!confirm("確定要將文章與圖片同步至 GitHub 嗎？")) return;
+
+        (window as any).showToast("正在建立同步請求...", 'info');
 
         const btnText = finalPushBtn.querySelector('span:not(.material-symbols-outlined)');
         const btnIcon = finalPushBtn.querySelector('.material-symbols-outlined');
@@ -1206,57 +1367,80 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
         finalPushBtn.setAttribute("disabled", "true");
 
         try {
-            // 1. 同步 Markdown 文章
+            const files = [];
+            
+            // 1. 準備 Markdown 文章
             const fileName = `${slug}.md`;
             const filePath = `src/content/posts/${fileName}`;
-            console.log("[Sync] Uploading Markdown:", filePath);
+            files.push({
+                path: filePath,
+                content: btoa(unescape(encodeURIComponent(content)))
+            });
+
+            // 2. 準備圖片
+            const datePath = new Date().toISOString().split('T')[0].substring(2, 4) + new Date().toISOString().split('T')[0].substring(5, 7);
+            for (const img of processedImages) {
+                const imgInput = document.querySelector(`.img-filename-input[data-id="${img.id}"]`) as HTMLInputElement;
+                let finalName = imgInput?.value.trim() || img.id;
+                if (!finalName.includes('.')) finalName += ".jpg";
+                
+                const imgPath = `public/images/${datePath}/${finalName}`;
+                files.push({
+                    path: imgPath,
+                    content: img.url.split(',')[1]
+                });
+            }
+
+            // 3. 發起批次同步請求 (單次 Commit)
+            console.log("[Sync] Batch uploading files:", files.map(f => f.path));
             
-            const mdResponse = await fetch(GAS_URL, {
+            const syncResponse = await fetch(GAS_URL, {
                 method: "POST",
                 mode: "no-cors",
                 body: JSON.stringify({
-                    action: "upload_file",
-                    path: filePath,
-                    content: btoa(unescape(encodeURIComponent(content))), // Base64 encoding for Unicode
-                    message: `Admin: Create/Update Post "${slug}"`,
+                    action: "batch_upload",
+                    files: files,
+                    message: `Admin: Sync "${slug}" (${files.length} files)`,
                     branch: "main"
                 })
             });
 
-            // 2. 同步圖片
-            const imageInputs = document.querySelectorAll(".img-filename-input") as NodeListOf<HTMLInputElement>;
-            for (const imgInput of Array.from(imageInputs)) {
-                const imgId = imgInput.getAttribute("data-id");
-                const customName = imgInput.value.trim();
-                const imageData = processedImages.find(img => img.id === imgId);
-
-                if (imageData && customName) {
-                    const imgPath = `public/images/posts/${customName}.jpg`;
-                    console.log("[Sync] Uploading Image:", imgPath);
-                    // Remove data:image/jpeg;base64, prefix
-                    const base64Content = imageData.url.split(",")[1];
-
-                    await fetch(GAS_URL, {
-                        method: "POST",
-                        mode: "no-cors",
-                        body: JSON.stringify({
-                            action: "upload_file",
-                            path: imgPath,
-                            content: base64Content,
-                            message: `Admin: Upload Image "${customName}" for post ${slug}`,
-                            branch: "main"
-                        })
-                    });
-                }
-            }
-
-            alert("同步請求已送出！請稍候 1-2 分鐘等待 GitHub 建置更新。");
+            (window as any).showToast(`成功！已將 ${files.length} 個檔案統整為一次提交同步。`, 'success', 5000);
         } catch (err) {
             console.error("[Sync] Error:", err);
-            alert("同步失敗，請檢查網路連線或 GAS 設定。");
+            (window as any).showToast("同步失敗，請檢查連線或 GAS 設定。", 'error');
         } finally {
             if (btnText) btnText.textContent = originalText;
             finalPushBtn.removeAttribute("disabled");
+        }
+    });
+
+    // --- Cleanup Build Logic ---
+    const cleanupBtn = document.getElementById("cleanup-build-btn");
+    cleanupBtn?.addEventListener("click", async () => {
+        if (!confirm("確定要從 GitHub 刪除 src/content/posts/test.md 嗎？這通常用於修復建置失敗。")) return;
+        
+        const originalContent = cleanupBtn.innerHTML;
+        cleanupBtn.innerHTML = `<span class="material-symbols-outlined text-sm animate-spin">sync</span> 清理中...`;
+        cleanupBtn.setAttribute("disabled", "true");
+
+        try {
+            await fetch(GAS_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify({
+                    action: "delete_file",
+                    path: "src/content/posts/test.md",
+                    message: "Admin: Emergency cleanup of corrupted test.md",
+                    branch: "main"
+                })
+            });
+            (window as any).showToast("清理請求已送出！建置應會在幾分鐘後恢復正常。", 'success');
+        } catch (err) {
+            (window as any).showToast("清理失敗", 'error');
+        } finally {
+            cleanupBtn.innerHTML = originalContent;
+            cleanupBtn.removeAttribute("disabled");
         }
     });
 
@@ -1377,6 +1561,82 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
         auth.signOut();
         window.location.reload();
     });
+    }
+    // --- Draft Tool Logic ---
+    const initDraftTool = () => {
+        const generateDraftBtn = document.getElementById("generate-draft-btn");
+        const copyPromptBtn = document.getElementById("copy-prompt-btn");
+        const draftResultContainer = document.getElementById("draft-result-container");
+        const draftResultArea = document.getElementById("draft-result") as HTMLTextAreaElement;
+
+        generateDraftBtn?.addEventListener("click", () => {
+            const q1 = (document.getElementById("draft-q1") as HTMLInputElement).value || "[未填寫]";
+            const q2 = (document.getElementById("draft-q2") as HTMLInputElement).value || "[未填寫]";
+            const q3 = (document.getElementById("draft-q3") as HTMLInputElement).value || "[未填寫]";
+            const q4 = (document.getElementById("draft-q4") as HTMLTextAreaElement).value || "[未填寫]";
+            const q5 = (document.getElementById("draft-q5") as HTMLTextAreaElement).value || "[未填寫]";
+            const q6 = (document.getElementById("draft-q6") as HTMLInputElement).value || "輕鬆幽默的個人隨筆";
+            const slug = (document.getElementById("draft-slug") as HTMLInputElement).value || "your-slug";
+            const cat = (document.getElementById("draft-cat") as HTMLInputElement).value || "";
+            const tags = (document.getElementById("draft-tags") as HTMLInputElement).value || "";
+
+            const today = new Date().toISOString().split('T')[0];
+            const datePath = today.substring(2, 4) + today.substring(5, 7); // YYMM
+            
+            // Handle Tags Logic (Dynamic Expansion if < 5)
+            let tagsOutput = "我回答的標籤，無則你負責生成，至少 6 個";
+            if (tags.trim()) {
+                const tagsArr = tags.split(',').map(t => t.trim()).filter(t => t);
+                if (tagsArr.length > 0 && tagsArr.length < 5) {
+                    tagsOutput = `${tagsArr.join(', ')}，請以此為基礎擴增到至少 6 個以上`;
+                } else if (tagsArr.length >= 5) {
+                    tagsOutput = tagsArr.join(', ');
+                }
+            }
+
+            // Get template string
+            const templateEl = document.getElementById("draft-template") as HTMLTextAreaElement;
+            let prompt = templateEl ? templateEl.value : "";
+            
+            // Format q4 to handle line breaks properly if not empty
+            const formattedQ4 = q4 !== "[未填寫]" 
+                ? q4.split('\n').filter(l => l.trim()).map(line => `   ${line.trim().startsWith('-') ? '' : '- '}${line}`).join('\n')
+                : q4;
+
+            // Replace variables placeholders with actual values
+            prompt = prompt.replace(/\{\{q1\}\}/g, q1)
+                           .replace(/\{\{q2\}\}/g, q2)
+                           .replace(/\{\{q3\}\}/g, q3)
+                           .replace(/\{\{q4\}\}/g, formattedQ4)
+                           .replace(/\{\{q5\}\}/g, q5)
+                           .replace(/\{\{q6\}\}/g, q6)
+                           .replace(/\{\{slug\}\}/g, slug)
+                           .replace(/\{\{cat\}\}/g, cat || '我回答的分類，無則你負責生成')
+                           .replace(/\{\{tags\}\}/g, tagsOutput)
+                           .replace(/\{\{date\}\}/g, today)
+                           .replace(/\{\{datePath\}\}/g, datePath);
+
+            if (draftResultArea) draftResultArea.value = prompt;
+            draftResultContainer?.classList.remove("hidden");
+            draftResultContainer?.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        copyPromptBtn?.addEventListener("click", () => {
+            if (draftResultArea) {
+                draftResultArea.select();
+                document.execCommand("copy");
+                const originalText = copyPromptBtn.innerHTML;
+                copyPromptBtn.innerHTML = `<span class="material-symbols-outlined text-sm">done</span> 已複製`;
+                setTimeout(() => {
+                    copyPromptBtn.innerHTML = originalText;
+                }, 2000);
+            }
+        });
+    };
+
+    if (typeof window !== 'undefined') {
+        initDraftTool();
+    }
 </script>
 
 <style>

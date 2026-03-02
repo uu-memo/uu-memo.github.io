@@ -711,3 +711,52 @@ All notable changes to this project will be documented in this file.
   - Includes explicit "Admin" badge for site owner replies for better clarity.
 
 *在用戶中心的「我的留言」區塊新增了回覆查看功能。用戶現在可以直接看到站長或其他用戶對其留言的回覆，無需回到文章頁面，提升了互動追蹤的便利性。*
+
+### 2026-03-01T00:00:00+08:00
+- **Feature**: Implemented the "Article Draft Tool" in the Admin Dashboard.
+  - Added a questionnaire-based form to gather content strategy details.
+  - Developed an automated LLM prompt generator that constructs a comprehensive writing prompt based on user input.
+  - Includes a pre-formatted Markdown frontmatter block with dynamic title, description, category, and tags placeholders.
+- **Fix**: Resolved critical ReferenceError: imageQueue is not defined in the Admin Panel.
+- **Maintenance**: Hardened the Admin script to prevent SSR build errors by wrapping all client-side logic in browser environment checks.
+- **Security**: Updated admin identity verification logic to resolve conflicts between multiple admin email aliases.
+- **Enhancement**: Refined Draft Tool Tags Logic.
+  - Automatically appends instructions to expand tags to a minimum of 6 if less than 5 are provided.
+- **Enhancement**: Added Custom Prompt Template Editor in Draft Tool.
+  - Administrators can now view and edit the default prompt instruction template directly from the Draft Tool UI, utilizing variables like `{{q1}}`, `{{tags}}`, etc.
+
+### 2026-03-02T00:00:00+08:00
+- **Enhancement**: Improved UX for batch uploading images in Admin Dashboard.
+  - Corrected hover states on the "Batch Upload Photos" button to be light initially and dark on hover.
+  - Implemented real-time listener on the Article Slug input field to sync its value to image filename default values.
+  - Newly uploaded images' filename fields will proactively append the current date (`{YYMMDD}`) and article slug into a structured format: `{YYMMDD}-{slug}-`.
+- **Enhancement**: Implemented Client-side Image Pre-processing.
+  - Added automatic Canvas-based compression for all uploaded images.
+  - Standardized Maximum Edge (Max Edge) to 1600px while preserving original aspect ratio (dropping fixed 1200x630 crops).
+  - Reduced payload size for GitHub Sync by encoding processed images as JPEG at 0.9 quality.
+- **UI/UX**: Replaced native browser `alert()` with a custom Toast Notification system.
+  - New global `Toast.astro` component introduced to provide non-intrusive feedback.
+  - Implemented specific themes for `success`, `error`, and `info` status.
+  - Integrated into Admin Dashboard for better feedback during article syncing and settings updates.
+- **Security**: Upgraded Firestore Security Rules from hardcoded email to hybrid Role-Based Access Control (RBAC).
+  - Admins can now be identified not only by explicitly whitelisted emails (`jing180804@gmail.com` and `uu-memo@outlook.com`) but also by dynamically checking if their corresponding user document in the `/users` collection has `role: "admin"`.
+  - Resolved `Permission Denied` conflict for the secondary whitelisted admin account.
+### [2026-03-02] - Unified Bridge & Batch Sync
+
+- **Core**: Implemented Unified GAS Bridge (`gh-bridge.gs`).
+  - Merged LinkedIn and Contact Form logic into a single Google Apps Script project.
+  - Added support for multiple actions: `batch_upload`, `upload_file`, `delete_file`, and `contact_form`.
+- **Enhancement**: Implemented Single-Commit Batch Synchronization.
+  - Article uploads now collect the Markdown file and all staged images into a single payload.
+  - Utilizes GitHub's Trees API to perform a single atomic commit, reducing commit noise and preventing redundant build triggers.
+- **Backup**: Enabled Automatic Google Drive Backup.
+  - All articles and images synchronized to GitHub are simultaneously backed up to `UU-Memo-Archive` folder in Google Drive.
+  - Automatically handles folder creation and classification (`Articles` vs `Media/YYMM`).
+- **Administrative Tools**: Added Emergency Cleanup functionality.
+  - New "Emergency Fix" section in Administrative Settings to force-delete corrupted files (like `test.md`) from GitHub remote to fix build errors.
+  - Updated Draft Prompt Generator to include a Slug field, which dynamically sets the default `heroImage` path matched to the batched uploaded image filename (e.g. `YYMM-slug-01.jpg`).
+- **Contact Form**: Updated integration to route emails via the unified bridge using a secure token.
+
+*實作了「全能中繼站 (Unified Bridge)」GAS 腳本，將 GitHub 同步、雲端硬碟備份與聯絡表單發信功能整合為一。導入了單次 Commit 批次同步技術，文章與所有圖片現在會合併為一次提交。同時啟用了 Google Drive 自動備份功能，並在後台新增了緊急修復按鈕，可一鍵刪除損毀檔案以修復 GitHub 建置錯誤。*
+
+---
