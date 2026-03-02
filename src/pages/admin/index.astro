@@ -855,18 +855,31 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
     const authorDisplayContent = document.getElementById("author-display-content");
     const authorSaveLoader = document.getElementById("author-save-loader");
 
+    function renderAuthorPreview(content: string) {
+        if (!authorDisplayContent) return;
+        if (!content.trim()) {
+            authorDisplayContent.innerHTML = '<p class="text-uu-main/30 italic text-sm">尚無內容，請點擊編輯...</p>';
+            return;
+        }
+        const html = content
+            .split(/\n\n+/)
+            .filter((p: string) => p.trim())
+            .map((p: string) => `<p class="mb-4 text-uu-main/80 text-sm leading-relaxed">${p.trim().replace(/\n/g, '<br>')}</p>`)
+            .join('');
+        authorDisplayContent.innerHTML = html;
+    }
+
     async function fetchAuthorConfig() {
         try {
             const docRef = doc(db, "site_config", "about_me");
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                if (authorMdEditor) authorMdEditor.value = data.content || "";
-                if (authorDisplayContent) {
-                    authorDisplayContent.innerHTML = data.content ? 
-                        data.content.split('\n').map((line: string) => `<p>${line}</p>`).join('') : 
-                        '<p class="text-uu-main/30 italic">尚無內容，請點擊編輯...</p>';
-                }
+                const content = data.content || "";
+                if (authorMdEditor) authorMdEditor.value = content;
+                renderAuthorPreview(content);
+            } else {
+                renderAuthorPreview("");
             }
         } catch (err) {
             console.error("Error fetching author config:", err);
@@ -885,22 +898,49 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
 
     authorSaveBtn?.addEventListener("click", async () => {
         if (!authorMdEditor || !authorSaveLoader) return;
-        
+
+        const bodyContent = authorMdEditor.value.trim();
+        if (!bodyContent) {
+            (window as any).showToast("內容不可為空", 'info');
+            return;
+        }
+
+        if (!confirm("確定要將「關於我」的更新同步至 GitHub 嗎？\n這將觸發一次網站自動建置（約 1-2 分鐘後生效）。")) return;
+
         authorSaveLoader.classList.remove("hidden");
         authorSaveBtn.setAttribute("disabled", "true");
 
+        // Build the full about.md file content (preserve frontmatter header)
+        const frontmatter = `---\ntitle: \"關於我\"\ndescription: \"UU MEMO — 記錄在日本交換的生活碎隙\"\n---\n\n<div class=\"flex flex-col items-center mb-10 text-center\">\n    <div class=\"w-32 h-32 rounded-full bg-uu-sub/30 mb-6 flex items-center justify-center relative overflow-hidden border-2 border-uu-sub/20\">\n        <img src=\"/uu-memo.png\" alt=\"UU Avatar\" class=\"w-full h-full object-cover\" />\n    <\/div>\n    <h2 class=\"text-2xl font-bold text-uu-main mb-2\">UU<\/h2>\n    <p class=\"text-sm text-uu-main/60 tracking-widest uppercase\">Writer / Photographer<\/p>\n<\/div>\n\n`;
+        const fullContent = frontmatter + bodyContent;
+        const encoded = btoa(unescape(encodeURIComponent(fullContent)));
+
         try {
+            // 1. Cache in Firestore so preview stays consistent
             await setDoc(doc(db, "site_config", "about_me"), {
-                content: authorMdEditor.value,
+                content: bodyContent,
                 updated_at: serverTimestamp()
             });
-            
-            await fetchAuthorConfig();
-            (window as any).showToast("個人介紹已更新", 'success');
+
+            // 2. Push about.md to GitHub via GAS Bridge
+            await fetch(GAS_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify({
+                    action: "upload_file",
+                    path: "src/content/pages/about.md",
+                    content: encoded,
+                    message: "Admin: Update 'About Me' page",
+                    branch: "main"
+                })
+            });
+
+            renderAuthorPreview(bodyContent);
+            (window as any).showToast("關於我已同步至 GitHub，網站將在約 1-2 分鐘後更新。", 'success');
             authorEditor?.classList.add("hidden");
             authorPreview?.classList.remove("hidden");
         } catch (err) {
-            (window as any).showToast("儲存失敗: " + err, 'error');
+            (window as any).showToast("同步失敗: " + err, 'error');
         } finally {
             authorSaveLoader.classList.add("hidden");
             authorSaveBtn.removeAttribute("disabled");
