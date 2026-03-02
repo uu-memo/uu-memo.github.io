@@ -374,10 +374,16 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                         </div>
 
                         <div class="space-y-2 mt-6 p-6 bg-uu-main/5 rounded-2xl border border-uu-main/10 shadow-inner">
-                            <label class="text-[10px] font-black text-uu-main uppercase tracking-widest flex items-center gap-2">
-                                <span class="material-symbols-outlined text-sm">settings_suggest</span>
-                                進階：編輯預設指令模板 (Prompt Template)
-                            </label>
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="text-[10px] font-black text-uu-main uppercase tracking-widest flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">settings_suggest</span>
+                                    進階：編輯預設指令模板 (Prompt Template)
+                                </label>
+                                <button id="save-template-btn" class="flex items-center gap-1.5 px-3 py-1 bg-white border border-uu-main/20 text-uu-main rounded-lg text-[10px] font-black tracking-widest uppercase hover:bg-uu-main hover:text-white transition-all shadow-sm">
+                                    <span class="material-symbols-outlined text-xs">cloud_upload</span>
+                                    儲存到資料庫
+                                </button>
+                            </div>
                             <textarea id="draft-template" class="w-full bg-white border border-uu-sub/20 rounded-xl px-4 py-3 text-[11px] focus:outline-none focus:border-uu-main transition-all min-h-[400px] font-mono leading-relaxed" placeholder="在這裡設定你的 Prompt 骨架..."># Role: 部落格作家與內容策略師
 
 請根據我下方提供的【文章草稿表單】資訊，為我撰寫一篇結構完整、引人入勝且具備個人觀點的部落格文章。
@@ -792,6 +798,52 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
             saveSysBtn.removeAttribute("disabled");
         }
     });
+
+    // --- Prompt Template Logic (New Firestore Integration) ---
+    async function fetchPromptConfig() {
+        const templateEl = document.getElementById("draft-template") as HTMLTextAreaElement;
+        if (!templateEl) return;
+        
+        try {
+            const docRef = doc(db, "site_config", "prompt_settings");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.template_content) {
+                    templateEl.value = data.template_content;
+                    console.log("[System] Prompt template loaded from database.");
+                }
+            }
+        } catch (err) {
+            console.error("Error fetching prompt config:", err);
+        }
+    }
+
+    const saveTemplateBtn = document.getElementById("save-template-btn");
+    saveTemplateBtn?.addEventListener("click", async () => {
+        const templateEl = document.getElementById("draft-template") as HTMLTextAreaElement;
+        if (!templateEl) return;
+
+        if (!confirm("確定要將目前的微調內容儲存為資料庫的『預設模板』嗎？\n儲存後，未來重新整理頁面也會以此次修改為準。")) return;
+
+        const originalHtml = saveTemplateBtn.innerHTML;
+        saveTemplateBtn.innerHTML = `<span class="material-symbols-outlined text-xs animate-spin">sync</span> 儲存中...`;
+        saveTemplateBtn.setAttribute("disabled", "true");
+
+        try {
+            await setDoc(doc(db, "site_config", "prompt_settings"), {
+                template_content: templateEl.value,
+                updated_at: serverTimestamp()
+            });
+            (window as any).showToast("模板已成功保存至雲端", 'success');
+        } catch (err) {
+            (window as any).showToast("儲存失敗: " + err, 'error');
+        } finally {
+            saveTemplateBtn.innerHTML = originalHtml;
+            saveTemplateBtn.removeAttribute("disabled");
+        }
+    });
+
 
     // --- Author Settings Logic ---
     const authorPreview = document.getElementById("author-preview");
@@ -1531,6 +1583,7 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
             // Fetch Data
             fetchSystemConfig();
             fetchAuthorConfig();
+            fetchPromptConfig();
             initCommentsModule();
 
             // Transition UI
