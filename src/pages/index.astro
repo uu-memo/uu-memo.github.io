@@ -63,7 +63,7 @@ const aboutBio = aboutRawBody
                                 <>
                                     <article class="flex flex-col md:flex-row gap-6 group">
                                         <a
-                                            href={`/posts/${post.slug}`}
+                                            href={`/posts/${post.id}`}
                                             class="w-full md:w-72 aspect-[16/10] bg-uu-sub/30 rounded-lg overflow-hidden shrink-0 block"
                                         >
                                             {post.data.heroImage ? (
@@ -98,7 +98,7 @@ const aboutBio = aboutRawBody
                                                 </a>
                                             </div>
                                             <h3 class="text-xl font-bold mb-3 group-hover:text-uu-dark transition-colors">
-                                                <a href={`/posts/${post.slug}`}>
+                                                <a href={`/posts/${post.id}`}>
                                                     {post.data.title}
                                                 </a>
                                             </h3>
@@ -141,7 +141,7 @@ const aboutBio = aboutRawBody
                         {
                             featuredPosts.map((post) => (
                                 <article class="bg-uu-light rounded-2xl overflow-hidden border border-uu-sub group shadow-sm hover:shadow-md transition-shadow">
-                                    <a href={`/posts/${post.slug}`}>
+                                    <a href={`/posts/${post.id}`}>
                                         <div class="aspect-[16/9] bg-uu-sub/20 relative overflow-hidden">
                                             {post.data.heroImage ? (
                                                 <img
@@ -160,7 +160,7 @@ const aboutBio = aboutRawBody
                                     </a>
                                     <div class="p-6">
                                         <h3 class="text-lg font-bold mb-3 group-hover:text-uu-dark transition-colors">
-                                            <a href={`/posts/${post.slug}`}>
+                                            <a href={`/posts/${post.id}`}>
                                                 {post.data.title}
                                             </a>
                                         </h3>
@@ -174,7 +174,7 @@ const aboutBio = aboutRawBody
                     </div>
                     <div class="mt-8 text-right">
                         <a
-                            href="/posts?tag=精選"
+                            href="/category/精選文章"
                             class="btn-text text-sm font-bold tracking-widest text-uu-main/80 hover:text-uu-main"
                             >看所有精選 →</a
                         >
@@ -212,8 +212,9 @@ const aboutBio = aboutRawBody
                             <span class="material-symbols-outlined">mail</span>
                         </a>
                         <a
-                            href="#"
+                            href="/contact"
                             class="text-uu-main/50 hover:text-uu-main transition-colors"
+                            title="聯絡我"
                         >
                             <span class="material-symbols-outlined"
                                 >alternate_email</span
