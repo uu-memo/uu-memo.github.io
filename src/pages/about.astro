@@ -1,0 +1,74 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="關於我 | UU MEMO">
+    <Header />
+    <main class="max-w-4xl mx-auto px-6 py-12 min-h-[60vh] w-full self-stretch">
+        <article class="bg-uu-light rounded-2xl p-8 md:p-12 shadow-sm border border-uu-sub">
+            <h1 class="text-3xl font-bold text-uu-main mb-8 border-b border-uu-sub pb-4 tracking-tight">
+                關於我
+            </h1>
+            <div class="flex flex-col items-center mb-10 text-center">
+                <div class="w-32 h-32 rounded-full bg-uu-sub/30 mb-6 flex items-center justify-center relative overflow-hidden border-2 border-uu-sub/20">
+                    <img src="/uu-memo.png" alt="UU Avatar" class="w-full h-full object-cover" />
+                </div>
+                <h2 class="text-2xl font-bold text-uu-main mb-2">UU</h2>
+                <p class="text-sm text-uu-main/60 tracking-widest uppercase">Writer / Photographer</p>
+            </div>
+            <div
+                id="about-content"
+                class="prose prose-stone max-w-none prose-headings:text-uu-main prose-headings:font-bold prose-p:text-uu-main/80 prose-a:text-uu-dark hover:prose-a:text-uu-main space-y-4"
+            >
+                <!-- Content dynamically loaded from Firestore -->
+                <p class="text-uu-main/30 italic text-sm animate-pulse">載入中...</p>
+            </div>
+        </article>
+    </main>
+    <Footer />
+</Layout>
+
+<script>
+    import { db } from "../lib/firebase.js";
+    import { doc, getDoc } from "firebase/firestore";
+
+    async function loadAboutContent() {
+        const contentEl = document.getElementById("about-content");
+        if (!contentEl) return;
+
+        try {
+            const docRef = doc(db, "site_config", "about_me");
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data() as { content?: string };
+                const rawContent = data.content || "";
+
+                // Split by double newlines for paragraphs, preserve single newlines as <br>
+                const html = rawContent
+                    .split(/\n\n+/)
+                    .filter(para => para.trim())
+                    .map(para => {
+                        const escaped = para
+                            .trim()
+                            .split('\n')
+                            .map(line => line.trim())
+                            .join('<br>');
+                        return `<p>${escaped}</p>`;
+                    })
+                    .join('');
+
+                contentEl.innerHTML = html || '<p class="text-uu-main/30 italic text-sm">內容尚未設定</p>';
+            } else {
+                contentEl.innerHTML = '<p class="text-uu-main/30 italic text-sm">內容尚未設定，請至後台更新。</p>';
+            }
+        } catch (err) {
+            console.error("Failed to load about content:", err);
+            contentEl.innerHTML = '<p class="text-uu-main/30 italic text-sm">載入失敗，請稍後再試</p>';
+        }
+    }
+
+    loadAboutContent();
+</script>
