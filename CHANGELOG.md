@@ -752,6 +752,10 @@ All notable changes to this project will be documented in this file.
 - **Backup**: Enabled Automatic Google Drive Backup.
   - All articles and images synchronized to GitHub are simultaneously backed up to `UU-Memo-Archive` folder in Google Drive.
   - Automatically handles folder creation and classification (`Articles` vs `Media/YYMM`).
+- **Homepage Architecture**: Fully dynamic content integration.
+  - Replaced hardcoded article placeholders with dynamic loops using Astro Content Collections.
+  - Implemented dynamic Sidebar with automated Category Index and frequent Tag Cloud.
+  - Added automatic sorting and filtering for "Latest" and "Featured" article sections.
 - **Administrative Tools**: Added Emergency Cleanup functionality.
   - New "Emergency Fix" section in Administrative Settings to force-delete corrupted files (like `test.md`) from GitHub remote to fix build errors.
   - Updated Draft Prompt Generator to include a Slug field, which dynamically sets the default `heroImage` path matched to the batched uploaded image filename (e.g. `YYMM-slug-01.jpg`).
