@@ -817,3 +817,24 @@ All notable changes to this project will be documented in this file.
 - Admin testing tab now excludes the "Home" link to streamline navigation.
 
 **中文說明：完成 2026-03-03 系統整合審核報告，確認系統達 88% 上線就緒度。優化了任務與支付管理介面，加入長按刪除防誤觸與二次確認機制，並校正了後端總時數計算邏輯。同時修復了 PDF 工具白屏問題，並統一了測試分頁的品牌配色視覺階層。**
+### [2026-03-03] - 17:50 (CST)
+#### Refinements & Architecture Migration
+- **Permission Consolidation (權限歸一)**: Unified administrative privileges under `jing180804@gmail.com`.
+- **Station Master Identity**: Updated comment system to recognize and style `jing180804@gmail.com` as "站長".
+- **GitHub Sync Strategy D (架構遷移)**: 
+    - Migrated from GAS Bridge to **Direct Browser-to-GitHub Sync**.
+    - Implemented `githubSync.ts` using `@octokit/rest`.
+    - Created a secure **Token Vault** in Firestore (`/admin_vault/credentials`) protected by RBAC.
+    - Updated Admin UI with a secure token management interface.
+- **OG Image Optimization (OG 抓取優化)**: Implemented intelligent fallback for Open Graph images (Hero Image > Content First Image > Default Site Image).
+- **SEO Enhancements**: Added dynamic meta descriptions and OG tags to post layouts.
+
+#### Affected Files
+- `/firestore.rules`
+- `/src/components/Comments.astro`
+- `/src/layouts/Layout.astro`
+- `/src/pages/posts/[...slug].astro`
+- `/src/pages/admin/index.astro`
+- `/src/lib/githubSync.ts` (New)
+
+**中文說明：執行架構遷移至「方案 D」，實作瀏覽器直接同步 GitHub 功能，擺脫 GAS 的 CORS 限制。同步流程現具備完整的狀態回饋。權杖安全存儲於 Firestore 憑證庫，僅限站長存取。同步優化包含 OG 圖像抓取、SEO 摘要自動生成與管理員身份統一。**

@@ -31,9 +31,20 @@ const tags = post.data.tags || [];
 const categories = Array.isArray(post.data.category) 
     ? post.data.category 
     : post.data.category ? [post.data.category] : ['未分類'];
+
+// --- OG & SEO Fallback Logic ---
+// 1. Image: heroImage -> First image in body -> Default site image
+const markdownBody = post["body"] || "";
+const firstImageMatch = markdownBody.match(/!\[.*?\]\((.*?)\)/);
+const firstImage = firstImageMatch ? firstImageMatch[1] : null;
+const ogImage = post.data.heroImage || firstImage || '/uu-memo.png';
+
+// 2. Description: frontmatter description -> first 100 chars of body
+const seoDescription = post.data.description || 
+    (markdownBody.replace(/[#*`\-\[\]\(\)]/g, '').trim().slice(0, 100) + '...');
 ---
 
-<Layout title={post.data.title}>
+<Layout title={post.data.title} description={seoDescription} image={ogImage}>
     <Header />
     <main class="max-w-4xl mx-auto px-6 py-12 w-full self-stretch">
         <article class="bg-uu-light rounded-2xl p-8 md:p-12 shadow-sm border border-uu-sub">
