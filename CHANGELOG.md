@@ -832,6 +832,7 @@ All notable changes to this project will be documented in this file.
 - **UI Aesthetic Refinement (視覺美學優化)**: 
     - Removed aggressive alert colors (Amber/Red) from the Admin dashboard.
     - Replaced with brand-aligned `UU-Base/Sub` gray tones and `UU-Main` charcoal themes.
+    - Fixed broken Material Symbol icon (`pests` -> `bug_report`).
     - Enhanced component elevation and micro-interactions.
 
 #### Affected Files
