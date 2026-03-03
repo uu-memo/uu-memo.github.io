@@ -134,5 +134,97 @@ export const githubSync = {
       }
       throw error;
     }
+  },
+
+  /**
+   * Fetches all posts from the repository and parses basic metadata.
+   */
+  async listPosts(options: { token: string; owner: string; repo: string; branch?: string }) {
+    const { token, owner, repo, branch = "main" } = options;
+    const octokit = new Octokit({ auth: token });
+
+    try {
+      console.log(`[GitHubSync] Listing posts from src/content/posts...`);
+      const { data: files } = await octokit.repos.getContent({
+        owner,
+        repo,
+        path: "src/content/posts",
+        ref: branch,
+      });
+
+      if (!Array.isArray(files)) return [];
+
+      // Filter only .md files
+      const mdFiles = files.filter(f => f.name.endsWith(".md"));
+
+      // Fetch content for each file to parse frontmatter
+      // Note: For performance, we only fetch the first 1KB if possible, but Octokit getContent returns full content.
+      // We'll limit to 20 files per batch or similar if needed, but for now we'll do all and the user wanted pagination.
+      const posts = await Promise.all(
+        mdFiles.map(async (file) => {
+          try {
+            const { data: contentData }: any = await octokit.repos.getContent({
+              owner,
+              repo,
+              path: file.path,
+              ref: branch,
+            });
+
+            const content = decodeURIComponent(escape(atob(contentData.content)));
+
+            // Simple Frontmatter Parser (regex)
+            const titleMatch = content.match(/title:\s*["']?(.*?)["']?(\r?\n|$)/);
+            const dateMatch = content.match(/publishDate:\s*(.*?)(\r?\n|$)/);
+            const categoryMatch = content.match(/category:\s*\[?(.*?)\]?(\r?\n|$)/);
+
+            return {
+              name: file.name,
+              path: file.path,
+              sha: file.sha,
+              title: titleMatch ? titleMatch[1] : file.name,
+              publishDate: dateMatch ? dateMatch[1].trim() : "Unknown",
+              category: categoryMatch ? categoryMatch[1].replace(/["']/g, "").split(",")[0].trim() : "Uncategorized"
+            };
+          } catch (e) {
+            return {
+              name: file.name,
+              path: file.path,
+              sha: file.sha,
+              title: file.name,
+              publishDate: "Error",
+              category: "Error"
+            };
+          }
+        })
+      );
+
+      // Sort by date descending
+      return posts.sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
+    } catch (error: any) {
+      console.error("[GitHubSync] Error listing posts:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Fetches the full content of a specific post.
+   */
+  async getPostContent(options: { token: string; owner: string; repo: string; branch?: string; path: string }) {
+    const { token, owner, repo, branch = "main", path } = options;
+    const octokit = new Octokit({ auth: token });
+
+    try {
+      const { data: contentData }: any = await octokit.repos.getContent({
+        owner,
+        repo,
+        path,
+        ref: branch,
+      });
+
+      return decodeURIComponent(escape(atob(contentData.content)));
+    } catch (error: any) {
+      console.error("[GitHubSync] Error fetching post content:", error);
+      throw error;
+    }
   }
 };

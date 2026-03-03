@@ -829,6 +829,11 @@ All notable changes to this project will be documented in this file.
 - **OG Image Optimization (OG 抓取優化)**: Implemented intelligent fallback for Open Graph images (Hero Image > Content First Image > Default Site Image).
 - **SEO Enhancements**: Added dynamic meta descriptions and OG tags to post layouts.
 
+- **Content Management Migration (內容管理功能)**:
+    - Added a new "Content Management" tab in the admin dashboard.
+    - Integrated with GitHub API (Octokit) to list, search, and filter existing posts.
+    - Implemented client-side pagination (10 items per page).
+    - Enabled seamless transition from "Manage" to "Edit" mode by pre-filling the editor with existing content.
 - **UI Aesthetic Refinement (視覺美學優化)**: 
     - Removed aggressive alert colors (Amber/Red) from the Admin dashboard.
     - Replaced with brand-aligned `UU-Base/Sub` gray tones and `UU-Main` charcoal themes.
