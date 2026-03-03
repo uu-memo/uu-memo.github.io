@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
+import Toast from "../components/Toast.astro";
 
 interface Props {
 	title: string;
@@ -39,5 +40,6 @@ const { title } = Astro.props;
 		class="selection:bg-uu-sub selection:text-uu-dark bg-uu-base text-uu-main font-sans antialiased w-full overflow-x-hidden min-h-screen flex flex-col"
 	>
 		<slot />
+		<Toast />
 	</body>
 </html>

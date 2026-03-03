@@ -149,6 +149,7 @@ import PrimaryButton from "../components/PrimaryButton.astro";
 
             const formData = new FormData(form);
             const data = {
+                action: "contact_form",
                 name: formData.get("name"),
                 email: formData.get("email"),
                 subject: formData.get("subject"),

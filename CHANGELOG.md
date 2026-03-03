@@ -766,4 +766,54 @@ All notable changes to this project will be documented in this file.
 
 *實作了「全能中繼站 (Unified Bridge)」GAS 腳本，將 GitHub 同步、雲端硬碟備份與聯絡表單發信功能整合為一。導入了單次 Commit 批次同步技術，文章與所有圖片現在會合併為一次提交。同時啟用了 Google Drive 自動備份功能，並在後台新增了緊急修復按鈕，可一鍵刪除損毀檔案以修復 GitHub 建置錯誤。*
 
----
+### [2026-03-02.4] - Unified Login & Identity Dispatcher
+
+#### Summary of changes
+- Implemented a centralized Login Portal at `/login` to replace fragmented login UIs.
+- Developed an intelligent Identity Dispatcher that automatically routes users based on their privileges.
+- Standardized the Header account navigation to point to the new unified entry point.
+- Hardened route protection for Admin and User dashboards.
+
+#### Technical details
+- Created `src/pages/login.astro` with a premium UI mirrored from the User dashboard, featuring automated redirection logic.
+- Implemented "Permission Trap" checking in the Dispatcher: attempts to read `admin_vault/credentials` to distinguish between Admins and regular Users.
+- Refactored `src/pages/user/index.astro` and `src/pages/admin/index.astro` to remove duplicate login forms and enforce redirection to `/login` for unauthenticated sessions.
+- Updated `src/components/Header.astro` with dynamic link attributes (href, title, icon) that reactively update to `/admin` or `/user` upon authentication.
+- Added a visual "Verifying Identity" loading overlay to `/login` to ensure smooth transitions during the redirection process.
+
+#### Affected files
+- `src/pages/login.astro` (NEW)
+- `src/pages/user/index.astro`
+- `src/pages/admin/index.astro`
+- `src/components/Header.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None anticipated.
+
+### [2026-03-03] - System Integration Audit & UI Refinement
+
+#### Summary of changes
+- Conducted a comprehensive System Integration Audit (2026-03-03) with modular architectural assessment.
+- Refined Task and Payment management UI with destructive action guards.
+- Standardized Admin Quick Links with brand-compliant visual hierarchy.
+- Restored PDF Flattening tool functionality and fixed layout blanking issues.
+
+#### Technical details
+- Created `audits/system_integration_report_2026-03-03.md` using a modular metric architecture for launch readiness.
+- Implemented a long-press overlay for task log deletion in the Admin dashboard to prevent accidental data loss on mobile devices.
+- Added explicit confirmation dialogs (`window.confirm`) for payment record deletion.
+- Corrected the synchronization logic for "Total Invested Hours" by ensuring real-time Firestore aggregation updates.
+- Updated `src/pages/admin/index.astro` Testing Tab: applied `#1a4d2e` for primary links, `#666` for auxiliary tools, and added the missing Phone Order Form entry point.
+- Resolved a critical file-overwrite bug in the PDF tool directory that caused a blank screen during tool invocation.
+
+#### Affected files
+- `audits/system_integration_report_2026-03-03.md`
+- `src/pages/admin/index.astro`
+- `public/pdf-tool/*` (Restored files)
+- `CHANGELOG.md`
+
+#### Side effects
+- Admin testing tab now excludes the "Home" link to streamline navigation.
+
+**中文說明：完成 2026-03-03 系統整合審核報告，確認系統達 88% 上線就緒度。優化了任務與支付管理介面，加入長按刪除防誤觸與二次確認機制，並校正了後端總時數計算邏輯。同時修復了 PDF 工具白屏問題，並統一了測試分頁的品牌配色視覺階層。**

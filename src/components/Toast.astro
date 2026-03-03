@@ -1,0 +1,102 @@
+---
+/**
+ * Toast 元件
+ * 用於顯示系統通知，取代原生的 alert()。
+ * 支援三種狀態：success (成功), error (錯誤), info (提示)
+ */
+---
+
+<div
+    id="toast-container"
+    class="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none"
+>
+    <!-- 這裡將動態注入 Toast 內容 -->
+</div>
+
+<script>
+    class ToastSystem {
+        container: HTMLElement | null = null;
+
+        constructor() {
+            // 在 ClientRouter 下，監聽導航事件以重新獲取容器
+            document.addEventListener('astro:page-load', () => {
+                this.container = document.getElementById('toast-container');
+            });
+            this.container = document.getElementById('toast-container');
+        }
+
+        show(message: string, type: 'success' | 'error' | 'info' = 'info', duration: number = 3000) {
+            if (!this.container) {
+                this.container = document.getElementById('toast-container');
+            }
+            if (!this.container) return;
+
+            const id = 'toast-' + Math.random().toString(36).substr(2, 9);
+            const toast = document.createElement('div');
+            toast.id = id;
+            toast.className = `
+                pointer-events-auto
+                flex items-center gap-3 px-5 py-3.5 
+                rounded-2xl border shadow-xl
+                transform transition-all duration-300 translate-y-4 opacity-0
+                min-w-[280px] max-w-[400px]
+            `;
+
+            // 根據類型設定樣式
+            let icon = 'notifications';
+            if (type === 'success') {
+                toast.classList.add('bg-white', 'border-uu-main/30', 'text-uu-dark');
+                icon = 'check_circle';
+            } else if (type === 'error') {
+                toast.classList.add('bg-white', 'border-red-200', 'text-red-900');
+                icon = 'report';
+            } else {
+                toast.classList.add('bg-white', 'border-uu-sub/40', 'text-uu-main');
+                icon = 'info';
+            }
+
+            toast.innerHTML = `
+                <span class="material-symbols-outlined text-xl ${type === 'success' ? 'text-uu-main' : type === 'error' ? 'text-red-500' : 'text-uu-sub'}">
+                    ${icon}
+                </span>
+                <p class="text-[13px] font-bold leading-tight flex-1">${message}</p>
+                <button class="opacity-20 hover:opacity-100 transition-opacity" onclick="this.parentElement.remove()">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </button>
+            `;
+
+            this.container.appendChild(toast);
+
+            // 動畫顯示
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            });
+
+            // 自動移除
+            if (duration !== 0) {
+                setTimeout(() => {
+                    this.remove(id);
+                }, duration);
+            }
+        }
+
+        remove(id: string) {
+            const toast = document.getElementById(id);
+            if (toast) {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }
+        }
+    }
+
+    // 將 Toast 實例掛載到 window 全域物體，方便所有腳本呼叫
+    const toastSystem = new ToastSystem();
+    (window as any).showToast = (message: string, type: any, duration: any) => toastSystem.show(message, type, duration);
+</script>
+
+<style>
+    #toast-container {
+        /* 確保不會遮擋底部的操作，但優先級最高 */
+        perspective: 1000px;
+    }
+</style>

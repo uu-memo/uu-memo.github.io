@@ -27,39 +27,6 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
             </p>
         </div>
 
-        <!-- Admin Login UI (Intermediate Page) -->
-        <div
-            id="admin-login-ui"
-            class="hidden fixed inset-0 z-50 bg-uu-base flex flex-col items-center justify-center px-6"
-        >
-            <div class="max-w-md w-full bg-white rounded-[2rem] p-10 shadow-xl border border-uu-sub/20 text-center space-y-8 animate-in fade-in zoom-in duration-500">
-                <div class="w-20 h-20 bg-uu-main/10 rounded-full flex items-center justify-center mx-auto border-4 border-white shadow-sm">
-                    <span class="material-symbols-outlined text-uu-main text-4xl">admin_panel_settings</span>
-                </div>
-                
-                <div class="space-y-2">
-                    <h2 class="text-2xl font-bold text-uu-dark font-logo uppercase tracking-wider">Restricted Access</h2>
-                    <p class="text-sm text-uu-main/60 leading-relaxed">This area is reserved for administrators only. Please sign in with an authorized Google account to continue.</p>
-                </div>
-
-                <div id="unauthorized-msg" class="hidden p-4 bg-red-50 rounded-xl border border-red-100">
-                    <p class="text-[10px] text-red-500 font-bold uppercase tracking-widest mb-1">Access Denied</p>
-                    <p id="denied-email" class="text-xs text-red-400 font-mono italic mb-3"></p>
-                    <p class="text-[10px] text-red-400 leading-tight">Please ensure your email is granted permission in Firestore rules.</p>
-                </div>
-
-                <button
-                    id="admin-login-btn"
-                    class="w-full py-4 bg-uu-dark text-white rounded-2xl flex items-center justify-center gap-3 font-black tracking-[0.2em] uppercase hover:bg-uu-main transition-all active:scale-95 shadow-lg shadow-uu-dark/10 group"
-                >
-                    <span class="material-symbols-outlined group-hover:rotate-12 transition-transform">login</span>
-                    Sign in with Google
-                </button>
-
-                <p class="text-[10px] text-uu-main/30 font-bold uppercase tracking-[0.3em]">Authorized Personnel Only</p>
-            </div>
-        </div>
-
         <!-- Admin Dashboard Container (Exact Mirror of User Dashboard Layout) -->
         <div
             id="admin-dashboard"
@@ -217,7 +184,7 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                             <div class="space-y-2">
                                 <label
                                     class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest"
-                                    >Visibility</label
+                                    >Visibility / 權限</label
                                 >
                                 <div class="relative">
                                     <select
@@ -237,6 +204,20 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                                     >
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Featured Post Selection -->
+                        <div class="bg-white/50 p-3 rounded-2xl border border-uu-sub/10 shadow-sm w-full">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <div class="relative">
+                                    <input type="checkbox" id="featured-checkbox" class="sr-only peer" />
+                                    <!-- Custom Square Checkbox -->
+                                    <div class="w-6 h-6 border-2 border-uu-sub/40 rounded-lg flex items-center justify-center transition-all duration-300 peer-checked:bg-uu-main peer-checked:border-uu-main peer-checked:shadow-md peer-checked:shadow-uu-main/20 group-hover:border-uu-main/50 bg-white">
+                                        <span class="material-symbols-outlined text-white text-lg font-bold scale-0 transition-transform duration-300 peer-checked:scale-100">check</span>
+                                    </div>
+                                </div>
+                                <span class="text-[11px] font-black text-uu-main/70 uppercase tracking-widest group-hover:text-uu-main transition-colors">精選文章</span>
+                            </label>
                         </div>
 
                         <!-- Markdown Upload Dropzone -->
@@ -998,9 +979,67 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
             // Suggest slug
             const base = file.name.replace(".md", "");
             slugInput.value = base.toLowerCase().replace(/\s+/g, "-");
+            // Sync featured checkbox
+            updateFeaturedFromText();
         };
         reader.readAsText(file);
     }
+
+    // --- Featured Post Sync Logic ---
+    const featuredCheckbox = document.getElementById("featured-checkbox") as HTMLInputElement;
+
+    function updateFeaturedFromText() {
+        if (!mdEditor || !featuredCheckbox) return;
+        const content = mdEditor.value;
+        const tagsMatch = content.match(/tags:\s*\[(.*?)\]/);
+        if (tagsMatch) {
+            const tagsStr = tagsMatch[1];
+            const isFeatured = tagsStr.includes('"精選"') || tagsStr.includes("'精選'") || tagsStr.includes("精選");
+            featuredCheckbox.checked = isFeatured;
+        } else {
+            featuredCheckbox.checked = false;
+        }
+    }
+
+    function updateTextFromFeatured() {
+        if (!mdEditor || !featuredCheckbox) return;
+        let content = mdEditor.value;
+        const isChecked = featuredCheckbox.checked;
+        
+        const tagsRegex = /tags:\s*\[(.*?)\]/;
+        const match = content.match(tagsRegex);
+
+        if (match) {
+            let tagsStr = match[1].trim();
+            let tagsArr = tagsStr ? tagsStr.split(',').map(t => t.trim().replace(/^['"]|['"]$/g, '')) : [];
+            
+            const index = tagsArr.indexOf("精選");
+            
+            if (isChecked && index === -1) {
+                tagsArr.push("精選");
+            } else if (!isChecked && index !== -1) {
+                tagsArr.splice(index, 1);
+            } else {
+                return; // No change needed
+            }
+
+            const newTagsLine = `tags: [${tagsArr.map(t => `"${t}"`).join(', ')}]`;
+            mdEditor.value = content.replace(tagsRegex, newTagsLine);
+        } else {
+            // If no tags line found, try to insert it before the closing --- of frontmatter
+            if (isChecked) {
+                const frontmatterEnd = content.indexOf('---', 3);
+                if (frontmatterEnd !== -1) {
+                    const beforeEnd = content.substring(0, frontmatterEnd);
+                    const afterEnd = content.substring(frontmatterEnd);
+                    mdEditor.value = beforeEnd + `tags: ["精選"]\n` + afterEnd;
+                }
+            }
+        }
+    }
+
+    mdEditor?.addEventListener("input", updateFeaturedFromText);
+    featuredCheckbox?.addEventListener("change", updateTextFromFeatured);
 
     let processedImages: any[] = [];
 
@@ -1599,13 +1638,8 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
     // --- Authentication & Initialization Execution ---
     onAuthStateChanged(auth, async (user) => {
         if (!user) {
-            // No User -> Show Login UI
-            loading?.classList.add("opacity-0");
-            setTimeout(() => {
-                loading?.classList.add("hidden");
-                loginUI?.classList.remove("hidden");
-                dashboard?.classList.add("hidden");
-            }, 300);
+            // No User -> Redirect to Shared Login
+            window.location.replace("/login");
             return;
         }
 
@@ -1638,15 +1672,8 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
         } catch (err: any) {
             // Access Denied (Logged in but no permission)
             console.error("[Auth] Access Denied for", user.email, ":", err.code);
-            
-            if (deniedEmail) deniedEmail.textContent = user.email || "Unknown Account";
-            unauthorizedMsg?.classList.remove("hidden");
-            
-            loading?.classList.add("opacity-0");
-            setTimeout(() => {
-                loading?.classList.add("hidden");
-                loginUI?.classList.remove("hidden");
-            }, 300);
+            alert("存取被拒絕：帳號 " + user.email + " 不具備管理員權限。正在返回個人中心...");
+            window.location.replace("/user");
         }
     });
 
