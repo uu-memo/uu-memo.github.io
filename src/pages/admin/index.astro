@@ -636,6 +636,17 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
                                     <p class="text-[9px] text-uu-main/40 leading-relaxed mt-2">請使用具備存取此內容 Repo 權限的權杖。您可以從 GitHub Settings &gt; Developer settings 獲取。</p>
                                 </div>
 
+                                <div class="space-y-3">
+                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block">權杖備註 (Token Remark)</label>
+                                    <input
+                                        type="text"
+                                        id="sys-github-token-note"
+                                        class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner"
+                                        placeholder="例如：2024-12-31 到期 / 用於內容同步"
+                                    />
+                                    <p class="text-[9px] text-uu-main/40 leading-relaxed mt-1">此欄位僅供您備註，不會用於 API 驗證。</p>
+                                </div>
+
                                 <div class="pt-4">
                                      <button id="save-github-token-btn" class="flex items-center justify-center gap-3 w-full sm:w-auto px-10 py-3.5 bg-uu-main text-white rounded-xl text-[11px] font-black tracking-[0.2em] uppercase hover:bg-uu-dark transition-all active:scale-[0.98] shadow-lg shadow-uu-main/10 group">
                                         <span id="save-token-btn-text">儲存 GitHub 權杖</span>
@@ -869,6 +880,7 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
 
     // --- GitHub Token Vault Logic ---
     const githubTokenInput = document.getElementById("sys-github-token") as HTMLInputElement;
+    const githubTokenNote = document.getElementById("sys-github-token-note") as HTMLInputElement;
     const saveTokenBtn = document.getElementById("save-github-token-btn");
     const saveTokenText = document.getElementById("save-token-btn-text");
     const saveTokenLoader = document.getElementById("save-token-loader");
@@ -890,6 +902,9 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
                 if (githubTokenInput && data.github_token) {
                     githubTokenInput.value = data.github_token;
                 }
+                if (githubTokenNote && data.github_token_note) {
+                    githubTokenNote.value = data.github_token_note;
+                }
             }
         } catch (err) {
             console.error("[System] Failed to fetch GitHub Token (Expected if not set):", err);
@@ -909,6 +924,7 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
         try {
             await setDoc(doc(db, "admin_vault", "credentials"), {
                 github_token: githubTokenInput.value.trim(),
+                github_token_note: githubTokenNote?.value.trim() || "",
                 updated_at: serverTimestamp(),
                 owner: "jing180804@gmail.com"
             });

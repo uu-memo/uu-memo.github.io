@@ -833,6 +833,7 @@ All notable changes to this project will be documented in this file.
     - Removed aggressive alert colors (Amber/Red) from the Admin dashboard.
     - Replaced with brand-aligned `UU-Base/Sub` gray tones and `UU-Main` charcoal themes.
     - Fixed broken Material Symbol icon (`pests` -> `bug_report`).
+    - Added **Token Remark (權杖備註)** field for managing PAT expiration and metadata.
     - Enhanced component elevation and micro-interactions.
 
 #### Affected Files
