@@ -829,6 +829,11 @@ All notable changes to this project will be documented in this file.
 - **OG Image Optimization (OG 抓取優化)**: Implemented intelligent fallback for Open Graph images (Hero Image > Content First Image > Default Site Image).
 - **SEO Enhancements**: Added dynamic meta descriptions and OG tags to post layouts.
 
+- **UI Aesthetic Refinement (視覺美學優化)**: 
+    - Removed aggressive alert colors (Amber/Red) from the Admin dashboard.
+    - Replaced with brand-aligned `UU-Base/Sub` gray tones and `UU-Main` charcoal themes.
+    - Enhanced component elevation and micro-interactions.
+
 #### Affected Files
 - `/firestore.rules`
 - `/src/components/Comments.astro`
@@ -837,4 +842,4 @@ All notable changes to this project will be documented in this file.
 - `/src/pages/admin/index.astro`
 - `/src/lib/githubSync.ts` (New)
 
-**中文說明：執行架構遷移至「方案 D」，實作瀏覽器直接同步 GitHub 功能，擺脫 GAS 的 CORS 限制。同步流程現具備完整的狀態回饋。權杖安全存儲於 Firestore 憑證庫，僅限站長存取。同步優化包含 OG 圖像抓取、SEO 摘要自動生成與管理員身份統一。**
+**中文說明：執行架構遷移至「方案 D」，實作瀏覽器直接同步 GitHub 功能，擺脫 GAS 的 CORS 限制。同步流程現具備完整的狀態回饋。權杖安全存儲於 Firestore 憑證庫，僅限站長存取。同步優化包含 OG 圖像抓取、SEO 摘要自動生成與管理員身份統一。此外，全面優化了後台視覺系統，將突兀的警告色替換為 UU-MEMO 標誌性的高級灰調與品牌色系，維持全站美學一致性。**

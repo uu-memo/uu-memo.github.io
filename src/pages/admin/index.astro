@@ -615,9 +615,9 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
                             </div>
 
                             <div class="space-y-6">
-                                <div class="flex items-center gap-2 px-4 py-3 bg-amber-50 rounded-xl border border-amber-200">
-                                    <span class="material-symbols-outlined text-amber-600 text-sm">lock</span>
-                                    <p class="text-[10px] text-amber-700 font-bold">資產存儲：此權杖將安全存儲於加密保管庫中，僅站長本人可讀取。</p>
+                                <div class="flex items-center gap-2 px-4 py-3 bg-uu-base/30 rounded-xl border border-uu-sub/10">
+                                    <span class="material-symbols-outlined text-uu-main/40 text-sm">lock</span>
+                                    <p class="text-[10px] text-uu-main/60 font-bold">資產存儲：此權杖將安全存儲於加密保管庫中，僅站長本人可讀取。</p>
                                 </div>
 
                                 <div class="space-y-3">
@@ -656,16 +656,16 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
                         </div>
 
                         <!-- NEW: Build Cleanup Section -->
-                        <div class="bg-red-50/50 border border-red-100 rounded-2xl p-8 space-y-4">
-                            <div class="flex items-center gap-3 mb-2 pb-4 border-b border-red-100">
-                                <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-red-600 text-sm">pests</span>
+                        <div class="bg-white border border-uu-sub/20 rounded-2xl p-8 space-y-4 shadow-sm">
+                            <div class="flex items-center gap-3 mb-2 pb-4 border-b border-uu-sub/10">
+                                <div class="w-8 h-8 rounded-lg bg-uu-main/5 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-uu-main/50 text-sm">pests</span>
                                 </div>
-                                <h4 class="text-xs font-black text-red-900 uppercase tracking-widest">故障排除：清除建置錯誤 (Emergency Fix)</h4>
+                                <h4 class="text-xs font-black text-uu-dark uppercase tracking-widest">故障排除：清除建置錯誤 (Emergency Fix)</h4>
                             </div>
-                            <p class="text-[10px] text-red-700/70 leading-relaxed font-medium">如果在同步後 GitHub 建置失敗，可能是因為某些草稿檔案格式不正確（例如 <code class="bg-red-100 px-1 rounded">test.md</code>）。點擊下方按鈕將會從 GitHub 遠端強制刪除該損毀檔案。</p>
+                            <p class="text-[10px] text-uu-main/50 leading-relaxed font-bold">如果在同步後 GitHub 建置失敗，可能是因為某些草稿檔案格式不正確（例如 <code class="bg-uu-base/40 px-1 rounded">test.md</code>）。管理員可點擊下方按鈕強制從 GitHub 遠端清理該損毀檔案。</p>
                             <div class="pt-2">
-                                <button id="cleanup-build-btn" class="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-red-700 transition-all shadow-lg shadow-red-200">
+                                <button id="cleanup-build-btn" class="flex items-center gap-2 px-6 py-3 bg-uu-main text-white rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-uu-dark transition-all shadow-lg shadow-uu-main/10 active:scale-[0.98]">
                                     <span class="material-symbols-outlined text-sm">delete_forever</span>
                                     強制刪除 test.md 並修復建置
                                 </button>
