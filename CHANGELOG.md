@@ -850,3 +850,49 @@ All notable changes to this project will be documented in this file.
 - `/src/lib/githubSync.ts` (New)
 
 **中文說明：執行架構遷移至「方案 D」，實作瀏覽器直接同步 GitHub 功能，擺脫 GAS 的 CORS 限制。同步流程現具備完整的狀態回饋。權杖安全存儲於 Firestore 憑證庫，僅限站長存取。同步優化包含 OG 圖像抓取、SEO 摘要自動生成與管理員身份統一。此外，全面優化了後台視覺系統，將突兀的警告色替換為 UU-MEMO 標誌性的高級灰調與品牌色系，維持全站美學一致性。**
+### [2026-03-04] - Custom Modal System & Native Dialog Replacement
+
+#### Summary of changes
+- Designed and implemented a custom, promise-based Modal system to replace blocky native browser dialogs (`confirm`, `alert`).
+- Integrated the new Modal system into all administrative workflows, including account verification, article synchronization, and comment management.
+- Enhanced UI consistency across the Admin Dashboard by aligning dialog aesthetics with the UU-MEMO brand design.
+
+#### Technical details
+- Developed a high-fidelity `CustomModal` component in `src/pages/admin/index.astro` using Vanilla JS and Tailwind CSS.
+- Implemented `CustomModal.confirm()` and `CustomModal.alert()` as asynchronous methods returning Promises, preventing JavaScript thread blocking.
+- Added support for adaptive themes (`main`, `danger`) and custom Material Symbols icons for different contexts (e.g., destructive deletions vs. informational notices).
+- Replaced all remaining instances of native `window.confirm()` and `window.alert()` in the Admin codebase with the new asynchronous equivalents.
+- Refined the authorization lifecycle to use the custom Modal for permission-denied prompts and login failure alerts.
+
+#### Affected files
+- `src/pages/admin/index.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None anticipated. All dialogs now operate asynchronously but maintain the original functional flow.
+
+**中文說明：實作自定義 Promise-based Modal 系統並全面汰換原生瀏覽器對話框。現在所有的確認視窗（如刪除留言、發布文章）與警告資訊（如登入失敗）均採用符合 UU-MEMO 品牌設計的自定義組件，解決了原生實作會阻斷執行緒且無法美化的問題。**
+
+### [2026-03-04] - Custom Select Component & Article Management Restoration
+
+#### Summary of changes
+- Designed and implemented `UUSelect`: A premium, custom dropdown component to replace native HTML `<select>` elements.
+- Successfully restored the "Content Management" tab, which provides a searchable and paginated interface for all blog articles.
+- Replaced the native visibility selector in the article editor and the category filter in managing view with the new `UUSelect`.
+- Fixed various visual regressions in the admin sidebar.
+
+#### Technical details
+- Created a reusable `UUSelect` object with `init`, `refresh`, and `toggle` methods.
+- The component dynamically proxies the hidden native select element, ensuring form data integrity while providing a glassmorphism-inspired UI.
+- Restored the full article listing logic, including GitHub API integration and local pagination filters.
+- Implemented smooth dropdown animations and hover states to align with the UU-MEMO "high-quality design" philosophy.
+
+#### Affected files
+- `src/pages/admin/index.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None. Native `select` elements are kept as hidden inputs to ensure no breakage in existing form logic.
+
+**中文說明：成功開發自定義 `UUSelect` 高級下拉選單組件，全面取代瀏覽器原生 Select，並同步修復了先前遺漏的文章管理分頁功能。現在的管理後台具備更高質感的互動體驗，且支援動態分類篩選與分頁預覽功能。**
+

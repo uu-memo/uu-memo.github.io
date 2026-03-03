@@ -66,6 +66,18 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
 
                     <nav class="w-full flex flex-col gap-1.5">
                         <button
+                            class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
+                            data-tab="manage"
+                        >
+                            <span class="material-symbols-outlined text-xl"
+                                >inventory_2</span
+                            >
+                            <span
+                                class="text-sm font-bold tracking-widest leading-none"
+                                >文章管理</span
+                            >
+                        </button>
+                        <button
                             class="tab-btn active group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full bg-uu-main text-white shadow-sm text-left"
                             data-tab="editor"
                         >
@@ -189,7 +201,7 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                                 <div class="relative">
                                     <select
                                         id="post-status"
-                                        class="w-full appearance-none bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all pr-10"
+                                        class="hidden"
                                     >
                                         <option value="public"
                                             >立即發佈 (Public)</option
@@ -198,10 +210,6 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                                             >私密閱讀 (Private)</option
                                         >
                                     </select>
-                                    <span
-                                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-uu-main/40 pointer-events-none"
-                                        >expand_more</span
-                                    >
                                 </div>
                             </div>
                         </div>
@@ -299,6 +307,52 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
                                 text="SYNC TO GITHUB" 
                                 icon="send"
                             />
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CONTENT: MANAGE -->
+                <section id="tab-manage" class="tab-content hidden w-full flex-1 flex flex-col p-10">
+                    <div class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main">
+                                <span class="material-symbols-outlined">inventory_2</span>
+                            </div>
+                            <h3 class="font-bold text-xl text-uu-dark">文章管理</h3>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-48">
+                                <select id="manage-category-filter" class="hidden">
+                                     <option value="all">所有分類 (All)</option>
+                                </select>
+                            </div>
+                            <button id="refresh-posts-btn" class="p-2.5 bg-uu-sub/10 text-uu-main rounded-xl hover:bg-uu-main hover:text-white transition-all active:scale-95">
+                                <span class="material-symbols-outlined text-sm">refresh</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex-1">
+                        <div class="bg-white border border-uu-sub/20 rounded-2xl overflow-hidden shadow-sm">
+                            <table class="w-full text-left">
+                                <thead class="bg-uu-base/30 border-b border-uu-sub/20">
+                                    <tr>
+                                        <th class="px-6 py-4 text-[10px] font-black text-uu-main/40 uppercase tracking-widest">日期</th>
+                                        <th class="px-6 py-4 text-[10px] font-black text-uu-main/40 uppercase tracking-widest">標題 / 網址標記</th>
+                                        <th class="px-6 py-4 text-[10px] font-black text-uu-main/40 uppercase tracking-widest text-center">分類</th>
+                                        <th class="px-6 py-4 text-[10px] font-black text-uu-main/40 uppercase tracking-widest text-right">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="posts-table-body" class="divide-y divide-uu-sub/10">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex items-center justify-between pb-4">
+                        <p id="posts-count-info" class="text-[10px] text-uu-main/40 font-bold uppercase tracking-widest"></p>
+                        <div id="manage-pagination" class="flex items-center gap-2">
                         </div>
                     </div>
                 </section>
@@ -689,6 +743,26 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
     </main>
 
     <Footer />
+    
+    <!-- Custom Dialog Modal -->
+    <div id="custom-modal-container" class="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300">
+        <div id="custom-modal-backdrop" class="absolute inset-0 bg-uu-dark/60 backdrop-blur-sm"></div>
+        <div id="custom-modal-card" class="relative bg-white rounded-[2.5rem] p-8 max-w-sm w-full mx-4 shadow-2xl scale-95 transition-transform duration-300 border border-uu-sub/10">
+            <div class="flex flex-col items-center text-center space-y-6">
+                <div id="custom-modal-icon-bg" class="w-16 h-16 rounded-3xl bg-uu-sub/5 flex items-center justify-center">
+                    <span id="custom-modal-icon" class="material-symbols-outlined text-3xl text-uu-main">help</span>
+                </div>
+                <div class="space-y-2">
+                    <h3 id="custom-modal-title" class="text-xl font-black text-uu-dark tracking-tight">確認操作</h3>
+                    <p id="custom-modal-message" class="text-sm text-uu-main/60 leading-relaxed font-medium">確定要執行此操作嗎？</p>
+                </div>
+                <div class="flex items-center gap-3 w-full pt-2">
+                    <button id="custom-modal-cancel" class="flex-1 py-4 bg-uu-sub/10 text-uu-main/60 rounded-2xl text-[11px] font-black tracking-widest uppercase hover:bg-uu-sub/20 transition-all active:scale-95">取消</button>
+                    <button id="custom-modal-confirm" class="flex-1 py-4 bg-uu-main text-white rounded-2xl text-[11px] font-black tracking-widest uppercase hover:bg-uu-dark hover:shadow-lg hover:shadow-uu-main/20 transition-all active:scale-95">確定執行</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </Layout>
 
 <script>
@@ -737,6 +811,192 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
     const slugInput = document.getElementById("post-slug") as HTMLInputElement;
     const mdEditor = document.getElementById("md-content") as HTMLTextAreaElement;
     const githubTokenInput = document.getElementById("sys-github-token") as HTMLInputElement;
+
+    // --- Custom Modal Logic ---
+    const modalContainer = document.getElementById("custom-modal-container");
+    const modalBackdrop = document.getElementById("custom-modal-backdrop");
+    const modalCard = document.getElementById("custom-modal-card");
+    const modalTitle = document.getElementById("custom-modal-title");
+    const modalMessage = document.getElementById("custom-modal-message");
+    const modalConfirmBtn = document.getElementById("custom-modal-confirm");
+    const modalCancelBtn = document.getElementById("custom-modal-cancel");
+    const modalIcon = document.getElementById("custom-modal-icon");
+    const modalIconBg = document.getElementById("custom-modal-icon-bg");
+
+    let modalResolve: ((value: boolean) => void) | null = null;
+
+    const CustomModal = {
+        confirm: ({ title = "確認", message = "", confirmText = "確定", cancelText = "取消", icon = "help", theme = "main" }) => {
+            return new Promise<boolean>((resolve) => {
+                if (!modalContainer || !modalCard || !modalTitle || !modalMessage || !modalConfirmBtn || !modalCancelBtn || !modalIcon) return resolve(false);
+                
+                modalTitle.textContent = title;
+                modalMessage.textContent = message;
+                modalConfirmBtn.textContent = confirmText;
+                modalCancelBtn.textContent = cancelText;
+                modalIcon.textContent = icon;
+                modalCancelBtn.classList.remove('hidden');
+
+                // Theme Logic
+                if (theme === 'danger') {
+                    modalIcon.className = "material-symbols-outlined text-3xl text-red-500";
+                    modalIconBg?.classList.remove('bg-uu-sub/5');
+                    modalIconBg?.classList.add('bg-red-50');
+                    modalConfirmBtn.className = "flex-1 py-4 bg-red-500 text-white rounded-2xl text-[11px] font-black tracking-widest uppercase hover:bg-red-600 hover:shadow-lg hover:shadow-red-500/20 transition-all active:scale-95";
+                } else {
+                    modalIcon.className = "material-symbols-outlined text-3xl text-uu-main";
+                    modalIconBg?.classList.remove('bg-red-50');
+                    modalIconBg?.classList.add('bg-uu-sub/5');
+                    modalConfirmBtn.className = "flex-1 py-4 bg-uu-main text-white rounded-2xl text-[11px] font-black tracking-widest uppercase hover:bg-uu-dark hover:shadow-lg hover:shadow-uu-main/20 transition-all active:scale-95";
+                }
+
+                modalResolve = resolve;
+                modalContainer.classList.remove("pointer-events-none", "opacity-0");
+                modalCard.classList.remove("scale-95");
+                modalCard.classList.add("scale-100");
+            });
+        },
+        alert({ title = "提示", message = "", confirmText = "了解", icon = "info", theme = "primary" }) {
+            return new Promise<void>((resolve) => {
+                const modalCancelBtn = document.getElementById('custom-modal-cancel');
+                if (modalCancelBtn) modalCancelBtn.classList.add('hidden');
+                
+                this.confirm({ title, message, confirmText, icon, theme, cancelText: "" }).then(() => {
+                    if (modalCancelBtn) modalCancelBtn.classList.remove('hidden');
+                    resolve();
+                });
+            });
+        },
+        close: (result: boolean) => {
+            if (!modalContainer || !modalCard) return;
+            modalContainer.classList.add("pointer-events-none", "opacity-0");
+            modalCard.classList.remove("scale-100");
+            modalCard.classList.add("scale-95");
+            if (modalResolve) {
+                modalResolve(result);
+                modalResolve = null;
+            }
+        }
+    };
+
+    /**
+     * UUSelect: Custom Dropdown Component
+     * Replaces native <select> with a premium UI while keeping the original functional.
+     */
+    const UUSelect = {
+        instances: new Map(),
+        
+        init(selectId, options = {}) {
+            const nativeSelect = document.getElementById(selectId) as HTMLSelectElement;
+            if (!nativeSelect) return;
+            
+            // Hide native select
+            nativeSelect.classList.add('hidden');
+            
+            // Cleanup existing container if re-initializing
+            const existingContainer = nativeSelect.closest('.uu-select-container');
+            if (existingContainer) {
+                existingContainer.querySelector('.uu-select-trigger')?.remove();
+                existingContainer.querySelector('.uu-select-dropdown')?.remove();
+            } else {
+                // Create container
+                const container = document.createElement('div');
+                container.className = 'uu-select-container';
+                nativeSelect.parentNode?.insertBefore(container, nativeSelect);
+                container.appendChild(nativeSelect);
+            }
+            
+            const container = nativeSelect.closest('.uu-select-container') as HTMLElement;
+
+            // Create trigger
+            const trigger = document.createElement('div');
+            trigger.className = 'uu-select-trigger';
+            trigger.innerHTML = `
+                <span class="selected-text"></span>
+                <span class="material-symbols-outlined text-sm">expand_more</span>
+            `;
+            container.appendChild(trigger);
+            
+            // Create dropdown
+            const dropdown = document.createElement('div');
+            dropdown.className = 'uu-select-dropdown';
+            container.appendChild(dropdown);
+            
+            const instance = { nativeSelect, container, trigger, dropdown, options };
+            this.instances.set(selectId, instance);
+            
+            this.refresh(selectId);
+            
+            // Event listeners
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggle(selectId);
+            });
+            
+            // Global click to close
+            if (!(window as any)._uuSelectGlobalHandled) {
+                document.addEventListener('click', () => this.closeAll());
+                (window as any)._uuSelectGlobalHandled = true;
+            }
+        },
+        
+        refresh(selectId) {
+            const instance = this.instances.get(selectId);
+            if (!instance) return;
+            
+            const { nativeSelect, trigger, dropdown, options } = instance;
+            const selectedOption = nativeSelect.options[nativeSelect.selectedIndex];
+            
+            const selectedText = trigger.querySelector('.selected-text');
+            if (selectedText) selectedText.textContent = selectedOption ? selectedOption.textContent : '請選擇...';
+            
+            // Build options
+            dropdown.innerHTML = '';
+            Array.from(nativeSelect.options).forEach((opt, index) => {
+                const item = document.createElement('div');
+                item.className = `uu-select-option ${index === nativeSelect.selectedIndex ? 'selected' : ''}`;
+                
+                // Optional icon support
+                const icon = options.icons ? options.icons[opt.value] : (options.defaultIcon || 'label');
+                item.innerHTML = `
+                    <span class="material-symbols-outlined option-icon">${icon}</span>
+                    <span>${opt.textContent}</span>
+                `;
+                
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    nativeSelect.value = opt.value;
+                    nativeSelect.dispatchEvent(new Event('change'));
+                    this.refresh(selectId);
+                    this.closeAll();
+                });
+                dropdown.appendChild(item);
+            });
+        },
+        
+        toggle(selectId) {
+            const instance = this.instances.get(selectId);
+            if (!instance) return;
+            const isOpen = instance.dropdown.classList.contains('open');
+            this.closeAll();
+            if (!isOpen) {
+                instance.dropdown.classList.add('open');
+                instance.trigger.classList.add('active');
+            }
+        },
+        
+        closeAll() {
+            this.instances.forEach(inst => {
+                inst.dropdown.classList.remove('open');
+                inst.trigger.classList.remove('active');
+            });
+        }
+    };
+    (window as any).CustomModal = CustomModal;
+
+    modalConfirmBtn?.addEventListener("click", () => CustomModal.close(true));
+    modalCancelBtn?.addEventListener("click", () => CustomModal.close(false));
+    modalBackdrop?.addEventListener("click", () => CustomModal.close(false));
 
     // --- Tab Logic ---
     const tabBtns = document.querySelectorAll(".tab-btn");
@@ -868,7 +1128,12 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
         const templateEl = document.getElementById("draft-template") as HTMLTextAreaElement;
         if (!templateEl) return;
 
-        if (!confirm("確定要將目前的微調內容儲存為資料庫的『預設模板』嗎？\n儲存後，未來重新整理頁面也會以此次修改為準。")) return;
+        if (!(await CustomModal.confirm({
+            title: "儲存預設模板",
+            message: "確定要將目前的微調內容儲存為資料庫的『預設模板』嗎？儲存後重新整理頁面也會生效。",
+            confirmText: "儲存模板",
+            icon: "save_as"
+        }))) return;
 
         const originalHtml = saveTemplateBtn.innerHTML;
         saveTemplateBtn.innerHTML = `<span class="material-symbols-outlined text-xs animate-spin">sync</span> 儲存中...`;
@@ -1013,7 +1278,12 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
             return;
         }
 
-        if (!confirm("確定要將「關於我」的更新同步至 GitHub 嗎？\n這將觸發一次網站自動建置（約 1-2 分鐘後生效）。")) return;
+        if (!(await CustomModal.confirm({
+            title: "同步關於我",
+            message: "確定要將「關於我」的更新同步至 GitHub 嗎？這將觸發網站自動建置。",
+            confirmText: "開始同步",
+            icon: "sync_alt"
+        }))) return;
 
         authorSaveLoader.classList.remove("hidden");
         authorSaveBtn.setAttribute("disabled", "true");
@@ -1456,8 +1726,14 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
 
         // Specific Permanent Delete for nested replies
         commentsList.querySelectorAll(".action-perm-delete").forEach((btn) => {
-            btn.addEventListener("click", () => {
-                if(confirm("確定要永久刪除此條回覆？")) {
+            btn.addEventListener("click", async () => {
+                if(await CustomModal.confirm({
+                    title: "永久刪除回覆",
+                    message: "確定要永久刪除此條回覆？此操作不可恢復。",
+                    confirmText: "刪除回覆",
+                    theme: "danger",
+                    icon: "delete_forever"
+                })) {
                     deleteDoc(doc(db, "comments", btn.getAttribute("data-id")!));
                 }
             });
@@ -1512,13 +1788,24 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
 
         if (comment.is_deleted) {
             // Permanent Delete
-            if (!confirm("確定要將這條留言從資料庫徹底移除嗎？此操作不可恢復。")) return;
+            if (!(await CustomModal.confirm({
+                title: "徹底刪除留言",
+                message: "確定要將這條留言從資料庫徹底移除嗎？此操作不可恢復。",
+                confirmText: "徹底刪除",
+                theme: "danger",
+                icon: "delete_forever"
+            }))) return;
             try {
                 await deleteDoc(doc(db, "comments", id));
             } catch (e) { (window as any).showToast("刪除失敗: " + e, 'error'); }
         } else {
             // Move to Trash
-            if (!confirm("將此留言移至回收桶？")) return;
+            if (!(await CustomModal.confirm({
+                title: "移至回收桶",
+                message: "確定要將此留言移至回收桶？您之後仍可以在回收分頁中復原。",
+                confirmText: "移至回收桶",
+                icon: "delete"
+            }))) return;
             try {
                 await updateDoc(doc(db, "comments", id), { is_deleted: true });
             } catch (e) { (window as any).showToast("移動失敗: " + e, 'error'); }
@@ -1608,7 +1895,12 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
             return;
         }
 
-        if (!confirm("確定要將文章與圖片同步至 GitHub 嗎？")) return;
+        if (!(await CustomModal.confirm({
+            title: "發布確認",
+            message: "確定要將文章與圖片同步至 GitHub 嗎？",
+            confirmText: "同步 GitHub",
+            icon: "cloud_sync"
+        }))) return;
 
         (window as any).showToast("正在建立同步請求...", 'info');
 
@@ -1682,7 +1974,13 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
     // --- Cleanup Build Logic ---
     const cleanupBtn = document.getElementById("cleanup-build-btn");
     cleanupBtn?.addEventListener("click", async () => {
-        if (!confirm("確定要從 GitHub 刪除 src/content/posts/test.md 嗎？這通常用於修復建置失敗。")) return;
+        if (!(await CustomModal.confirm({
+            title: "緊急修復修復",
+            message: "確定要從 GitHub 刪除 test.md 嗎？這通常用於修復建置失敗。",
+            confirmText: "刪除檔案",
+            theme: "danger",
+            icon: "warning"
+        }))) return;
         
         const originalContent = cleanupBtn.innerHTML;
         cleanupBtn.innerHTML = `<span class="material-symbols-outlined text-sm animate-spin">sync</span> 清理中...`;
@@ -1711,7 +2009,12 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
     // --- Seeding Logic ---
     const seedBtn = document.getElementById("seed-comments-btn");
     seedBtn?.addEventListener("click", async () => {
-        if (!confirm("Add 3 test comments to Firestore?")) return;
+        if (!(await CustomModal.confirm({
+            title: "測試數據",
+            message: "確定要在 Firestore 中建立 3 條測試留言嗎？",
+            confirmText: "建立數據",
+            icon: "database"
+        }))) return;
 
         const testData = [
             {
@@ -1752,9 +2055,9 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
             for (const item of testData) {
                 await addDoc(collection(db, "comments"), item);
             }
-            alert("Test data seeded successfully!");
+            await CustomModal.alert({ title: "數據建立成功", message: "測試留言已成功寫入 Firestore。", icon: "check_circle" });
         } catch (e) {
-            alert("Seeding failed: " + e);
+            await CustomModal.alert({ title: "建立失敗", message: "錯誤原因: " + e, theme: "danger", icon: "error" });
         }
     });
 
@@ -1764,7 +2067,12 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
             const provider = new GoogleAuthProvider();
             await signInWithPopup(auth, provider);
         } catch (err: any) {
-            alert("Login Failed: " + err.message);
+            await CustomModal.alert({
+                title: "登入失敗",
+                message: "身份驗證過程中發生錯誤: " + err.message,
+                theme: "danger",
+                icon: "error"
+            });
         }
     });
 
@@ -1806,7 +2114,12 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
         } catch (err: any) {
             // Access Denied (Logged in but no permission)
             console.error("[Auth] Access Denied for", user.email, ":", err.code);
-            alert("存取被拒絕：帳號 " + user.email + " 不具備管理員權限。正在返回個人中心...");
+            await CustomModal.alert({
+                title: "存取被拒絕",
+                message: "帳號 " + user.email + " 不具備管理員權限。正在返回個人中心...",
+                theme: "danger",
+                icon: "gpp_bad"
+            });
             window.location.replace("/user");
         }
     });
@@ -1886,6 +2199,7 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
                 }, 2000);
             }
         });
+    }
 
     // --- Content Management Logic ---
     const postsTableBody = document.getElementById("posts-table-body");
@@ -1941,6 +2255,9 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
             categoryFilter.appendChild(option);
         });
         categoryFilter.value = currentVal;
+        
+        // Refresh custom select
+        UUSelect.refresh("manage-category-filter");
     }
 
     function renderPosts() {
@@ -2030,7 +2347,7 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
             updateFeaturedFromText();
             const pushBtnText = finalPushBtn?.querySelector('span:not(.material-symbols-outlined)');
             if (pushBtnText) pushBtnText.textContent = "UPDATE POST";
-            if (finalPushBtn) finalPushBtn.classList.replace("bg-uu-main", "bg-uu-dark");
+            if (finalPushBtn) finalPushBtn.classList.replace("bg-uu-dark", "bg-uu-main");
 
             const editorTabBtn = document.querySelector('[data-tab="editor"]') as HTMLButtonElement;
             editorTabBtn?.click();
@@ -2046,13 +2363,29 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
         loadPosts();
     });
 
+    // Initialize Custom Selects
+    UUSelect.init("post-status", {
+        icons: {
+            'public': 'public',
+            'private': 'lock'
+        }
+    });
+    
+    UUSelect.init("manage-category-filter", {
+        defaultIcon: 'category'
+    });
+
     categoryFilter?.addEventListener("change", () => {
         currentFilter = categoryFilter.value;
         currentPage = 1;
         renderPosts();
     });
 
-    loadPosts(); // Initial load if needed or tab triggers it
+    const manageTabBtn = document.querySelector('[data-tab="manage"]');
+    manageTabBtn?.addEventListener("click", () => {
+        if (allPosts.length === 0) loadPosts();
+    });
+
     initDraftTool();
 }
 </script>
@@ -2096,5 +2429,98 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
     #md-content::-webkit-scrollbar-thumb {
         background: rgba(26, 26, 26, 0.1);
         border-radius: 10px;
+    }
+
+    /* Custom Select Component Styles */
+    .uu-select-container {
+        position: relative;
+        width: 100%;
+    }
+    .uu-select-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0.75rem 1.25rem;
+        background: rgba(245, 240, 231, 0.4);
+        border: 1px solid rgba(221, 204, 180, 0.3);
+        border-radius: 0.875rem;
+        font-size: 0.8125rem;
+        color: #6d492f;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        user-select: none;
+        backdrop-filter: blur(4px);
+    }
+    .uu-select-trigger:hover {
+        border-color: #6d492f;
+        background: white;
+        box-shadow: 0 4px 12px rgba(109, 73, 47, 0.05);
+    }
+    .uu-select-trigger.active {
+        border-color: #6d492f;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(109, 73, 47, 0.05);
+    }
+    .uu-select-trigger .material-symbols-outlined {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        color: rgba(109, 73, 47, 0.4);
+    }
+    .uu-select-trigger.active .material-symbols-outlined {
+        transform: rotate(180deg);
+        color: #6d492f;
+    }
+    .uu-select-dropdown {
+        position: absolute;
+        top: calc(100% + 0.625rem);
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid rgba(221, 204, 179, 0.15);
+        border-radius: 1.25rem;
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        z-index: 100;
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+        pointer-events: none;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        padding: 0.5rem;
+    }
+    .uu-select-dropdown.open {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+    }
+    .uu-select-option {
+        padding: 0.75rem 1rem;
+        font-size: 0.8125rem;
+        color: #6d492f;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        border-radius: 0.75rem;
+        margin-bottom: 0.125rem;
+    }
+    .uu-select-option:last-child {
+        margin-bottom: 0;
+    }
+    .uu-select-option:hover {
+        background: rgba(109, 73, 47, 0.05);
+        color: #4a301e;
+    }
+    .uu-select-option.selected {
+        background: #6d492f;
+        color: white;
+        font-weight: bold;
+    }
+    .uu-select-option .option-icon {
+        font-size: 1.125rem;
+        opacity: 0.6;
+    }
+    .uu-select-option.selected .option-icon {
+        opacity: 1;
     }
 </style>
