@@ -399,12 +399,12 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
 
 ```markdown
 ---
-title: "【{{cat}}】幫我想一個吸睛的主題標題"
+title: "【&#123;&#123;cat&#125;&#125;】幫我想一個吸睛的主題標題"
 description: "請根據文章內容生成約 50 字的溫暖 SEO 摘要"
-publishDate: {{date}}
-category: [{{cat}}]
-tags: [{{tags}}]
-heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
+publishDate: &#123;&#123;date&#125;&#125;
+category: [&#123;&#123;cat&#125;&#125;]
+tags: [&#123;&#123;tags&#125;&#125;]
+heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&#125;-&#123;&#123;slug&#125;&#125;-01.jpg'
 ---
 ```</textarea>
                             <p class="text-[9px] text-uu-main/40 mt-1">您可以使用 <code class="bg-white px-1 py-0.5 rounded shadow-sm border border-uu-sub/10 opacity-80">&#123;&#123;變數&#125;&#125;</code> 來替換上方表單內容，例如：&#123;&#123;q1&#125;&#125;, &#123;&#123;cat&#125;&#125;, &#123;&#123;tags&#125;&#125;</p>
@@ -890,7 +890,6 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
 
 
     // --- GitHub Token Vault Logic ---
-    const githubTokenInput = document.getElementById("sys-github-token") as HTMLInputElement;
     const githubTokenNote = document.getElementById("sys-github-token-note") as HTMLInputElement;
     const saveTokenBtn = document.getElementById("save-github-token-btn");
     const saveTokenText = document.getElementById("save-token-btn-text");
@@ -1061,10 +1060,6 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
     const mdInput = document.getElementById(
         "md-file-input"
     ) as HTMLInputElement;
-    const mdEditor = document.getElementById(
-        "md-content"
-    ) as HTMLTextAreaElement;
-    const slugInput = document.getElementById("post-slug") as HTMLInputElement;
 
     slugInput?.addEventListener("input", (e) => {
         const dateStr = new Date().toISOString().split('T')[0].substring(2).replace(/-/g, '');
@@ -1602,7 +1597,6 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
     };
 
     // --- Sync to GitHub Logic ---
-    const finalPushBtn = document.getElementById("final-push-btn");
 
     finalPushBtn?.addEventListener("click", async () => {
         const slug = slugInput.value.trim();
@@ -1892,7 +1886,6 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
                 }, 2000);
             }
         });
-    };
 
     // --- Content Management Logic ---
     const postsTableBody = document.getElementById("posts-table-body");
@@ -2059,14 +2052,9 @@ heroImage: '/images/{{datePath}}/{{datePath}}-{{slug}}-01.jpg'
         renderPosts();
     });
 
-    const manageTabBtn = document.querySelector('[data-tab="manage"]');
-    manageTabBtn?.addEventListener("click", () => {
-        if (allPosts.length === 0) loadPosts();
-    });
-
-    if (typeof window !== 'undefined') {
-        initDraftTool();
-    }
+    loadPosts(); // Initial load if needed or tab triggers it
+    initDraftTool();
+}
 </script>
 
 <style>
