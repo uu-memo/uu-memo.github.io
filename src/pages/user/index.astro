@@ -38,7 +38,6 @@ const postsJson = allPosts.map((post: any) => ({
             </p>
         </div>
 
-
         <!-- User Dashboard -->
         <div
             id="user-dashboard"
@@ -713,8 +712,63 @@ const postsJson = allPosts.map((post: any) => ({
                                     (a.created_at?.seconds || 0)
                             );
 
+                            // --- OPTION A: Site-wide Real-time Sampling ---
+                            // Fetch latest profile for the current user and any other participants in replies
+                            const allParticipantUids = [
+                                ...new Set([
+                                    user.uid,
+                                    ...allReplies
+                                        .filter((r) => r.author_uid)
+                                        .map((r) => r.author_uid),
+                                ]),
+                            ];
+
+                            let userMap: Record<string, any> = {};
+                            if (allParticipantUids.length > 0) {
+                                const userPromises = allParticipantUids.map(
+                                    (uid) => getDoc(doc(db, "users", uid))
+                                );
+                                const userDocs = await Promise.all(
+                                    userPromises
+                                );
+                                userDocs.forEach((d) => {
+                                    if (d.exists()) userMap[d.id] = d.data();
+                                });
+                            }
+
+                            const adminUid = "P9G0w4qEa9gY6ZRY8K8oYVbS7zJ2";
+
                             commentsList.innerHTML = userComments
                                 .map((c) => {
+                                    const adminUid =
+                                        "P9G0w4qEa9gY6ZRY8K8oYVbS7zJ2";
+                                    const isAdmin =
+                                        c.author_uid === adminUid ||
+                                        c.author_email ===
+                                            "jing180804@gmail.com";
+
+                                    let name = c.author_name;
+                                    let avatar = c.author_avatar;
+
+                                    if (c.author_uid && userMap[c.author_uid]) {
+                                        const latest = userMap[c.author_uid];
+                                        name = latest.nickname || name;
+                                        avatar = latest.avatar_icon || avatar;
+                                    }
+
+                                    if (isAdmin) {
+                                        if (
+                                            !name ||
+                                            name === "User" ||
+                                            name === "使用者"
+                                        )
+                                            name = "UU (站長)";
+                                        if (!avatar) avatar = "/uu-memo.png";
+                                    }
+
+                                    c.author_name = name;
+                                    c.author_avatar = avatar;
+
                                     const date =
                                         c.created_at
                                             ?.toDate()
@@ -727,9 +781,35 @@ const postsJson = allPosts.map((post: any) => ({
                                         ? post.title
                                         : "未知文章";
 
-                                    const myReplies = allReplies.filter(
-                                        (r) => r.parent_id === c.id
-                                    );
+                                    const myReplies = allReplies
+                                        .filter((r) => r.parent_id === c.id)
+                                        .map((r) => {
+                                            // Apply real-time sampling to replies
+                                            if (
+                                                r.author_uid &&
+                                                userMap[r.author_uid]
+                                            ) {
+                                                const latest =
+                                                    userMap[r.author_uid];
+                                                r.author_name =
+                                                    latest.nickname ||
+                                                    r.author_name;
+                                                r.author_avatar =
+                                                    latest.avatar_icon ||
+                                                    r.author_avatar;
+                                            }
+                                            // Force Admin Identity for replies
+                                            if (
+                                                r.author_uid === adminUid ||
+                                                r.author_email ===
+                                                    "jing180804@gmail.com"
+                                            ) {
+                                                r.author_name = "UU (站長)";
+                                                r.author_avatar =
+                                                    "/uu-memo.png";
+                                            }
+                                            return r;
+                                        });
 
                                     return `
                                     <div class="bg-white p-6 rounded-2xl border border-uu-sub/20 shadow-sm hover:border-uu-main/30 transition-all group text-left">

@@ -404,30 +404,31 @@ const { postSlug } = Astro.props;
                     
                     // Update allDocs with dynamic user details (Strict UID mapping)
                     allDocs = allDocs.map((c: any) => {
-                        const adminUid = 'P9G0w4qEa9gY6ZRY8K8oYVbS7zJ2'; // We should probably get this from context or env but hardcoding for now based on known admin
+                        const adminUid = 'P9G0w4qEa9gY6ZRY8K8oYVbS7zJ2';
+                        const isAdmin = c.author_uid === adminUid || c.author_email === 'jing180804@gmail.com';
                         
-                        // Priority 1: Admin Identity (recognized by UID or legacy/contact emails)
-                        if (c.author_uid === adminUid || c.author_email === 'jing180804@gmail.com' || c.author_email === 'uu-memo@outlook.com') {
-                            return {
-                                ...c,
-                                author_name: 'UU (站長)',
-                                author_avatar: '/uu-memo.png',
-                                is_guest: false
-                            };
+                        let name = c.author_name;
+                        let avatar = c.author_avatar;
+
+                        // Priority: Latest Registered Profile
+                        if (c.author_uid && userMap[c.author_uid]) {
+                            const latest = userMap[c.author_uid];
+                            name = latest.nickname || name;
+                            avatar = latest.avatar_icon || avatar;
                         }
 
-                        // Priority 2: Registered User Identity (Mapped by UID)
-                        if (c.author_uid && userMap[c.author_uid]) {
-                            const latestData = userMap[c.author_uid];
-                            return {
-                                ...c,
-                                author_name: latestData.nickname || c.author_name,
-                                author_avatar: latestData.avatar_icon || c.author_avatar,
-                                is_guest: false
-                            };
+                        // Fallback for Admin Identity
+                        if (isAdmin) {
+                            if (!name || name === 'User' || name === '使用者') name = 'UU (站長)';
+                            if (!avatar) avatar = '/uu-memo.png';
                         }
                         
-                        return c;
+                        return {
+                            ...c,
+                            author_name: name,
+                            author_avatar: avatar,
+                            is_guest: !c.author_uid
+                        };
                     });
                 } catch (e) {
                     console.error("Failed to fetch latest user profiles:", e);
@@ -460,9 +461,9 @@ const { postSlug } = Astro.props;
                                                 }
                                             </div>
                                              <div class="flex flex-col gap-0.5">
-                                                <div class="font-bold text-uu-dark text-sm tracking-tight">${c.author_email === 'jing180804@gmail.com' || c.author_email === 'uu-memo@outlook.com' ? 'UU (站長)' : c.author_name}</div>
-                                                <div class="text-[9px] font-black tracking-[0.2em] px-2 py-0.5 rounded-full bg-uu-sub/10 w-fit uppercase ${c.author_email === 'jing180804@gmail.com' || c.author_email === 'uu-memo@outlook.com' ? 'text-uu-main' : (isVerifiedUser ? 'text-uu-main/60' : 'text-uu-main/30')}">
-                                                    ${c.author_email === 'jing180804@gmail.com' || c.author_email === 'uu-memo@outlook.com' ? 'Official' : (isVerifiedUser ? 'Verified' : 'Guest')}
+                                                <div class="font-bold text-uu-dark text-sm tracking-tight">${c.author_name}</div>
+                                                <div class="text-[9px] font-black tracking-[0.2em] px-2 py-0.5 rounded-full bg-uu-sub/10 w-fit uppercase ${c.author_name.includes('(站長)') ? 'text-uu-main' : (isVerifiedUser ? 'text-uu-main/60' : 'text-uu-main/30')}">
+                                                    ${c.author_name.includes('(站長)') ? 'Official' : (isVerifiedUser ? 'Verified' : 'Guest')}
                                                 </div>
                                             </div>
                                         </div>

@@ -1013,3 +1013,17 @@ All notable changes to this project will be documented in this file.
 - `CHANGELOG.md`
 
 **中文說明：同步首頁按鈕設計至最新的膠囊型樣式，並在文章預覽中加入「閱讀全文」按鈕。同時整合了 Firestore 動態贊助連結功能，並優化了全站滾動條的視覺效果。**
+
+## [2026-03-04] - Real-time Profile Sampling & Home UI Refinement
+
+### Added
+- **Real-time User Profile Sampling (Option A)**: Implemented a site-wide mechanism to fetch and display the latest user configurations (nickname, avatar icon) for all past comments.
+- **Dynamic Profile Sync**: Ensured that the administrator can also customize their profile while maintaining a clear fallback identity for official recognition.
+
+### Refined
+- **Homepage UI Alignment**: Reverted "View all posts" and "View all featured" buttons to the classic text-arrow style matching the reference site (uu-memo.web.app).
+- **Admin Identity Consistency**: Unified the logic for identifying and labeling official responses across the entire application.
+
+---
+- **全站即時採樣 (方案 A)**: 實施全站機制，無論是主留言板還是會員中心，都會即時抓取最新用戶設定（暱稱、頭像 Icon），確保修改資料後舊留言也能同步更新。
+- **首頁樣式對準**: 將「看所有文章」與「看所有精選」按鈕恢復為與參考網站一致的文字箭頭樣式，優化間距與懸停效果。
