@@ -21,19 +21,17 @@ const postsJson = allPosts.map((post) => ({
     <Header />
 
     <main class="max-w-6xl mx-auto px-6 py-12 min-h-[60vh]">
-        <!-- Page Header (Flattened to 2 layers: main > h1) -->
-        <h1
-            class="text-3xl font-bold text-uu-main mb-8 border-b border-uu-sub pb-4 flex justify-between items-end"
-        >
-            <span>我的書籤</span>
-            <span
-                class="text-sm font-mono opacity-50 whitespace-nowrap hidden md:inline-block font-normal mb-1"
+        <!-- Page Header (Locked to 2 layers: main > div > h1) -->
+        <div class="relative mb-8 border-b border-uu-sub pb-4">
+            <h1 class="text-3xl font-bold text-uu-main">我的書籤</h1>
+            <div
+                class="absolute right-0 bottom-4 text-sm font-mono opacity-50 whitespace-nowrap hidden md:inline-block"
             >
                 <span id="bookmark-count">0</span> BOOKMARKS
-            </span>
-        </h1>
+            </div>
+        </div>
 
-        <!-- Dynamic Category Filter (Placeholder for alignment) -->
+        <!-- Dynamic Category Filter -->
         <div class="mb-10 overflow-x-auto no-scrollbar">
             <div class="flex flex-nowrap gap-2 items-center pb-2">
                 <span
