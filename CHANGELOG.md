@@ -964,7 +964,7 @@ All notable changes to this project will be documented in this file.
 
 #### Technical details
 - Removed `flex flex-col` from the `body` tag in `Layout.astro`. This resolves a layout engine discrepancy where `mx-auto` on flex items calculated margins differently than on standard block items, causing a few pixels of horizontal offset.
-- Cleaned up `src/pages/bookmarks/index.astro` by removing the unused empty state icon container.
+- Cleaned up `src/pages/bookmarks/index.astro` by removing the unused empty state icon container and fixing text wrapping constraints to better utilize horizontal space.
 
 #### Affected files
 - `src/layouts/Layout.astro`
