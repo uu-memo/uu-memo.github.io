@@ -937,3 +937,21 @@ All notable changes to this project will be documented in this file.
 - None. Both pages now have 100% structural DOM parity.
 
 **中文說明：透過 curl 抓取原始 HTML 並逐位元組比對，最終確認兩個頁面的靜態 DOM 結構（從 `</header>` 到 `<h1>`）已完全一致。透過開發者工具截圖驗證，書籤頁面不存在多餘容器，結構重構任務成功完成。**
+
+### [2026-03-04T13:40:00+08:00] - Refactor: Flatten Bookmarks Structure to 2 Layers (Option A)
+
+#### Summary of changes
+- Removed the intermediate `div` wrapper for the page header to achieve a direct `main > h1` structure.
+- Simplified the DOM tree as requested to resolve perceived "extra container" issues.
+- Re-aligned the bookmark count metadata to maintain layout integrity without the flex wrapper.
+
+#### Technical details
+- Collapsed `main > div > h1` into `main > h1`.
+- Moved layout-critical classes (border-b, padding, margin) directly to the `h1` element.
+- Standardized vertical spacing to ensure pixel-perfect alignment with the site-wide logo.
+
+#### Affected files
+- `src/pages/bookmarks/index.astro`
+- `CHANGELOG.md`
+
+**中文說明：執行方案 A，將書籤頁面的結構扁平化為兩層（main > h1），移除了原本包裹標題的 Page Header 容器。此舉直接解決了使用者觀察到的「多一層容器」問題，並確保標題與上方 Logo 的對齊更加穩固。**
