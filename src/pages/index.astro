@@ -30,20 +30,14 @@ const topTags = Object.entries(tagsCount)
     .slice(0, 10)
     .map((t) => t[0]);
 
-// Load author bio from about.md (first non-empty, non-HTML paragraph)
+// Load author bio from about.md (first non-empty paragraph)
 const aboutPage = await getEntry("pages", "about");
 const aboutRawBody = aboutPage?.body || "";
-const aboutBio =
-    aboutRawBody
-        .split(/\n+/)
-        .map((l: string) => l.trim())
-        .filter(
-            (l: string) =>
-                l &&
-                !l.startsWith("<") &&
-                !l.startsWith("#") &&
-                !l.startsWith("---")
-        )[0] || "在這裡記錄生活的碎片。";
+const aboutBio = aboutRawBody
+    .split(/\n+/)
+    .map((l) => l.trim())
+    .find((l) => l && !l.startsWith("<") && !l.startsWith("#") && !l.startsWith("---"))
+    || "在這裡記錄生活的碎片。";
 ---
 
 <Layout title="UU MEMO - 值得留下的日常時光">
@@ -140,7 +134,7 @@ const aboutBio =
                     <div class="mt-8 text-right">
                         <a
                             href="/posts"
-                            class="btn-text text-sm font-bold tracking-widest text-uu-main/80 hover:text-uu-main"
+                            class="inline-flex items-center gap-2 px-6 py-2.5 bg-white border border-uu-sub/30 rounded-full text-xs font-bold tracking-widest text-uu-main hover:bg-uu-sub/10 hover:border-uu-main transition-all active:scale-95 group/all shadow-sm"
                             >看所有文章 →</a
                         >
                     </div>
@@ -198,7 +192,7 @@ const aboutBio =
                     <div class="mt-8 text-right">
                         <a
                             href="/category/精選文章"
-                            class="btn-text text-sm font-bold tracking-widest text-uu-main/80 hover:text-uu-main"
+                            class="inline-flex items-center gap-2 px-6 py-2.5 bg-white border border-uu-sub/30 rounded-full text-xs font-bold tracking-widest text-uu-main hover:bg-uu-sub/10 hover:border-uu-main transition-all active:scale-95 group/all shadow-sm"
                             >看所有精選 →</a
                         >
                     </div>

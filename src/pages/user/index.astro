@@ -740,30 +740,29 @@ const postsJson = allPosts.map((post: any) => ({
 
                             commentsList.innerHTML = userComments
                                 .map((c) => {
-                                    const adminUid =
-                                        "P9G0w4qEa9gY6ZRY8K8oYVbS7zJ2";
                                     const isAdmin =
                                         c.author_uid === adminUid ||
-                                        c.author_email ===
-                                            "jing180804@gmail.com";
+                                        c.author_email === "jing180804@gmail.com" ||
+                                        c.author_email === "uu-memo@outlook.com";
 
                                     let name = c.author_name;
                                     let avatar = c.author_avatar;
 
+                                    // Priority 1: Latest Registered Profile (by UID)
                                     if (c.author_uid && userMap[c.author_uid]) {
                                         const latest = userMap[c.author_uid];
                                         name = latest.nickname || name;
                                         avatar = latest.avatar_icon || avatar;
                                     }
 
+                                    // Priority 2: Admin Fallback
                                     if (isAdmin) {
-                                        if (
-                                            !name ||
-                                            name === "User" ||
-                                            name === "使用者"
-                                        )
+                                        if (!name || name === "User" || name === "使用者" || name === "Anonymous" || name === "匿名訪客") {
                                             name = "UU (站長)";
-                                        if (!avatar) avatar = "/uu-memo.png";
+                                        }
+                                        if (!avatar || avatar.includes('person') || avatar.includes('account_circle')) {
+                                            avatar = "/uu-memo.png";
+                                        }
                                     }
 
                                     c.author_name = name;
@@ -784,6 +783,11 @@ const postsJson = allPosts.map((post: any) => ({
                                     const myReplies = allReplies
                                         .filter((r) => r.parent_id === c.id)
                                         .map((r) => {
+                                            const rIsAdmin =
+                                                r.author_uid === adminUid ||
+                                                r.author_email === "jing180804@gmail.com" ||
+                                                r.author_email === "uu-memo@outlook.com";
+
                                             // Apply real-time sampling to replies
                                             if (
                                                 r.author_uid &&
@@ -798,17 +802,17 @@ const postsJson = allPosts.map((post: any) => ({
                                                     latest.avatar_icon ||
                                                     r.author_avatar;
                                             }
-                                            // Force Admin Identity for replies
-                                            if (
-                                                r.author_uid === adminUid ||
-                                                r.author_email ===
-                                                    "jing180804@gmail.com"
-                                            ) {
-                                                r.author_name = "UU (站長)";
-                                                r.author_avatar =
-                                                    "/uu-memo.png";
+
+                                            // Priority 2: Admin Fallback for replies
+                                            if (rIsAdmin) {
+                                                if (!r.author_name || r.author_name === 'User' || r.author_name === '使用者' || r.author_name === 'Anonymous' || r.author_name === '匿名訪客') {
+                                                    r.author_name = "UU (站長)";
+                                                }
+                                                if (!r.author_avatar || r.author_avatar.includes('person') || r.author_avatar.includes('account_circle')) {
+                                                    r.author_avatar = "/uu-memo.png";
+                                                }
                                             }
-                                            return r;
+                                            return { ...r, rIsAdmin };
                                         });
 
                                     return `
@@ -834,13 +838,7 @@ const postsJson = allPosts.map((post: any) => ({
                                                 <div class="text-[9px] font-black text-uu-main/30 uppercase tracking-[0.2em] mb-2">Replies / 其他回覆</div>
                                                 ${myReplies
                                                     .map((r) => {
-                                                        const isAdmin =
-                                                            r.author_uid ===
-                                                                "P9G0w4qEa9gY6ZRY8K8oYVbS7zJ2" ||
-                                                            r.author_email ===
-                                                                "uu-memo@outlook.com" ||
-                                                            r.author_email ===
-                                                                "jing180804@gmail.com";
+                                                         const isAdmin = r.rIsAdmin;
                                                         return `
                                                     <div class="flex gap-3 items-start bg-uu-sub/5 p-3 rounded-xl border border-uu-sub/5">
                                                         <div class="w-6 h-6 rounded-full bg-uu-dark shadow-sm overflow-hidden shrink-0 flex items-center justify-center border border-white">

@@ -405,29 +405,34 @@ const { postSlug } = Astro.props;
                     // Update allDocs with dynamic user details (Strict UID mapping)
                     allDocs = allDocs.map((c: any) => {
                         const adminUid = 'P9G0w4qEa9gY6ZRY8K8oYVbS7zJ2';
-                        const isAdmin = c.author_uid === adminUid || c.author_email === 'jing180804@gmail.com';
+                        const isAdmin = c.author_uid === adminUid || c.author_email === 'jing180804@gmail.com' || c.author_email === 'uu-memo@outlook.com';
                         
                         let name = c.author_name;
                         let avatar = c.author_avatar;
 
-                        // Priority: Latest Registered Profile
+                        // Priority 1: Latest Registered Profile from Firestore (by UID)
                         if (c.author_uid && userMap[c.author_uid]) {
                             const latest = userMap[c.author_uid];
                             name = latest.nickname || name;
                             avatar = latest.avatar_icon || avatar;
                         }
 
-                        // Fallback for Admin Identity
+                        // Priority 2: Admin Fallback (only if name is default/empty)
                         if (isAdmin) {
-                            if (!name || name === 'User' || name === '使用者') name = 'UU (站長)';
-                            if (!avatar) avatar = '/uu-memo.png';
+                            if (!name || name === 'User' || name === '使用者' || name === 'Anonymous' || name === '匿名訪客') {
+                                name = 'UU (站長)';
+                            }
+                            if (!avatar || avatar.includes('person') || avatar.includes('account_circle')) {
+                                avatar = '/uu-memo.png';
+                            }
                         }
                         
                         return {
                             ...c,
                             author_name: name,
                             author_avatar: avatar,
-                            is_guest: !c.author_uid
+                            is_guest: !c.author_uid,
+                            is_admin: isAdmin
                         };
                     });
                 } catch (e) {
@@ -462,10 +467,10 @@ const { postSlug } = Astro.props;
                                             </div>
                                              <div class="flex flex-col gap-0.5">
                                                 <div class="font-bold text-uu-dark text-sm tracking-tight">${c.author_name}</div>
-                                                <div class="text-[9px] font-black tracking-[0.2em] px-2 py-0.5 rounded-full bg-uu-sub/10 w-fit uppercase ${c.author_name.includes('(站長)') ? 'text-uu-main' : (isVerifiedUser ? 'text-uu-main/60' : 'text-uu-main/30')}">
-                                                    ${c.author_name.includes('(站長)') ? 'Official' : (isVerifiedUser ? 'Verified' : 'Guest')}
+                                                <div class="text-[9px] font-black tracking-[0.2em] px-2 py-0.5 rounded-full bg-uu-sub/10 w-fit uppercase ${c.is_admin ? 'text-uu-main' : (isVerifiedUser ? 'text-uu-main/60' : 'text-uu-main/30')}">
+                                                    ${c.is_admin ? 'Official' : (isVerifiedUser ? 'Verified' : 'Guest')}
                                                 </div>
-                                            </div>
+                                             </div>
                                         </div>
                                         
                                         <!-- Right: Metadata (Date & No.) -->
@@ -484,8 +489,7 @@ const { postSlug } = Astro.props;
                                     ${replies.length > 0 ? `
                                         <div class="space-y-6">
                                             ${replies.map((r: any) => {
-                                                const isAdminReply = r.author_email === 'jing180804@gmail.com' || r.author_email === 'uu-memo@outlook.com' || r.author_avatar === '/uu-memo.png';
-                                                return `
+                                                 return `
                                                     <div class="flex gap-4 items-start">
                                                         <div class="w-9 h-9 rounded-xl bg-uu-dark shadow-sm overflow-hidden shrink-0 flex items-center justify-center border-2 border-white group-hover:rotate-3 transition-transform">
                                                             ${r.author_avatar && (r.author_avatar.startsWith('http') || r.author_avatar.startsWith('/'))
@@ -498,9 +502,9 @@ const { postSlug } = Astro.props;
                                                          <div class="flex-1 min-w-0">
                                                             <div class="flex items-center gap-2 mb-1">
                                                                 <span class="text-xs font-bold text-uu-dark">${r.author_name}</span>
-                                                                ${isAdminReply ? `
-                                                                    <span class="text-[8px] font-black tracking-widest px-1.5 py-0.5 rounded-md bg-uu-main text-white uppercase scale-90 origin-left">Admin</span>
-                                                                ` : ''}
+                                                                ${r.is_admin ? `
+                                                                     <span class="text-[8px] font-black tracking-widest px-1.5 py-0.5 rounded-md bg-uu-main text-white uppercase scale-90 origin-left">Admin</span>
+                                                                 ` : ''}
                                                                 <span class="text-[9px] font-mono text-uu-main/20 ml-auto">${r.created_at?.toDate().toLocaleDateString('zh-TW')}</span>
                                                             </div>
                                                             <div class="bg-uu-sub/10 border border-uu-sub/5 rounded-2xl p-4 transition-colors group-hover:bg-uu-sub/15">

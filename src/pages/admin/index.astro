@@ -1571,29 +1571,35 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
                     // Update fetchedComments with dynamic user details (Strict UID mapping)
                     fetchedComments = fetchedComments.map((c: any) => {
                         const adminUid = 'P9G0w4qEa9gY6ZRY8K8oYVbS7zJ2';
+                        const isAdmin = c.author_uid === adminUid || c.author_email === 'jing180804@gmail.com' || c.author_email === 'uu-memo@outlook.com';
                         
-                        // Priority 1: Admin Identity (UID or verified emails)
-                        if (c.author_uid === adminUid || c.author_email === 'jing180804@gmail.com' || c.author_email === 'uu-memo@outlook.com') {
-                            return {
-                                ...c,
-                                author_name: 'UU (站長)',
-                                author_avatar: '/uu-memo.png',
-                                is_guest: false
-                            };
+                        let name = c.author_name;
+                        let avatar = c.author_avatar;
+
+                        // Priority 1: Latest Registered Profile from Firestore (by UID)
+                        if (c.author_uid && userMap[c.author_uid]) {
+                            const latest = userMap[c.author_uid];
+                            name = latest.nickname || name;
+                            avatar = latest.avatar_icon || avatar;
                         }
 
-                        // Priority 2: Registered User Identity (Mapped by UID)
-                        if (c.author_uid && userMap[c.author_uid]) {
-                            const latestData = userMap[c.author_uid];
-                            return {
-                                ...c,
-                                author_name: latestData.nickname || c.author_name,
-                                author_avatar: latestData.avatar_icon || c.author_avatar,
-                                is_guest: false
-                            };
+                        // Priority 2: Admin Fallback (only if name is default/empty)
+                        if (isAdmin) {
+                            if (!name || name === 'User' || name === '使用者' || name === 'Anonymous' || name === '匿名訪客') {
+                                name = 'UU (站長)';
+                            }
+                            if (!avatar || avatar.includes('person') || avatar.includes('account_circle')) {
+                                avatar = '/uu-memo.png';
+                            }
                         }
                         
-                        return c;
+                        return {
+                            ...c,
+                            author_name: name,
+                            author_avatar: avatar,
+                            is_guest: !c.author_uid,
+                            is_admin: isAdmin
+                        };
                     });
                 } catch (e) {
                     console.error("Failed to fetch latest admin user profiles:", e);

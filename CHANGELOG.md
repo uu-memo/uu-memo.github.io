@@ -1014,16 +1014,28 @@ All notable changes to this project will be documented in this file.
 
 **中文說明：同步首頁按鈕設計至最新的膠囊型樣式，並在文章預覽中加入「閱讀全文」按鈕。同時整合了 Firestore 動態贊助連結功能，並優化了全站滾動條的視覺效果。**
 
-## [2026-03-04] - Real-time Profile Sampling & Home UI Refinement
+### [2026-03-04.2] - Real-time Identity Synchronization & UI Fidelity
 
-### Added
-- **Real-time User Profile Sampling (Option A)**: Implemented a site-wide mechanism to fetch and display the latest user configurations (nickname, avatar icon) for all past comments.
-- **Dynamic Profile Sync**: Ensured that the administrator can also customize their profile while maintaining a clear fallback identity for official recognition.
+#### Summary of changes
+- Implemented robust real-time user profile sampling (Option A) across the entire platform.
+- Standardized UID-based lookups to prioritize Firestore `users` data, ensuring historical comments reflect current profile changes.
+- Upgraded homepage "View All" buttons to high-fidelity capsule styles with shadow and hover micro-animations.
+- Resolved frontmatter parsing inconsistencies in `src/pages/index.astro`.
 
-### Refined
-- **Homepage UI Alignment**: Reverted "View all posts" and "View all featured" buttons to the classic text-arrow style matching the reference site (uu-memo.web.app).
-- **Admin Identity Consistency**: Unified the logic for identifying and labeling official responses across the entire application.
+#### Technical details
+- **UID-Primary Logic**: Rewrote data mapping in `Comments.astro`, `user/index.astro`, and `admin/index.astro`. The system now fetches `users` collection snapshots for all participants and dynamically overrides `author_name` and `author_avatar` based on the latest record.
+- **Admin Identity System**: Implemented a two-tier identity fallback. Priority 1 is the customized user profile; Priority 2 is the "UU (站長)" fallback if no customization is found, ensuring official identities are never missing.
+- **Button Styling**: Applied `inline-flex`, `rounded-full`, and `bg-white` classes to homepage navigation links to achieve the premium, tactile feel of the reference application.
+- **Logic Safeguards**: Replaced `.filter()[0]` with `.find()` in metadata loaders for better robustness against empty or malformed content.
 
----
-- **全站即時採樣 (方案 A)**: 實施全站機制，無論是主留言板還是會員中心，都會即時抓取最新用戶設定（暱稱、頭像 Icon），確保修改資料後舊留言也能同步更新。
-- **首頁樣式對準**: 將「看所有文章」與「看所有精選」按鈕恢復為與參考網站一致的文字箭頭樣式，優化間距與懸停效果。
+#### Affected files
+- `src/components/Comments.astro`
+- `src/pages/user/index.astro`
+- `src/pages/admin/index.astro`
+- `src/pages/index.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None. Improved cross-page data consistency.
+
+*實作了強韌的「全站即時身份同步」系統，確保留言與回覆能即時反映使用者的最新暱稱與頭像（以 UID 為唯一指名）。同時將首頁「看所有文章」連結升級為高質感的膠囊按鈕樣式，並修復了關於我頁面 metadata 的讀取穩定性。*
