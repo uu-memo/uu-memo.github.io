@@ -5,7 +5,7 @@ title: |
 description: "關於春天的散步"
 pubDate: "2026-02-12"
 category: ["life", "精選文章"]
-tags: ["生活", "隨筆", "春天"]
+tags: ["生活", "隨筆", "春天", "精選"]
 heroImage: ""
 slug: "first-post"
 ---
