@@ -991,3 +991,25 @@ All notable changes to this project will be documented in this file.
 
 **中文說明：優化了書籤頁面的登入區塊，將標題改為「開始探索之旅」，並移除鎖頭圖示與文字寬度限制，讓介面更簡潔且空間利用更合理。**
 
+
+### [2026-03-04T14:43:35+0800] - Sync: Homepage UI Refinement and Action Buttons
+#### Summary of changes
+- Modernized the homepage navigation buttons to match the site's current pill-shaped design language.
+- Added a "Donate" entry point in the sidebar and post-article section.
+- Integrated Firestore-driven configuration for site-wide donation links.
+- Implemented global scrollbar hiding for a more immersive reading experience.
+
+#### Technical details
+- Updated `src/pages/index.astro` to use flex-centered rounded-full buttons for "View All" links.
+- Added "Read More" (閱讀全文) buttons with arrow icons to homepage post previews.
+- Added `volunteer_activism` icon to the sidebar with Firestore-linked visibility logic.
+- Applied `overflow-x-hidden` and scrollbar hiding styles in `src/styles/global.css`.
+
+#### Affected files
+- `src/pages/index.astro`
+- `src/pages/posts/[...slug].astro`
+- `src/styles/global.css`
+- `src/pages/admin/index.astro`
+- `CHANGELOG.md`
+
+**中文說明：同步首頁按鈕設計至最新的膠囊型樣式，並在文章預覽中加入「閱讀全文」按鈕。同時整合了 Firestore 動態贊助連結功能，並優化了全站滾動條的視覺效果。**

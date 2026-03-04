@@ -635,17 +635,21 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
                                     <input
                                         type="text"
                                         id="sys-donate-name"
-                                        class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner"
+                                        class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner"
                                         placeholder="例如：Buy Me a Coffee"
+                                        autocomplete="off"
+                                        data-lpignore="true"
                                     />
                                 </div>
                                 <div class="space-y-3">
                                     <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block">Donation Link (贊助連結)</label>
                                     <input
-                                        type="text"
+                                        type="url"
                                         id="sys-donate-url"
-                                        class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner"
+                                        class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner"
                                         placeholder="https://..."
+                                        autocomplete="off"
+                                        data-lpignore="true"
                                     />
                                 </div>
                             </div>
@@ -656,6 +660,14 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
                                     id="sys-donate-msg"
                                     class="w-full bg-uu-base/10 border border-uu-sub/10 rounded-2xl p-8 text-sm leading-relaxed focus:outline-none focus:bg-white transition-all min-h-[160px] shadow-inner"
                                     placeholder="輸入您想對贊助者說的話..."></textarea>
+                            </div>
+
+                            <div class="pt-2 flex justify-end">
+                                <button id="save-donation-btn" class="flex items-center gap-2.5 px-6 py-2.5 bg-uu-sub/5 text-uu-main border border-uu-sub/10 rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-white hover:shadow-md hover:border-uu-main/20 transition-all active:scale-95 group">
+                                    <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">save</span>
+                                    <span id="save-donation-text">儲存贊助設定</span>
+                                    <div id="save-donation-loader" class="hidden w-3 h-3 border-2 border-uu-main/20 border-t-uu-main rounded-full animate-spin"></div>
+                                </button>
                             </div>
                         </div>
 
@@ -701,24 +713,17 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
                                     <p class="text-[9px] text-uu-main/40 leading-relaxed mt-1">此欄位僅供您備註，不會用於 API 驗證。</p>
                                 </div>
 
-                                <div class="pt-4">
-                                     <button id="save-github-token-btn" class="flex items-center justify-center gap-3 w-full sm:w-auto px-10 py-3.5 bg-uu-main text-white rounded-xl text-[11px] font-black tracking-[0.2em] uppercase hover:bg-uu-dark transition-all active:scale-[0.98] shadow-lg shadow-uu-main/10 group">
+                                <div class="pt-4 flex justify-end">
+                                     <button id="save-github-token-btn" class="flex items-center gap-2.5 px-6 py-2.5 bg-uu-sub/5 text-uu-main border border-uu-sub/10 rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-white hover:shadow-md hover:border-uu-main/20 transition-all active:scale-95 group">
+                                        <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">key</span>
                                         <span id="save-token-btn-text">儲存 GitHub 權杖</span>
-                                        <div id="save-token-loader" class="hidden w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        <div id="save-token-loader" class="hidden w-3 h-3 border-2 border-uu-main/20 border-t-uu-main rounded-full animate-spin"></div>
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="pt-4 mt-4">
-                            <PrimaryButton
-                                id="save-sys-btn"
-                                text="SAVE CONFIGURATION"
-                                textId="save-btn-text"
-                                showLoader={true}
-                                loaderId="save-btn-loader"
-                            />
-                        </div>
+
 
                         <!-- NEW: Build Cleanup Section -->
                         <div class="bg-white border border-uu-sub/20 rounded-2xl p-8 space-y-4 shadow-sm">
@@ -729,10 +734,10 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
                                 <h4 class="text-xs font-black text-uu-dark uppercase tracking-widest">故障排除：清除建置錯誤 (Emergency Fix)</h4>
                             </div>
                             <p class="text-[10px] text-uu-main/50 leading-relaxed font-bold">如果在同步後 GitHub 建置失敗，可能是因為某些草稿檔案格式不正確（例如 <code class="bg-uu-base/40 px-1 rounded">test.md</code>）。管理員可點擊下方按鈕強制從 GitHub 遠端清理該損毀檔案。</p>
-                            <div class="pt-2">
-                                <button id="cleanup-build-btn" class="flex items-center gap-2 px-6 py-3 bg-uu-main text-white rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-uu-dark transition-all shadow-lg shadow-uu-main/10 active:scale-[0.98]">
-                                    <span class="material-symbols-outlined text-sm">delete_forever</span>
-                                    強制刪除 test.md 並修復建置
+                            <div class="pt-2 flex justify-end">
+                                <button id="cleanup-build-btn" class="flex items-center gap-2.5 px-6 py-2.5 bg-uu-sub/5 text-uu-main border border-uu-sub/10 rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-white hover:shadow-md hover:border-uu-main/20 transition-all active:scale-95 group">
+                                    <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">delete_forever</span>
+                                    <span>強制刪除 test.md 並修復建置</span>
                                 </button>
                             </div>
                         </div>
@@ -912,8 +917,11 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
             const trigger = document.createElement('div');
             trigger.className = 'uu-select-trigger';
             trigger.innerHTML = `
-                <span class="selected-text"></span>
-                <span class="material-symbols-outlined text-sm">expand_more</span>
+                <div class="selected-content">
+                    <span class="material-symbols-outlined trigger-icon"></span>
+                    <span class="selected-text"></span>
+                </div>
+                <span class="material-symbols-outlined arrow-icon">expand_more</span>
             `;
             container.appendChild(trigger);
             
@@ -935,7 +943,12 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
             
             // Global click to close
             if (!(window as any)._uuSelectGlobalHandled) {
-                document.addEventListener('click', () => this.closeAll());
+                document.addEventListener('click', (e) => {
+                    const target = e.target as HTMLElement;
+                    if (!target.closest('.uu-select-container')) {
+                        UUSelect.closeAll();
+                    }
+                });
                 (window as any)._uuSelectGlobalHandled = true;
             }
         },
@@ -948,7 +961,17 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
             const selectedOption = nativeSelect.options[nativeSelect.selectedIndex];
             
             const selectedText = trigger.querySelector('.selected-text');
+            const triggerIcon = trigger.querySelector('.trigger-icon') as HTMLElement;
+            
             if (selectedText) selectedText.textContent = selectedOption ? selectedOption.textContent : '請選擇...';
+            
+            if (triggerIcon && selectedOption) {
+                const icon = options.icons ? options.icons[selectedOption.value] : (options.defaultIcon || 'label');
+                triggerIcon.textContent = icon;
+                triggerIcon.style.display = 'block';
+            } else if (triggerIcon) {
+                triggerIcon.style.display = 'none';
+            }
             
             // Build options
             dropdown.innerHTML = '';
@@ -977,9 +1000,21 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
         toggle(selectId) {
             const instance = this.instances.get(selectId);
             if (!instance) return;
+            
             const isOpen = instance.dropdown.classList.contains('open');
-            this.closeAll();
-            if (!isOpen) {
+            
+            // Close others first
+            this.instances.forEach((inst, id) => {
+                if (id !== selectId) {
+                    inst.dropdown.classList.remove('open');
+                    inst.trigger.classList.remove('active');
+                }
+            });
+            
+            if (isOpen) {
+                instance.dropdown.classList.remove('open');
+                instance.trigger.classList.remove('active');
+            } else {
                 instance.dropdown.classList.add('open');
                 instance.trigger.classList.add('active');
             }
@@ -1054,9 +1089,9 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
     const sysDonateEnabled = document.getElementById(
         "sys-donate-enabled"
     ) as HTMLInputElement;
-    const saveSysBtn = document.getElementById("save-sys-btn");
-    const saveBtnText = document.getElementById("save-btn-text");
-    const saveBtnLoader = document.getElementById("save-btn-loader");
+    const saveDonationBtn = document.getElementById("save-donation-btn");
+    const saveDonationText = document.getElementById("save-donation-text");
+    const saveDonationLoader = document.getElementById("save-donation-loader");
 
     async function fetchSystemConfig() {
         try {
@@ -1076,12 +1111,12 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
         }
     }
 
-    saveSysBtn?.addEventListener("click", async () => {
-        if (!saveBtnText || !saveBtnLoader) return;
+    saveDonationBtn?.addEventListener("click", async () => {
+        if (!saveDonationText || !saveDonationLoader) return;
 
-        saveBtnText.textContent = "SAVING...";
-        saveBtnLoader.classList.remove("hidden");
-        saveSysBtn.setAttribute("disabled", "true");
+        saveDonationText.textContent = "儲存中...";
+        saveDonationLoader.classList.remove("hidden");
+        saveDonationBtn.setAttribute("disabled", "true");
 
         try {
             await setDoc(doc(db, "site_config", "donation_settings"), {
@@ -1091,15 +1126,15 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
                 enabled: sysDonateEnabled.checked,
             });
 
-            saveBtnText.textContent = "SAVED SUCCESS!";
+            saveDonationText.textContent = "儲存成功";
             setTimeout(() => {
-                saveBtnText.textContent = "SAVE CONFIGURATION";
+                saveDonationText.textContent = "儲存贊助設定";
             }, 2000);
         } catch (err) {
             (window as any).showToast("儲存失敗: " + err, 'error');
         } finally {
-            saveBtnLoader.classList.add("hidden");
-            saveSysBtn.removeAttribute("disabled");
+            saveDonationLoader.classList.add("hidden");
+            saveDonationBtn.removeAttribute("disabled");
         }
     });
 
@@ -1192,7 +1227,7 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
             return;
         }
 
-        saveTokenText.textContent = "SAVING SECURITY VAULT...";
+        saveTokenText.textContent = "更變儲存中...";
         saveTokenLoader.classList.remove("hidden");
         saveTokenBtn.setAttribute("disabled", "true");
 
@@ -2389,6 +2424,125 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
 }
 </script>
 
+<style is:global>
+    /* Custom Select Component Styles (Global to ensure visibility to JS-injected elements) */
+    .uu-select-container {
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .uu-select-container * {
+        box-sizing: border-box;
+    }
+    .uu-select-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: rgba(245, 240, 231, 0.4);
+        border: 1px solid rgba(109, 73, 47, 0.15);
+        border-radius: 0.75rem;
+        font-size: 0.875rem;
+        color: #4a301e;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        user-select: none;
+        backdrop-filter: blur(10px);
+    }
+    .uu-select-trigger:hover {
+        border-color: rgba(109, 73, 47, 0.4);
+        background: white;
+        box-shadow: 0 4px 20px rgba(109, 73, 47, 0.06);
+    }
+    .uu-select-trigger.active {
+        border-color: #6d492f;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(109, 73, 47, 0.08);
+    }
+    .uu-select-trigger .selected-content {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+    }
+    .uu-select-trigger .trigger-icon {
+        font-size: 1.125rem;
+        color: #6d492f;
+        opacity: 0.7;
+    }
+    .uu-select-trigger .arrow-icon {
+        font-size: 1.125rem;
+        transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        color: rgba(109, 73, 47, 0.25);
+    }
+    .uu-select-trigger.active .arrow-icon {
+        transform: rotate(180deg);
+        color: #6d492f;
+    }
+    
+    .uu-select-dropdown {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(109, 73, 47, 0.12);
+        border-radius: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(109, 73, 47, 0.2), 0 10px 20px -5px rgba(109, 73, 47, 0.1);
+        overflow: hidden;
+        z-index: 2000;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-12px) scale(0.96);
+        pointer-events: none;
+        transition: 
+            opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1),
+            transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1),
+            visibility 0.3s;
+        padding: 0.625rem;
+    }
+    .uu-select-dropdown.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+    }
+    .uu-select-option {
+        padding: 0.75rem 1rem;
+        font-size: 0.8125rem;
+        color: #6d492f;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-radius: 0.75rem;
+        margin-bottom: 0.25rem;
+    }
+    .uu-select-option:last-child {
+        margin-bottom: 0;
+    }
+    .uu-select-option:hover {
+        background: rgba(109, 73, 47, 0.04);
+        transform: translateX(4px);
+        color: #4a301e;
+    }
+    .uu-select-option.selected {
+        background: #6d492f;
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 10px 20px -5px rgba(109, 73, 47, 0.4);
+    }
+    .uu-select-option .option-icon {
+        font-size: 1.125rem;
+        opacity: 0.4;
+    }
+    .uu-select-option.selected .option-icon {
+        opacity: 1;
+    }
+</style>
+
 <style>
     /* Reuse User Dashboard Styles */
     .dashboard-layout {
@@ -2430,96 +2584,6 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
         border-radius: 10px;
     }
 
-    /* Custom Select Component Styles */
-    .uu-select-container {
-        position: relative;
-        width: 100%;
-    }
-    .uu-select-trigger {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        padding: 0.75rem 1.25rem;
-        background: rgba(245, 240, 231, 0.4);
-        border: 1px solid rgba(221, 204, 180, 0.3);
-        border-radius: 0.875rem;
-        font-size: 0.8125rem;
-        color: #6d492f;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        user-select: none;
-        backdrop-filter: blur(4px);
-    }
-    .uu-select-trigger:hover {
-        border-color: #6d492f;
-        background: white;
-        box-shadow: 0 4px 12px rgba(109, 73, 47, 0.05);
-    }
-    .uu-select-trigger.active {
-        border-color: #6d492f;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(109, 73, 47, 0.05);
-    }
-    .uu-select-trigger .material-symbols-outlined {
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        color: rgba(109, 73, 47, 0.4);
-    }
-    .uu-select-trigger.active .material-symbols-outlined {
-        transform: rotate(180deg);
-        color: #6d492f;
-    }
-    .uu-select-dropdown {
-        position: absolute;
-        top: calc(100% + 0.625rem);
-        left: 0;
-        right: 0;
-        background: white;
-        border: 1px solid rgba(221, 204, 179, 0.15);
-        border-radius: 1.25rem;
-        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -5px rgba(0, 0, 0, 0.08);
-        overflow: hidden;
-        z-index: 100;
-        opacity: 0;
-        transform: translateY(-8px) scale(0.98);
-        pointer-events: none;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        padding: 0.5rem;
-    }
-    .uu-select-dropdown.open {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        pointer-events: auto;
-    }
-    .uu-select-option {
-        padding: 0.75rem 1rem;
-        font-size: 0.8125rem;
-        color: #6d492f;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 0.625rem;
-        border-radius: 0.75rem;
-        margin-bottom: 0.125rem;
-    }
-    .uu-select-option:last-child {
-        margin-bottom: 0;
-    }
-    .uu-select-option:hover {
-        background: rgba(109, 73, 47, 0.05);
-        color: #4a301e;
-    }
-    .uu-select-option.selected {
-        background: #6d492f;
-        color: white;
-        font-weight: bold;
-    }
-    .uu-select-option .option-icon {
-        font-size: 1.125rem;
-        opacity: 0.6;
-    }
-    .uu-select-option.selected .option-icon {
-        opacity: 1;
-    }
+
+
 </style>

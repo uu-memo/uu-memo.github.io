@@ -10,30 +10,40 @@ const sortedPosts = allPosts.sort(
 );
 
 const latestPosts = sortedPosts.slice(0, 3);
-const featuredPosts = sortedPosts.filter((post) => 
-    post.data.tags?.includes("精選")
-).slice(0, 4);
+const featuredPosts = sortedPosts
+    .filter((post) => post.data.tags?.includes("精選"))
+    .slice(0, 4);
 
 // Extract unique categories
-const categories = [...new Set(allPosts.flatMap(post => post.data.category || []))].filter(Boolean);
+const categories = [
+    ...new Set(allPosts.flatMap((post) => post.data.category || [])),
+].filter(Boolean);
 // Extract top tags (most frequent)
-const tagsCount = allPosts.flatMap(post => post.data.tags || []).reduce((acc, tag) => {
-    acc[tag] = (acc[tag] || 0) + 1;
-    return acc;
-}, {} as Record<string, number>);
+const tagsCount = allPosts
+    .flatMap((post) => post.data.tags || [])
+    .reduce((acc, tag) => {
+        acc[tag] = (acc[tag] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>);
 const topTags = Object.entries(tagsCount)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10)
-    .map(t => t[0]);
+    .map((t) => t[0]);
 
 // Load author bio from about.md (first non-empty, non-HTML paragraph)
 const aboutPage = await getEntry("pages", "about");
 const aboutRawBody = aboutPage?.body || "";
-const aboutBio = aboutRawBody
-    .split(/\n+/)
-    .map((l: string) => l.trim())
-    .filter((l: string) => l && !l.startsWith('<') && !l.startsWith('#') && !l.startsWith('---'))
-    [0] || "在這裡記錄生活的碎片。";
+const aboutBio =
+    aboutRawBody
+        .split(/\n+/)
+        .map((l: string) => l.trim())
+        .filter(
+            (l: string) =>
+                l &&
+                !l.startsWith("<") &&
+                !l.startsWith("#") &&
+                !l.startsWith("---")
+        )[0] || "在這裡記錄生活的碎片。";
 ---
 
 <Layout title="UU MEMO - 值得留下的日常時光">
@@ -90,7 +100,11 @@ const aboutBio = aboutRawBody
                                                 </span>{" "}
                                                 /
                                                 <a
-                                                    href={`/category/${post.data.category?.[0] || "life"}`}
+                                                    href={`/category/${
+                                                        post.data
+                                                            .category?.[0] ||
+                                                        "life"
+                                                    }`}
                                                     class="hover:text-uu-main hover:underline decoration-1 underline-offset-2 transition-colors"
                                                 >
                                                     {post.data.category?.[0] ||
@@ -105,6 +119,15 @@ const aboutBio = aboutRawBody
                                             <p class="text-sm leading-relaxed opacity-70 line-clamp-2 mb-4">
                                                 {post.data.description}
                                             </p>
+                                            <a
+                                                href={`/posts/${post.id}`}
+                                                class="text-xs font-bold self-start text-uu-main hover:text-uu-dark transition-colors flex items-center gap-1 group/btn"
+                                            >
+                                                閱讀全文
+                                                <span class="material-symbols-outlined text-sm group-hover/btn:translate-x-1 transition-transform">
+                                                    arrow_forward
+                                                </span>
+                                            </a>
                                         </div>
                                     </article>
                                     {index < latestPosts.length - 1 && (
@@ -114,12 +137,16 @@ const aboutBio = aboutRawBody
                             ))
                         }
                     </div>
-                    <div class="mt-8 text-right">
+                    <div class="mt-12 flex justify-center">
                         <a
                             href="/posts"
-                            class="btn-text text-sm font-bold tracking-widest text-uu-main/80 hover:text-uu-main"
-                            >看所有文章 →</a
+                            class="inline-flex items-center gap-2 px-8 py-3 bg-uu-sub/20 text-uu-main rounded-full text-sm font-bold hover:bg-uu-main hover:text-white transition-all shadow-sm"
                         >
+                            <span class="material-symbols-outlined text-sm"
+                                >list_alt</span
+                            >
+                            看所有文章
+                        </a>
                     </div>
                 </section>
 
@@ -172,12 +199,16 @@ const aboutBio = aboutRawBody
                             ))
                         }
                     </div>
-                    <div class="mt-8 text-right">
+                    <div class="mt-12 flex justify-center">
                         <a
                             href="/category/精選文章"
-                            class="btn-text text-sm font-bold tracking-widest text-uu-main/80 hover:text-uu-main"
-                            >看所有精選 →</a
+                            class="inline-flex items-center gap-2 px-8 py-3 bg-uu-sub/20 text-uu-main rounded-full text-sm font-bold hover:bg-uu-main hover:text-white transition-all shadow-sm"
                         >
+                            <span class="material-symbols-outlined text-sm"
+                                >stars</span
+                            >
+                            看所有精選
+                        </a>
                     </div>
                 </section>
             </div>
@@ -208,6 +239,7 @@ const aboutBio = aboutRawBody
                         <a
                             href="mailto:uu-memo@outlook.com"
                             class="text-uu-main/50 hover:text-uu-main transition-colors"
+                            title="Email"
                         >
                             <span class="material-symbols-outlined">mail</span>
                         </a>
@@ -216,8 +248,17 @@ const aboutBio = aboutRawBody
                             class="text-uu-main/50 hover:text-uu-main transition-colors"
                             title="聯絡我"
                         >
+                            <span class="material-symbols-outlined">chat</span>
+                        </a>
+                        <a
+                            id="home-donate-btn"
+                            href="#"
+                            target="_blank"
+                            class="text-uu-main/50 hover:text-uu-main transition-colors hidden"
+                            title="贊助我"
+                        >
                             <span class="material-symbols-outlined"
-                                >alternate_email</span
+                                >volunteer_activism</span
                             >
                         </a>
                     </div>
@@ -277,3 +318,33 @@ const aboutBio = aboutRawBody
 
     <Footer />
 </Layout>
+
+<script>
+    import { db } from "../lib/firebase";
+    import { doc, getDoc } from "firebase/firestore";
+
+    async function initHomeDonation() {
+        const donateBtn = document.getElementById(
+            "home-donate-btn"
+        ) as HTMLAnchorElement;
+        if (!donateBtn) return;
+
+        try {
+            const docRef = doc(db, "site_config", "donation_settings");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.enabled && data.link_url) {
+                    donateBtn.href = data.link_url;
+                    donateBtn.classList.remove("hidden");
+                }
+            }
+        } catch (err) {
+            console.error("Home: Failed to fetch donation config:", err);
+        }
+    }
+
+    document.addEventListener("astro:page-load", () => {
+        initHomeDonation();
+    });
+</script>

@@ -101,6 +101,16 @@ const seoDescription = post.data.description ||
 
             <!-- Post Actions (Bookmark, Share, Copy Link) -->
             <div class="mt-8 flex justify-end gap-2">
+                <a 
+                    id="donate-btn"
+                    href="#" 
+                    target="_blank"
+                    class="h-10 px-4 flex items-center justify-center gap-2 rounded-full bg-uu-sub/10 text-uu-main/60 hover:bg-uu-main hover:text-white transition-all hidden" 
+                    title="贊助作者"
+                >
+                    <span class="material-symbols-outlined text-[20px]">volunteer_activism</span>
+                    <span class="text-xs font-bold">贊助計畫</span>
+                </a>
                 <button 
                     id="bookmark-btn" 
                     class="w-10 h-10 flex items-center justify-center rounded-full text-uu-main/60 hover:bg-uu-sub/20 hover:text-uu-main transition-colors" 
@@ -314,6 +324,32 @@ const seoDescription = post.data.description ||
         copyLinkBtn?.addEventListener('click', () => {
             copyToClipboard(window.location.href);
         });
+
+        // Fetch Donation Link from Firestore
+        async function initDonationButton() {
+            const donateBtn = document.getElementById('donate-btn') as HTMLAnchorElement;
+            if (!donateBtn) return;
+
+            try {
+                const docRef = doc(db, "site_config", "donation_settings");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.enabled && data.link_url) {
+                        donateBtn.href = data.link_url;
+                        donateBtn.classList.remove('hidden');
+                        if (data.platform_name) {
+                            const label = donateBtn.querySelector('.text-xs');
+                            if (label) label.textContent = `支持計畫 (${data.platform_name})`;
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to fetch donation config:", err);
+            }
+        }
+
+        initDonationButton();
     }
 
     // Run on every page load (initial and navigation)
