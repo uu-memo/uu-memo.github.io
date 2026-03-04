@@ -19,50 +19,89 @@ const postsJson = allPosts.map((post) => ({
 
 <Layout title="我的書籤 - UU MEMO">
     <Header />
-    <main class="max-w-6xl mx-auto px-6 py-12 md:py-20 min-h-[70vh]">
-        <div class="flex items-center gap-4 mb-12 border-b border-uu-sub pb-6">
-            <span class="material-symbols-outlined text-3xl text-uu-main"
-                >bookmarks</span
-            >
+
+    <main class="max-w-6xl mx-auto px-6 py-12 min-h-[60vh]">
+        <!-- Page Header -->
+        <div
+            class="flex flex-col md:flex-row md:items-end justify-between mb-8 border-b border-uu-sub pb-4 gap-4"
+        >
             <h1 class="text-3xl font-bold text-uu-main">我的書籤</h1>
+
+            <div
+                class="w-full md:w-auto flex flex-col md:flex-row items-center gap-4 flex-1 md:justify-end"
+            >
+                <span
+                    class="text-sm font-mono opacity-50 whitespace-nowrap hidden md:inline-block"
+                    ><span id="bookmark-count">0</span> BOOKMARKS</span
+                >
+            </div>
+        </div>
+
+        <!-- Dynamic Category Filter (Placeholder for alignment) -->
+        <div class="mb-10 overflow-x-auto no-scrollbar">
+            <div class="flex flex-nowrap gap-2 items-center pb-2">
+                <span
+                    class="text-xs font-bold text-uu-main/60 uppercase tracking-widest mr-2 shrink-0"
+                    >目前顯示：</span
+                >
+                <span
+                    class="text-xs px-4 py-1.5 bg-uu-main text-white rounded-full font-medium shrink-0"
+                    >已收藏的文章</span
+                >
+            </div>
         </div>
 
         <!-- Auth State Message (Internal Login) -->
-        <div id="auth-check" class="hidden py-8 text-center">
+        <div id="auth-check" class="hidden py-12 md:py-20">
             <div
                 id="login-section"
-                class="opacity-0 translate-y-4 transition-all duration-500 max-w-md mx-auto w-full bg-uu-light p-10 rounded-2xl shadow-sm border border-uu-sub text-center"
+                class="opacity-0 translate-y-4 transition-all duration-500 w-full mb-12"
             >
-                <h2 class="text-2xl font-bold mb-4 font-logo text-uu-dark">
-                    開啟你在 UU MEMO 的收藏夾
-                </h2>
-                <p class="text-uu-main/60 mb-8 text-sm leading-relaxed">
-                    登入後即可同步您的書籤，找回觸動心靈的瞬間。
-                </p>
-
-                <button
-                    id="google-login-btn"
-                    class="w-full bg-white border border-uu-sub hover:border-uu-main hover:bg-uu-base/30 text-uu-dark font-medium py-3.5 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 group mb-6 active:scale-[0.98]"
-                >
-                    <svg
-                        class="w-5 h-5 group-hover:scale-110 transition-transform"
-                        viewBox="0 0 24 24"
+                <div class="flex flex-col md:flex-row md:items-center gap-10">
+                    <div
+                        class="w-24 h-24 bg-uu-sub/20 rounded-3xl flex items-center justify-center shrink-0"
                     >
-                        <path
-                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                            fill="#4285F4"></path>
-                        <path
-                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                            fill="#34A853"></path>
-                        <path
-                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                            fill="#FBBC05"></path>
-                        <path
-                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                            fill="#EA4335"></path>
-                    </svg>
-                    <span>使用 Google 帳戶繼續</span>
-                </button>
+                        <span
+                            class="material-symbols-outlined text-4xl text-uu-main"
+                            >lock_open</span
+                        >
+                    </div>
+                    <div class="flex-1">
+                        <h2
+                            class="text-3xl font-bold mb-4 font-logo text-uu-dark"
+                        >
+                            開啟你的收藏夾
+                        </h2>
+                        <p
+                            class="text-uu-main/60 mb-8 text-lg leading-relaxed max-w-2xl"
+                        >
+                            登入後即可同步您的書籤，找回觸動心靈的瞬間。我們將為您妥善保管每一篇喜愛的文章。
+                        </p>
+                        <button
+                            id="google-login-btn"
+                            class="inline-flex items-center gap-3 bg-white border border-uu-sub hover:border-uu-main hover:bg-uu-base/30 text-uu-dark font-medium py-3.5 px-8 rounded-2xl transition-all duration-300 group active:scale-[0.98] shadow-sm"
+                        >
+                            <svg
+                                class="w-5 h-5 group-hover:scale-110 transition-transform"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                    fill="#4285F4"></path>
+                                <path
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                    fill="#34A853"></path>
+                                <path
+                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                                    fill="#FBBC05"></path>
+                                <path
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                    fill="#EA4335"></path>
+                            </svg>
+                            <span>使用 Google 帳戶繼續</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -80,17 +119,37 @@ const postsJson = allPosts.map((post) => ({
         <!-- Empty State -->
         <div
             id="bookmarks-empty"
-            class="hidden py-20 text-center bg-uu-light rounded-2xl border border-uu-sub shadow-sm"
+            class="hidden py-24 text-left border-b border-uu-sub/20 mb-12 w-full"
         >
-            <span class="material-symbols-outlined text-5xl mb-4 text-uu-sub"
-                >bookmark_border</span
-            >
-            <p class="text-uu-main/60">目前還沒有收藏的文章。</p>
-            <a
-                href="/posts"
-                class="inline-block mt-6 text-uu-main underline text-sm hover:text-uu-dark"
-                >去看看文章</a
-            >
+            <div class="flex flex-col md:flex-row md:items-center gap-10">
+                <div
+                    class="w-24 h-24 bg-uu-sub/10 rounded-full flex items-center justify-center shrink-0"
+                >
+                    <span
+                        class="material-symbols-outlined text-4xl text-uu-sub/60"
+                        >bookmark_border</span
+                    >
+                </div>
+                <div class="flex-1">
+                    <h2 class="text-2xl font-bold text-uu-main/80 mb-2">
+                        安靜的收藏夾
+                    </h2>
+                    <p
+                        class="text-uu-main/40 text-lg mb-8 max-w-2xl leading-relaxed"
+                    >
+                        目前這裡還沒有收藏的文章。當您在閱讀時看到觸動心靈的文字，點擊右上角的「收藏」圖標，它就會出現在這裡。
+                    </p>
+                    <a
+                        href="/posts"
+                        class="inline-flex items-center gap-2 px-8 py-3 bg-uu-sub text-uu-main rounded-full text-base font-bold hover:bg-uu-main hover:text-white transition-all shadow-sm"
+                    >
+                        去探索更多故事
+                        <span class="material-symbols-outlined text-sm"
+                            >explore</span
+                        >
+                    </a>
+                </div>
+            </div>
         </div>
 
         <!-- Bookmarks Grid -->
@@ -154,6 +213,12 @@ const postsJson = allPosts.map((post) => ({
                         loadingState?.classList.add("hidden");
                         emptyState?.classList.remove("hidden");
                     } else {
+                        const bookmarkCount =
+                            document.getElementById("bookmark-count");
+                        if (bookmarkCount)
+                            bookmarkCount.innerText =
+                                bookmarkedIds.length.toString();
+
                         renderBookmarks(
                             bookmarkedIds,
                             postsJson,

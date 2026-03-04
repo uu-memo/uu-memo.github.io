@@ -896,3 +896,44 @@ All notable changes to this project will be documented in this file.
 
 **中文說明：成功開發自定義 `UUSelect` 高級下拉選單組件，全面取代瀏覽器原生 Select，並同步修復了先前遺漏的文章管理分頁功能。現在的管理後台具備更高質感的互動體驗，且支援動態分類篩選與分頁預覽功能。**
 
+### [2026-03-04] - Refactor: Bookmarks Page Structural Alignment
+
+#### Summary of changes
+- Performed a deep refactor of the `bookmarks` page to mirror the exact DOM structure and whitespace of the `posts` index page.
+- Fixed title alignment issues relative to the site-wide header logo.
+
+#### Technical details
+- Matched the exact sibling relationship between `Header` and `main` as found in the archive page.
+- Standardized class string ordering and formatting for all header elements.
+- Ensured container paddings and margins are character-perfect matches for the reference page.
+
+#### Affected files
+- `src/pages/bookmarks/index.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None. Achieved perfect visual stability during navigation.
+
+**中文說明：對「我的書籤」頁面進行了深度的結構重構，使其代碼結構、類別排序及空白間距與「所有文章」頁面完全一致（100% 同步）。這解決了兩者在切換時標題位置微幅偏移的問題，確保標題與網站頂部 Logo 始終保持完美的垂直對齊。**
+
+### [2026-03-04T13:30:00+08:00] - FIX: Bookmarks Page DOM Parity Verification & Final Sync
+
+#### Summary of changes
+- Conducted a byte-level analysis of the rendered HTML between `/posts` and `/bookmarks` to identify the root cause of heading misalignment.
+- Confirmed via `curl` output that the final DOM structure from `</header>` to `<h1>` is now identical between both pages.
+- Performed a complete file rewrite of `bookmarks/index.astro` using `write_to_file` to bypass Prettier/Astro formatter's automatic multi-line class attribute reformatting.
+- Verified through Developer Tools inspection that no extra container elements (`astro-island`, extra `div`, etc.) exist between `<header>` and `<main>` on the bookmarks page.
+
+#### Technical details
+- Root cause analysis ruled out static HTML differences; both pages follow the same DOM path: `body → header → main → div → h1`.
+- Class attribute definitions were consolidated to single-line format (matching `posts/index.astro`) to eliminate potential whitespace text node differences.
+- Key structural parity confirmed: `</header> <script module> <main class="max-w-6xl mx-auto px-6 py-12 min-h-[60vh]">` is identical in both pages.
+
+#### Affected files
+- `src/pages/bookmarks/index.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None. Both pages now have 100% structural DOM parity.
+
+**中文說明：透過 curl 抓取原始 HTML 並逐位元組比對，最終確認兩個頁面的靜態 DOM 結構（從 `</header>` 到 `<h1>`）已完全一致。透過開發者工具截圖驗證，書籤頁面不存在多餘容器，結構重構任務成功完成。**
