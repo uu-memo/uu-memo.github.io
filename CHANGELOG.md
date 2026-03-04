@@ -1039,3 +1039,24 @@ All notable changes to this project will be documented in this file.
 - None. Improved cross-page data consistency.
 
 *實作了強韌的「全站即時身份同步」系統，確保留言與回覆能即時反映使用者的最新暱稱與頭像（以 UID 為唯一指名）。同時將首頁「看所有文章」連結升級為高質感的膠囊按鈕樣式，並修復了關於我頁面 metadata 的讀取穩定性。*
+
+### [2026-03-04.3] - Homepage Interaction & Button Refinement
+
+#### Summary of changes
+- Refined homepage article cards to be fully clickable, removing explicit "Read More" buttons for a cleaner aesthetic.
+- Reverted the section navigation buttons ("View All Posts", "View All Featured") to high-quality text-only links with arrows.
+- Optimized card spacing and hover interactions across the homepage.
+
+#### Technical details
+- **Stretched Link Pattern**: Implemented the `after:absolute after:inset-0` technique on primary links within `article` cards, making the entire container interactive while preserving nested link accessibility for categories.
+- **Button Reversion**: Replaced capsule-style components with `btn-text` class implementation, providing a more airy and elegant transition while maintaining a clear call-to-action.
+- **Micro-interactions**: Retained smooth scale-up effects on card images and color transitions on titles to provide tactical feedback upon hover.
+
+#### Affected files
+- `src/pages/index.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None. Improved UX friction by simplifying card navigation while maintaining branding.
+
+*優化首頁文章卡片的互動體驗，將整個卡片設為可點擊區域並移除冗餘的「閱讀全文」連結。同時將下方「看所有文章」的引導按鈕改回簡約優質感的手寫文字箭頭樣式，提升整體的留白與視覺質感。*
