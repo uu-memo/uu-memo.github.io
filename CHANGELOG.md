@@ -972,3 +972,22 @@ All notable changes to this project will be documented in this file.
 - `CHANGELOG.md`
 
 **中文說明：修復了全域佈局對齊問題，透過移除 body 的 flex 屬性解決了導覽列與標題之間微小的水平偏移。同時簡化了書籤頁面，移除了無書籤狀態時的裝飾圖示。**
+
+### [2026-03-04T14:26:00+08:00] - Refactor: Bookmarks Login Section UI Cleanup
+
+#### Summary of changes
+- Updated the "Login Required" section on the Bookmarks page for a cleaner, more focused look.
+- Changed the heading text to "開始探索之旅".
+- Removed the lock icon and optimized text wrapping for the description.
+
+#### Technical details
+- Updated `h2` text in `src/pages/bookmarks/index.astro`.
+- Removed the flex container and icon div that wrapped the login information.
+- Removed `max-w-2xl` from the description paragraph to prevent premature line breaks.
+
+#### Affected files
+- `src/pages/bookmarks/index.astro`
+- `CHANGELOG.md`
+
+**中文說明：優化了書籤頁面的登入區塊，將標題改為「開始探索之旅」，並移除鎖頭圖示與文字寬度限制，讓介面更簡潔且空間利用更合理。**
+
