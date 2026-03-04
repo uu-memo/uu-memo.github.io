@@ -115,34 +115,24 @@ const postsJson = allPosts.map((post) => ({
             id="bookmarks-empty"
             class="hidden py-24 text-left border-b border-uu-sub/20 mb-12 w-full"
         >
-            <div class="flex flex-col md:flex-row md:items-center gap-10">
-                <div
-                    class="w-24 h-24 bg-uu-sub/10 rounded-full flex items-center justify-center shrink-0"
+            <div class="flex-1">
+                <h2 class="text-2xl font-bold text-uu-main/80 mb-2">
+                    安靜的收藏夾
+                </h2>
+                <p
+                    class="text-uu-main/40 text-lg mb-8 max-w-2xl leading-relaxed"
                 >
-                    <span
-                        class="material-symbols-outlined text-4xl text-uu-sub/60"
-                        >bookmark_border</span
+                    目前這裡還沒有收藏的文章。當您在閱讀時看到觸動心靈的文字，點擊右上角的「收藏」圖標，它就會出現在這裡。
+                </p>
+                <a
+                    href="/posts"
+                    class="inline-flex items-center gap-2 px-8 py-3 bg-uu-sub text-uu-main rounded-full text-base font-bold hover:bg-uu-main hover:text-white transition-all shadow-sm"
+                >
+                    去探索更多故事
+                    <span class="material-symbols-outlined text-sm"
+                        >explore</span
                     >
-                </div>
-                <div class="flex-1">
-                    <h2 class="text-2xl font-bold text-uu-main/80 mb-2">
-                        安靜的收藏夾
-                    </h2>
-                    <p
-                        class="text-uu-main/40 text-lg mb-8 max-w-2xl leading-relaxed"
-                    >
-                        目前這裡還沒有收藏的文章。當您在閱讀時看到觸動心靈的文字，點擊右上角的「收藏」圖標，它就會出現在這裡。
-                    </p>
-                    <a
-                        href="/posts"
-                        class="inline-flex items-center gap-2 px-8 py-3 bg-uu-sub text-uu-main rounded-full text-base font-bold hover:bg-uu-main hover:text-white transition-all shadow-sm"
-                    >
-                        去探索更多故事
-                        <span class="material-symbols-outlined text-sm"
-                            >explore</span
-                        >
-                    </a>
-                </div>
+                </a>
             </div>
         </div>
 

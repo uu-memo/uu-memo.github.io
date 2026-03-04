@@ -955,3 +955,20 @@ All notable changes to this project will be documented in this file.
 - `CHANGELOG.md`
 
 **中文說明：執行方案 A，將書籤頁面的結構扁平化為兩層（main > h1），移除了原本包裹標題的 Page Header 容器。此舉直接解決了使用者觀察到的「多一層容器」問題，並確保標題與上方 Logo 的對齊更加穩固。**
+
+### [2026-03-04T13:58:00+08:00] - Fix: Global Layout Alignment & Bookmarks UI Cleanup
+
+#### Summary of changes
+- Fixed the persistent misalignment between the site Header and Page Headings by refactoring the global `body` layout.
+- Removed the decorative bookmark icon from the Bookmarks page's empty state to streamline the interface.
+
+#### Technical details
+- Removed `flex flex-col` from the `body` tag in `Layout.astro`. This resolves a layout engine discrepancy where `mx-auto` on flex items calculated margins differently than on standard block items, causing a few pixels of horizontal offset.
+- Cleaned up `src/pages/bookmarks/index.astro` by removing the unused empty state icon container.
+
+#### Affected files
+- `src/layouts/Layout.astro`
+- `src/pages/bookmarks/index.astro`
+- `CHANGELOG.md`
+
+**中文說明：修復了全域佈局對齊問題，透過移除 body 的 flex 屬性解決了導覽列與標題之間微小的水平偏移。同時簡化了書籤頁面，移除了無書籤狀態時的裝飾圖示。**
