@@ -1,0 +1,201 @@
+---
+---
+
+<section
+    id="tab-author"
+    class="tab-content hidden w-full flex-1 flex flex-col p-10"
+>
+    <div
+        class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20"
+    >
+        <div class="flex items-center gap-3.5">
+            <div
+                class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main"
+            >
+                <span class="material-symbols-outlined">person_edit</span>
+            </div>
+            <h3 class="font-bold text-xl text-uu-dark">作者設定</h3>
+        </div>
+        <button
+            id="author-edit-toggle"
+            class="flex items-center gap-2 px-4 py-2 bg-uu-sub/10 text-uu-main rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-uu-sub/20 transition-all"
+        >
+            <span class="material-symbols-outlined text-sm">edit</span>
+            編輯關於我
+        </button>
+    </div>
+
+    <div id="author-preview" class="space-y-6 animate-fade-in">
+        <div
+            class="flex items-center gap-6 p-6 bg-uu-base/10 rounded-2xl border border-uu-sub/10"
+        >
+            <div
+                class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-sm shrink-0"
+            >
+                <img src="/uu-memo.png" class="w-full h-full object-cover" />
+            </div>
+            <div>
+                <h4 class="text-lg font-bold text-uu-dark mb-1">關於站長</h4>
+                <p class="text-xs text-uu-main/60">
+                    目前顯示於「關於我」頁面的內容預覽
+                </p>
+            </div>
+        </div>
+        <div
+            id="author-display-content"
+            class="prose prose-sm max-w-none text-uu-main/80 p-8 bg-white rounded-2xl border border-uu-sub/20 min-h-[300px]"
+        >
+            <!-- Content will be injected here -->
+        </div>
+    </div>
+
+    <div
+        id="author-editor"
+        class="hidden space-y-6 animate-fade-in flex-1 flex flex-col"
+    >
+        <div
+            class="flex items-center gap-2 px-4 py-3 bg-uu-main/5 rounded-xl border border-uu-main/10 mb-2"
+        >
+            <span class="material-symbols-outlined text-uu-main text-sm"
+                >info</span
+            >
+            <p class="text-[10px] text-uu-main font-bold">
+                正在編輯：請使用 Markdown 語法撰寫您的自我介紹
+            </p>
+        </div>
+        <div class="flex-1 flex flex-col">
+            <textarea
+                id="author-md-editor"
+                class="w-full flex-1 min-h-[500px] bg-uu-base/10 border border-uu-sub/10 rounded-2xl p-8 text-sm font-mono leading-relaxed focus:outline-none focus:bg-white transition-all shadow-inner"
+                placeholder="# 關於我..."></textarea>
+        </div>
+        <div class="pt-6 mt-4">
+            <div class="flex flex-col gap-3">
+                <button
+                    id="author-save-btn"
+                    class="w-full py-4 bg-uu-main text-white rounded-2xl font-black tracking-widest uppercase hover:bg-uu-dark transition-all flex items-center justify-center gap-3"
+                >
+                    <span>儲存設定</span>
+                    <div
+                        id="author-save-loader"
+                        class="hidden w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"
+                    >
+                    </div>
+                </button>
+                <button
+                    id="author-cancel-btn"
+                    class="text-[10px] font-bold text-uu-main/40 uppercase tracking-[0.2em] hover:text-uu-main transition-all py-2"
+                    >取消更變</button
+                >
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    import { db } from "../../lib/firebase";
+    import {
+        doc,
+        getDoc,
+        updateDoc,
+        setDoc,
+        serverTimestamp,
+    } from "firebase/firestore";
+
+    if (typeof window !== "undefined") {
+        const authorPreview = document.getElementById("author-preview");
+        const authorEditor = document.getElementById("author-editor");
+        const authorDisplay = document.getElementById("author-display-content");
+        const authorMdInput = document.getElementById(
+            "author-md-editor"
+        ) as HTMLTextAreaElement;
+        const authorToggleBtn = document.getElementById("author-edit-toggle");
+        const authorSaveBtn = document.getElementById("author-save-btn");
+        const authorSaveLoader = document.getElementById("author-save-loader");
+        const authorCancelBtn = document.getElementById("author-cancel-btn");
+
+        let currentAuthorData = "";
+
+        async function fetchAuthorConfig() {
+            try {
+                const docRef = doc(db, "site_config", "author");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    currentAuthorData = docSnap.data().about_me || "";
+                    if (authorMdInput) authorMdInput.value = currentAuthorData;
+                    renderAuthorPreview();
+                }
+            } catch (err) {
+                console.error("Error fetching author config:", err);
+            }
+        }
+
+        function renderAuthorPreview() {
+            if (!authorDisplay) return;
+            if (!currentAuthorData.trim()) {
+                authorDisplay.innerHTML =
+                    '<p class="text-uu-main/30 italic text-sm">尚無內容，請點擊編輯...</p>';
+                return;
+            }
+            authorDisplay.innerHTML = currentAuthorData
+                .split(/\n\n+/)
+                .filter((p) => p.trim())
+                .map(
+                    (p) =>
+                        `<p class="mb-4 text-uu-main/80 text-sm leading-relaxed">${p
+                            .trim()
+                            .replace(/\n/g, "<br>")}</p>`
+                )
+                .join("");
+        }
+
+        function toggleAuthorEdit(show: boolean) {
+            if (show) {
+                authorPreview?.classList.add("hidden");
+                authorEditor?.classList.remove("hidden");
+            } else {
+                authorPreview?.classList.remove("hidden");
+                authorEditor?.classList.add("hidden");
+                if (authorMdInput) authorMdInput.value = currentAuthorData;
+            }
+        }
+
+        authorToggleBtn?.addEventListener("click", () =>
+            toggleAuthorEdit(true)
+        );
+        authorCancelBtn?.addEventListener("click", () =>
+            toggleAuthorEdit(false)
+        );
+
+        authorSaveBtn?.addEventListener("click", async () => {
+            if (!authorSaveLoader || !authorMdInput) return;
+
+            authorSaveLoader.classList.remove("hidden");
+            authorSaveBtn.setAttribute("disabled", "true");
+
+            try {
+                const newContent = authorMdInput.value;
+                await updateDoc(doc(db, "site_config", "author"), {
+                    about_me: newContent,
+                });
+
+                currentAuthorData = newContent;
+                renderAuthorPreview();
+                toggleAuthorEdit(false);
+                if ((window as any).showToast)
+                    (window as any).showToast("作者資訊已成功更新", "success");
+            } catch (err) {
+                if ((window as any).showToast)
+                    (window as any).showToast("儲存失敗: " + err, "error");
+            } finally {
+                authorSaveLoader.classList.add("hidden");
+                authorSaveBtn.removeAttribute("disabled");
+            }
+        });
+
+        // --- API Exposed ---
+        (window as any).AuthorSettings = {
+            loadSettings: fetchAuthorConfig,
+        };
+    }
+</script>

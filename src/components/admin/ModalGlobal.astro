@@ -1,0 +1,193 @@
+---
+---
+
+<!-- Custom Modal for Admin Actions -->
+<div
+    id="custom-modal-container"
+    class="fixed inset-0 z-[100] flex items-center justify-center p-6 opacity-0 pointer-events-none transition-all duration-300"
+>
+    <!-- Backdrop -->
+    <div
+        id="custom-modal-backdrop"
+        class="absolute inset-0 bg-uu-dark/40 backdrop-blur-sm"
+    >
+    </div>
+
+    <!-- Modal Card -->
+    <div
+        id="custom-modal-card"
+        class="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl shadow-uu-dark/20 overflow-hidden transform scale-95 transition-all duration-300"
+    >
+        <div class="p-10 text-center">
+            <!-- Icon -->
+            <div
+                id="custom-modal-icon-bg"
+                class="w-20 h-20 bg-uu-sub/5 rounded-full flex items-center justify-center mx-auto mb-8"
+            >
+                <span
+                    id="custom-modal-icon"
+                    class="material-symbols-outlined text-3xl text-uu-main"
+                    >help</span
+                >
+            </div>
+
+            <h3
+                id="custom-modal-title"
+                class="text-xl font-bold text-uu-dark mb-4 tracking-tight"
+            >
+                確認執行？
+            </h3>
+            <p
+                id="custom-modal-message"
+                class="text-sm text-uu-main/60 leading-relaxed mb-10 px-4"
+            >
+                詳細的操作說明將會顯示在這裡，請確認後再繼續。
+            </p>
+
+            <div class="flex gap-4">
+                <button
+                    id="custom-modal-cancel"
+                    class="flex-1 py-4 bg-uu-sub/10 text-uu-main/60 rounded-2xl text-[11px] font-black tracking-widest uppercase hover:bg-uu-sub/20 transition-all active:scale-95"
+                    >取消</button
+                >
+                <button
+                    id="custom-modal-confirm"
+                    class="flex-1 py-4 bg-uu-main text-white rounded-2xl text-[11px] font-black tracking-widest uppercase hover:bg-uu-dark hover:shadow-lg hover:shadow-uu-main/20 transition-all active:scale-95"
+                    >確定執行</button
+                >
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    if (typeof window !== "undefined") {
+        // --- Custom Modal Logic ---
+        const modalContainer = document.getElementById(
+            "custom-modal-container"
+        );
+        const modalBackdrop = document.getElementById("custom-modal-backdrop");
+        const modalCard = document.getElementById("custom-modal-card");
+        const modalTitle = document.getElementById("custom-modal-title");
+        const modalMessage = document.getElementById("custom-modal-message");
+        const modalConfirmBtn = document.getElementById("custom-modal-confirm");
+        const modalCancelBtn = document.getElementById("custom-modal-cancel");
+        const modalIcon = document.getElementById("custom-modal-icon");
+        const modalIconBg = document.getElementById("custom-modal-icon-bg");
+
+        let modalResolve: ((value: boolean) => void) | null = null;
+
+        const CustomModal = {
+            confirm: ({
+                title = "確認",
+                message = "",
+                confirmText = "確定",
+                cancelText = "取消",
+                icon = "help",
+                theme = "main",
+            }) => {
+                return new Promise<boolean>((resolve) => {
+                    if (
+                        !modalContainer ||
+                        !modalCard ||
+                        !modalTitle ||
+                        !modalMessage ||
+                        !modalConfirmBtn ||
+                        !modalCancelBtn ||
+                        !modalIcon
+                    )
+                        return resolve(false);
+
+                    modalTitle.textContent = title;
+                    modalMessage.textContent = message;
+                    modalConfirmBtn.textContent = confirmText;
+                    modalCancelBtn.textContent = cancelText;
+                    modalIcon.textContent = icon;
+                    modalCancelBtn.classList.remove("hidden");
+
+                    // Theme Logic (Brand Color Only)
+                    if (theme === "danger") {
+                        // Critical actions (like delete) use uu-dark for a serious gravity
+                        modalIcon.className =
+                            "material-symbols-outlined text-3xl text-uu-dark";
+                        modalIconBg?.classList.remove("bg-uu-sub/5");
+                        modalIconBg?.classList.add("bg-uu-sub/20");
+                        modalConfirmBtn.className =
+                            "flex-1 py-4 bg-uu-dark text-white rounded-2xl text-[11px] font-black tracking-widest uppercase hover:opacity-90 hover:shadow-lg hover:shadow-uu-dark/20 transition-all active:scale-95";
+                    } else {
+                        modalIcon.className =
+                            "material-symbols-outlined text-3xl text-uu-main";
+                        modalIconBg?.classList.remove("bg-uu-sub/20");
+                        modalIconBg?.classList.add("bg-uu-sub/5");
+                        modalConfirmBtn.className =
+                            "flex-1 py-4 bg-uu-dark text-white rounded-2xl text-[11px] font-black tracking-widest uppercase hover:opacity-90 hover:shadow-lg hover:shadow-uu-dark/20 transition-all active:scale-95";
+                    }
+
+                    modalResolve = resolve;
+                    modalContainer.classList.remove(
+                        "pointer-events-none",
+                        "opacity-0"
+                    );
+                    modalCard.classList.remove("scale-95");
+                    modalCard.classList.add("scale-100");
+                });
+            },
+            alert({
+                title = "提示",
+                message = "",
+                confirmText = "了解",
+                icon = "info",
+                theme = "primary",
+            }: {
+                title?: string;
+                message?: string;
+                confirmText?: string;
+                icon?: string;
+                theme?: string;
+            }) {
+                return new Promise<void>((resolve) => {
+                    const modalCancelBtn = document.getElementById(
+                        "custom-modal-cancel"
+                    );
+                    if (modalCancelBtn) modalCancelBtn.classList.add("hidden");
+
+                    this.confirm({
+                        title,
+                        message,
+                        confirmText,
+                        icon,
+                        theme,
+                        cancelText: "",
+                    }).then(() => {
+                        if (modalCancelBtn)
+                            modalCancelBtn.classList.remove("hidden");
+                        resolve();
+                    });
+                });
+            },
+            close: (result: boolean) => {
+                if (!modalContainer || !modalCard) return;
+                modalContainer.classList.add(
+                    "pointer-events-none",
+                    "opacity-0"
+                );
+                modalCard.classList.remove("scale-100");
+                modalCard.classList.add("scale-95");
+                if (modalResolve) {
+                    modalResolve(result);
+                    modalResolve = null;
+                }
+            },
+        };
+        (window as any).CustomModal = CustomModal;
+
+        modalConfirmBtn?.addEventListener("click", () =>
+            CustomModal.close(true)
+        );
+        modalCancelBtn?.addEventListener("click", () =>
+            CustomModal.close(false)
+        );
+        modalBackdrop?.addEventListener("click", () =>
+            CustomModal.close(false)
+        );
+    }
+</script>

@@ -48,7 +48,8 @@
                 toast.classList.add('bg-white', 'border-uu-main/30', 'text-uu-dark');
                 icon = 'check_circle';
             } else if (type === 'error') {
-                toast.classList.add('bg-white', 'border-red-200', 'text-red-900');
+                // Change error color from red to uu-dark/main theme
+                toast.classList.add('bg-white', 'border-uu-dark/30', 'text-uu-dark');
                 icon = 'report';
             } else {
                 toast.classList.add('bg-white', 'border-uu-sub/40', 'text-uu-main');

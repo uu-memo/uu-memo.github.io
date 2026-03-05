@@ -3,6 +3,16 @@ import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import PrimaryButton from "../../components/PrimaryButton.astro";
+
+// New Modular Components
+import Sidebar from "../../components/admin/Sidebar.astro";
+import PostManager from "../../components/admin/PostManager.astro";
+import PostEditor from "../../components/admin/PostEditor.astro";
+import DraftTool from "../../components/admin/DraftTool.astro";
+import CommentManager from "../../components/admin/CommentManager.astro";
+import AuthorSettings from "../../components/admin/AuthorSettings.astro";
+import SystemSettings from "../../components/admin/SystemSettings.astro";
+import ModalGlobal from "../../components/admin/ModalGlobal.astro";
 ---
 
 <Layout title="Admin Management | UU MEMO">
@@ -27,2418 +37,280 @@ import PrimaryButton from "../../components/PrimaryButton.astro";
             </p>
         </div>
 
-        <!-- Admin Dashboard Container (Exact Mirror of User Dashboard Layout) -->
+        <!-- Admin Dashboard Container -->
         <div
             id="admin-dashboard"
             class="hidden opacity-0 transition-opacity duration-500 dashboard-layout w-full"
         >
-            <!-- LEFT COLUMN: Sidebar -->
-            <aside class="dashboard-sidebar">
-                <div
-                    class="bg-uu-light p-8 rounded-2xl border border-uu-sub/30 shadow-sm flex flex-col items-center text-center"
-                >
-                    <div
-                        class="w-20 h-20 bg-uu-main/10 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-sm mb-4 shrink-0"
-                    >
-                        <span
-                            class="material-symbols-outlined text-uu-main text-4xl"
-                            >admin_panel_settings</span
-                        >
-                    </div>
-
-                    <div class="w-full">
-                        <h1
-                            class="text-lg font-bold font-logo text-uu-dark mb-0.5 truncate px-2"
-                        >
-                            ADMINISTRATOR
-                        </h1>
-                        <p
-                            id="admin-email"
-                            class="text-[10px] text-uu-main/60 tracking-wider font-mono truncate px-2"
-                        >
-                        </p>
-                    </div>
-
-                    <div
-                        class="w-8 h-0.5 bg-uu-sub/20 rounded-full my-6 shrink-0"
-                    >
-                    </div>
-
-                    <nav class="w-full flex flex-col gap-1.5">
-                        <button
-                            class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
-                            data-tab="manage"
-                        >
-                            <span class="material-symbols-outlined text-xl"
-                                >inventory_2</span
-                            >
-                            <span
-                                class="text-sm font-bold tracking-widest leading-none"
-                                >文章管理</span
-                            >
-                        </button>
-                        <button
-                            class="tab-btn active group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full bg-uu-main text-white shadow-sm text-left"
-                            data-tab="editor"
-                        >
-                            <span class="material-symbols-outlined text-xl"
-                                >edit_note</span
-                            >
-                            <span
-                                class="text-sm font-bold tracking-widest leading-none"
-                                >文章編輯</span
-                            >
-                        </button>
-                        <button
-                            class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
-                            data-tab="draft"
-                        >
-                            <span class="material-symbols-outlined text-xl"
-                                >auto_fix</span
-                            >
-                            <span
-                                class="text-sm font-bold tracking-widest leading-none"
-                                >草稿工具</span
-                            >
-                        </button>
-                        <button
-                            class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
-                            data-tab="comments"
-                        >
-                            <span class="material-symbols-outlined text-xl"
-                                >forum</span
-                            >
-                            <span
-                                class="text-sm font-bold tracking-widest leading-none"
-                                >留言管理</span
-                            >
-                        </button>
-                        <button
-                            class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
-                            data-tab="author"
-                        >
-                            <span class="material-symbols-outlined text-xl"
-                                >person_edit</span
-                            >
-                            <span
-                                class="text-sm font-bold tracking-widest leading-none"
-                                >作者設定</span
-                            >
-                        </button>
-                        <button
-                            class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
-                            data-tab="system"
-                        >
-                            <span class="material-symbols-outlined text-xl"
-                                >tune</span
-                            >
-                            <span
-                                class="text-sm font-bold tracking-widest leading-none"
-                                >全站設定</span
-                            >
-                        </button>
-
-                        <div class="h-2"></div>
-
-                        <button
-                            id="logout-btn"
-                            class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-uu-main/40 hover:text-uu-main hover:bg-uu-sub/10 transition-all group border border-transparent hover:border-uu-sub/20 text-left mt-2 cursor-pointer"
-                        >
-                            <span class="material-symbols-outlined text-xl"
-                                >logout</span
-                            >
-                            <span
-                                class="text-sm font-bold tracking-widest leading-none"
-                                >登出</span
-                            >
-                        </button>
-                    </nav>
-                </div>
-            </aside>
+            <Sidebar adminEmail="" />
 
             <!-- RIGHT COLUMN: Content -->
             <div
                 class="dashboard-content bg-uu-light rounded-2xl border border-uu-sub/30 shadow-sm min-h-[700px] flex flex-col overflow-hidden"
             >
-                <!-- CONTENT: EDITOR -->
-                <section
-                    id="tab-editor"
-                    class="tab-content w-full flex-1 flex flex-col p-10"
-                >
-                    <div
-                        class="flex items-center gap-3.5 mb-8 pb-6 border-b border-uu-sub/20"
-                    >
-                        <div
-                            class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main"
-                        >
-                            <span class="material-symbols-outlined"
-                                >description</span
-                            >
-                        </div>
-                        <h3 class="font-bold text-xl text-uu-dark">內容創作</h3>
-                    </div>
-
-                    <div class="space-y-8 flex-1">
-                        <!-- Top Meta -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label
-                                    class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest"
-                                    >Article Slug</label
-                                >
-                                <input
-                                    id="post-slug"
-                                    type="text"
-                                    class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all"
-                                    placeholder="例如: 2024-spring-trip"
-                                />
-                            </div>
-                            <div class="space-y-2">
-                                <label
-                                    class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest"
-                                    >Visibility / 權限</label
-                                >
-                                <div class="relative">
-                                    <select
-                                        id="post-status"
-                                        class="hidden"
-                                    >
-                                        <option value="public"
-                                            >立即發佈 (Public)</option
-                                        >
-                                        <option value="private"
-                                            >私密閱讀 (Private)</option
-                                        >
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Featured Post Selection -->
-                        <div class="bg-white/50 p-3 rounded-2xl border border-uu-sub/10 shadow-sm w-full">
-                            <label class="flex items-center gap-3 cursor-pointer group">
-                                <div class="relative">
-                                    <input type="checkbox" id="featured-checkbox" class="sr-only peer" />
-                                    <!-- Custom Square Checkbox -->
-                                    <div class="w-6 h-6 border-2 border-uu-sub/40 rounded-lg flex items-center justify-center transition-all duration-300 peer-checked:bg-uu-main peer-checked:border-uu-main peer-checked:shadow-md peer-checked:shadow-uu-main/20 group-hover:border-uu-main/50 bg-white">
-                                        <span class="material-symbols-outlined text-white text-lg font-bold scale-0 transition-transform duration-300 peer-checked:scale-100">check</span>
-                                    </div>
-                                </div>
-                                <span class="text-[11px] font-black text-uu-main/70 uppercase tracking-widest group-hover:text-uu-main transition-colors">精選文章</span>
-                            </label>
-                        </div>
-
-                        <!-- Markdown Upload Dropzone -->
-                        <div
-                            id="md-dropzone"
-                            class="border-2 border-dashed border-uu-sub/30 rounded-2xl py-12 flex flex-col items-center justify-center gap-3 transition-colors hover:border-uu-main/50 hover:bg-uu-sub/5 group cursor-pointer"
-                        >
-                            <input
-                                type="file"
-                                id="md-file-input"
-                                accept=".md"
-                                class="hidden"
-                            />
-                            <span
-                                class="material-symbols-outlined text-4xl text-uu-main/30 group-hover:text-uu-main transition-colors"
-                                >cloud_upload</span
-                            >
-                            <div class="text-center">
-                                <p class="text-xs font-bold text-uu-main/60">
-                                    拖移 .md 檔案至此，或點擊選擇
-                                </p>
-                                <p
-                                    class="text-[10px] text-uu-main/30 mt-1 italic"
-                                >
-                                    系統將自動讀取內容並嘗試生成 Slug
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Editor -->
-                        <div class="space-y-2 flex-1 flex flex-col">
-                            <label
-                                class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest"
-                                >Markdown Editor</label
-                            >
-                            <textarea
-                                id="md-content"
-                                class="w-full flex-1 min-h-[500px] bg-uu-base/10 border border-uu-sub/10 rounded-2xl p-8 text-sm font-mono leading-relaxed focus:outline-none focus:bg-white transition-all shadow-inner"
-                                placeholder="# 標題..."></textarea>
-                        </div>
-
-                        <!-- Image Workshop -->
-                        <div class="space-y-6 pt-6 border-t border-uu-sub/20">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <span
-                                        class="material-symbols-outlined text-uu-main"
-                                        >image</span
-                                    >
-                                    <h4 class="font-bold text-sm text-uu-dark">
-                                        影像工坊
-                                    </h4>
-                                </div>
-                                <input
-                                    type="file"
-                                    id="image-input"
-                                    multiple
-                                    accept="image/*"
-                                    class="hidden"
-                                />
-                                <button
-                                    onclick="document.getElementById('image-input').click()"
-                                    class="px-4 py-2 bg-uu-sub/10 text-uu-main hover:bg-uu-main hover:text-white rounded-lg text-[10px] font-black tracking-widest uppercase transition-all active:scale-95"
-                                    >批次上傳照片</button
-                                >
-                            </div>
-
-                            <div
-                                id="image-queue"
-                                class="grid grid-cols-1 sm:grid-cols-2 gap-4"
-                            >
-                                <!-- Dynamic Preview Cards -->
-                            </div>
-                        </div>
-
-                        <div class="pt-8">
-                            <PrimaryButton 
-                                id="final-push-btn" 
-                                text="SYNC TO GITHUB" 
-                                icon="send"
-                            />
-                        </div>
-                    </div>
-                </section>
-
-                <!-- CONTENT: MANAGE -->
-                <section id="tab-manage" class="tab-content hidden w-full flex-1 flex flex-col p-10">
-                    <div class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20">
-                        <div class="flex items-center gap-3.5">
-                            <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main">
-                                <span class="material-symbols-outlined">inventory_2</span>
-                            </div>
-                            <h3 class="font-bold text-xl text-uu-dark">文章管理</h3>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-48">
-                                <select id="manage-category-filter" class="hidden">
-                                     <option value="all">所有分類 (All)</option>
-                                </select>
-                            </div>
-                            <button id="refresh-posts-btn" class="p-2.5 bg-uu-sub/10 text-uu-main rounded-xl hover:bg-uu-main hover:text-white transition-all active:scale-95">
-                                <span class="material-symbols-outlined text-sm">refresh</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex-1">
-                        <div class="bg-white border border-uu-sub/20 rounded-2xl overflow-hidden shadow-sm">
-                            <table class="w-full text-left">
-                                <thead class="bg-uu-base/30 border-b border-uu-sub/20">
-                                    <tr>
-                                        <th class="px-6 py-4 text-[10px] font-black text-uu-main/40 uppercase tracking-widest">日期</th>
-                                        <th class="px-6 py-4 text-[10px] font-black text-uu-main/40 uppercase tracking-widest">標題 / 網址標記</th>
-                                        <th class="px-6 py-4 text-[10px] font-black text-uu-main/40 uppercase tracking-widest text-center">分類</th>
-                                        <th class="px-6 py-4 text-[10px] font-black text-uu-main/40 uppercase tracking-widest text-right">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="posts-table-body" class="divide-y divide-uu-sub/10">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="mt-8 flex items-center justify-between pb-4">
-                        <p id="posts-count-info" class="text-[10px] text-uu-main/40 font-bold uppercase tracking-widest"></p>
-                        <div id="manage-pagination" class="flex items-center gap-2">
-                        </div>
-                    </div>
-                </section>
-
-                <!-- CONTENT: DRAFT TOOL -->
-                <section id="tab-draft" class="tab-content hidden w-full flex-1 flex flex-col p-10">
-                    <div class="flex items-center gap-3.5 mb-8 pb-6 border-b border-uu-sub/20">
-                        <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main">
-                            <span class="material-symbols-outlined">auto_fix</span>
-                        </div>
-                        <h3 class="font-bold text-xl text-uu-dark">文章草稿工具</h3>
-                    </div>
-
-                    <div class="space-y-8 flex-1 overflow-y-auto pr-4 no-scrollbar">
-                        <div class="grid grid-cols-1 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">1. 文章暫定標題或主題方向</label>
-                                <input id="draft-q1" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="請在此填寫">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">2. 目標受眾（這篇文章寫給誰看）</label>
-                                <input id="draft-q2" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="請在此填寫">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">3. 核心觀點與目的</label>
-                                <input id="draft-q3" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="讀完這篇文章，讀者能帶走什麼？">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">4. 關鍵段落與大綱（列出 3-5 個重點）</label>
-                                <textarea id="draft-q4" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all min-h-[120px]" placeholder="- 重點 1：&#10;- 重點 2：&#10;- 重點 3："></textarea>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">5. 個人獨特經驗與細節（文章的靈魂）</label>
-                                <textarea id="draft-q5" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all min-h-[150px]" placeholder="請在此填寫你想放入的具體細節"></textarea>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">6. 行文語氣與風格</label>
-                                <input id="draft-q6" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="預設：輕鬆幽默的個人隨筆">
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">文章短網址 (Slug)</label>
-                                    <input id="draft-slug" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="例如: 2024-trip">
-                                </div>
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">分類 (Category)</label>
-                                    <input id="draft-cat" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="例如：生活隨筆">
-                                </div>
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">標籤 (Tags)</label>
-                                    <input id="draft-tags" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="用逗號分隔">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="space-y-2 mt-6 p-6 bg-uu-main/5 rounded-2xl border border-uu-main/10 shadow-inner">
-                            <div class="flex items-center justify-between mb-2">
-                                <label class="text-[10px] font-black text-uu-main uppercase tracking-widest flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-sm">settings_suggest</span>
-                                    進階：編輯預設指令模板 (Prompt Template)
-                                </label>
-                                <button id="save-template-btn" class="flex items-center gap-1.5 px-3 py-1 bg-white border border-uu-main/20 text-uu-main rounded-lg text-[10px] font-black tracking-widest uppercase hover:bg-uu-main hover:text-white transition-all shadow-sm">
-                                    <span class="material-symbols-outlined text-xs">cloud_upload</span>
-                                    儲存到資料庫
-                                </button>
-                            </div>
-                            <textarea id="draft-template" class="w-full bg-white border border-uu-sub/20 rounded-xl px-4 py-3 text-[11px] focus:outline-none focus:border-uu-main transition-all min-h-[400px] font-mono leading-relaxed" placeholder="在這裡設定你的 Prompt 骨架..."># Role: 部落格作家與內容策略師
-
-請根據我下方提供的【文章草稿表單】資訊，為我撰寫一篇結構完整、引人入勝且具備個人觀點的部落格文章。
-
-## 📥 【文章草稿表單】（User Input）
-
-1. **文章暫定標題或主題方向：** &#123;&#123;q1&#125;&#125;
-2. **目標受眾（這篇文章寫給誰看）：** &#123;&#123;q2&#125;&#125;
-3. **核心觀點與目的（讀完這篇文章，讀者能帶走什麼？）：** &#123;&#123;q3&#125;&#125;
-4. **關鍵段落與大綱（列出 3-5 個重點）：**
-&#123;&#123;q4&#125;&#125;
-5. **個人獨特經驗與細節（必填，這是文章的靈魂）：**
-   &#123;&#123;q5&#125;&#125;
-6. **行文語氣與風格：**
-   &#123;&#123;q6&#125;&#125;
-
----
-
-## 📤 輸出要求 (Output Requirements)
-
-請嚴格遵守以下規則撰寫文章：
-1. **Markdown 格式**：請使用標準 Markdown 語法排版（包含 H2 ##、H3 ### 標題、粗體、條列式清單、引用區塊、表格等），確保文章層次分明、易於閱讀。
-2. **吸引人的開場**：第一段必須點出痛點或引起共鳴，直接破題，吸引讀者往下看。
-3. **無縫融入個人細節**：請將表單第 5 點的「個人獨特經驗」自然地揉合進文章段落中，不要像是生硬的條列，要帶有「人味」。
-4. **流暢的轉折**：段落之間必須有邏輯連貫的過渡句。
-5. **有力量的結尾**：總結核心觀點，並提供一個 Call to Action（例如：問讀者一個問題、鼓勵他們留言、或分享下一步計畫）。
-
-### 【生成 .md 前綴】
-當我回答完上述問題後，請你「吸收」我的回答，並**直接產出一段完整的 Markdown (.md) 程式碼區塊**。
-
-請嚴格遵守以下輸出格式：
-
-```markdown
----
-title: "【&#123;&#123;cat&#125;&#125;】幫我想一個吸睛的主題標題"
-description: "請根據文章內容生成約 50 字的溫暖 SEO 摘要"
-publishDate: &#123;&#123;date&#125;&#125;
-category: [&#123;&#123;cat&#125;&#125;]
-tags: [&#123;&#123;tags&#125;&#125;]
-heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&#125;-&#123;&#123;slug&#125;&#125;-01.jpg'
----
-```</textarea>
-                            <p class="text-[9px] text-uu-main/40 mt-1">您可以使用 <code class="bg-white px-1 py-0.5 rounded shadow-sm border border-uu-sub/10 opacity-80">&#123;&#123;變數&#125;&#125;</code> 來替換上方表單內容，例如：&#123;&#123;q1&#125;&#125;, &#123;&#123;cat&#125;&#125;, &#123;&#123;tags&#125;&#125;</p>
-                        </div>
-
-                        <div class="pt-6">
-                            <PrimaryButton id="generate-draft-btn" text="生成文章草稿 PROMPT" icon="temp_preferences_custom" />
-                        </div>
-
-                        <div id="draft-result-container" class="hidden space-y-4 animate-fade-in pb-10">
-                            <div class="flex items-center justify-between">
-                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">生成的 AI PROMPT</label>
-                                <button id="copy-prompt-btn" class="flex items-center gap-2 px-3 py-1.5 bg-uu-main/10 text-uu-main rounded-lg text-[10px] font-black tracking-widest uppercase hover:bg-uu-main hover:text-white transition-all">
-                                    <span class="material-symbols-outlined text-sm">content_copy</span>
-                                    複製內容
-                                </button>
-                            </div>
-                            <textarea id="draft-result" readonly class="w-full bg-white border border-uu-sub/30 rounded-2xl p-6 text-xs font-mono leading-relaxed h-[400px] focus:outline-none shadow-sm"></textarea>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- CONTENT: COMMENTS -->
-                <section
-                    id="tab-comments"
-                    class="tab-content hidden w-full flex-1 flex flex-col p-10"
-                >
-                    <div
-                        class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20"
-                    >
-                        <div class="flex items-center gap-3.5">
-                            <div
-                                class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main"
-                            >
-                                <span class="material-symbols-outlined"
-                                    >forum</span
-                                >
-                            </div>
-                            <h3 class="font-bold text-xl text-uu-dark">
-                                留言管理
-                            </h3>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button
-                                id="seed-comments-btn"
-                                class="px-3 py-1.5 border border-uu-sub/30 rounded-full text-[9px] font-black text-uu-main/40 hover:bg-uu-main hover:text-white transition-all uppercase tracking-widest"
-                                >Seed Test Data</button
-                            >
-                            <div
-                                id="comment-stats"
-                                class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest bg-uu-base/50 px-3 py-1.5 rounded-full border border-uu-sub/20"
-                            >
-                                Loading...
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Filters -->
-                    <div class="flex gap-2 mb-6">
-                        <button class="comment-filter active px-4 py-2 rounded-full text-[10px] font-bold tracking-widest border border-uu-sub/30 bg-white text-uu-dark transition-all hover:border-uu-main" data-filter="latest">最新 (未讀)</button>
-                        <button class="comment-filter px-4 py-2 rounded-full text-[10px] font-bold tracking-widest border border-uu-sub/30 text-uu-main/40 transition-all hover:border-uu-main" data-filter="all">所有留言</button>
-                        <button class="comment-filter px-4 py-2 rounded-full text-[10px] font-bold tracking-widest border border-uu-sub/30 text-uu-main/40 transition-all hover:border-uu-main" data-filter="hidden">隱藏中</button>
-                        <button class="comment-filter px-4 py-2 rounded-full text-[10px] font-bold tracking-widest border border-uu-sub/30 text-uu-main/40 transition-all hover:border-uu-main" data-filter="deleted">回收桶</button>
-                    </div>
-
-                    <!-- Comments List -->
-                    <div
-                        id="comments-list"
-                        class="flex-1 space-y-4 overflow-y-auto pr-2 no-scrollbar min-h-[500px]"
-                    >
-                        <!-- Dynamic Comment Cards -->
-                        <div
-                            class="flex flex-col items-center justify-center h-full opacity-20 py-20"
-                        >
-                            <span
-                                class="material-symbols-outlined text-6xl mb-4"
-                                >history_edu</span
-                            >
-                            <p
-                                class="text-sm font-bold tracking-widest uppercase"
-                            >
-                                Fetching conversations...
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- CONTENT: AUTHOR SETTINGS -->
-                <section id="tab-author" class="tab-content hidden w-full flex-1 flex flex-col p-10">
-                    <div class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20">
-                        <div class="flex items-center gap-3.5">
-                            <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main">
-                                <span class="material-symbols-outlined">person_edit</span>
-                            </div>
-                            <h3 class="font-bold text-xl text-uu-dark">作者設定</h3>
-                        </div>
-                        <button id="author-edit-toggle" class="flex items-center gap-2 px-4 py-2 bg-uu-sub/10 text-uu-main rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-uu-sub/20 transition-all">
-                            <span class="material-symbols-outlined text-sm">edit</span>
-                            編輯關於我
-                        </button>
-                    </div>
-
-                    <div id="author-preview" class="space-y-6 animate-fade-in">
-                        <div class="flex items-center gap-6 p-6 bg-uu-base/10 rounded-2xl border border-uu-sub/10">
-                            <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-sm shrink-0">
-                                <img src="/uu-memo.png" class="w-full h-full object-cover">
-                            </div>
-                            <div>
-                                <h4 class="text-lg font-bold text-uu-dark mb-1">關於站長</h4>
-                                <p class="text-xs text-uu-main/60">目前顯示於「關於我」頁面的內容預覽</p>
-                            </div>
-                        </div>
-                        <div id="author-display-content" class="prose prose-sm max-w-none text-uu-main/80 p-8 bg-white rounded-2xl border border-uu-sub/20 min-h-[300px]">
-                            <!-- Content will be injected here -->
-                        </div>
-                    </div>
-
-                    <div id="author-editor" class="hidden space-y-6 animate-fade-in flex-1 flex flex-col">
-                        <div class="flex items-center gap-2 px-4 py-3 bg-uu-main/5 rounded-xl border border-uu-main/10 mb-2">
-                            <span class="material-symbols-outlined text-uu-main text-sm">info</span>
-                            <p class="text-[10px] text-uu-main font-bold">正在編輯：請使用 Markdown 語法撰寫您的自我介紹</p>
-                        </div>
-                        <div class="flex-1 flex flex-col">
-                            <textarea
-                                id="author-md-editor"
-                                class="w-full flex-1 min-h-[500px] bg-uu-base/10 border border-uu-sub/10 rounded-2xl p-8 text-sm font-mono leading-relaxed focus:outline-none focus:bg-white transition-all shadow-inner"
-                                placeholder="# 關於我..."></textarea>
-                        </div>
-                        <div class="pt-6 mt-4">
-                            <div class="flex flex-col gap-3">
-                                <PrimaryButton
-                                    id="author-save-btn"
-                                    text="儲存設定"
-                                    showLoader={true}
-                                    loaderId="author-save-loader"
-                                />
-                                <button id="author-cancel-btn" class="text-[10px] font-bold text-uu-main/40 uppercase tracking-[0.2em] hover:text-uu-main transition-all py-2">取消更變</button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- CONTENT: SYSTEM -->
-                <section id="tab-system" class="tab-content hidden w-full flex-1 flex flex-col p-10">
-                    <div class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20">
-                        <div class="flex items-center gap-3.5">
-                            <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main">
-                                <span class="material-symbols-outlined">payments</span>
-                            </div>
-                            <h3 class="font-bold text-xl text-uu-dark">全站設定</h3>
-                        </div>
-                        <div class="flex items-center gap-4 bg-uu-base/20 px-5 py-2.5 rounded-2xl border border-uu-sub/10">
-                            <span class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">贊助模組狀態</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="sys-donate-enabled" class="sr-only peer" checked />
-                                <div class="w-11 h-6 bg-uu-sub/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-uu-sub/30 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-uu-main"></div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="space-y-10">
-                        <!-- Donation Config Section -->
-                        <div class="bg-white border border-uu-sub/20 rounded-2xl p-8 space-y-8 shadow-sm">
-                            <div class="flex items-center gap-3 mb-2 pb-4 border-b border-uu-sub/10">
-                                <div class="w-8 h-8 rounded-lg bg-uu-main/5 flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-uu-main text-sm">settings_heart</span>
-                                </div>
-                                <h4 class="text-xs font-black text-uu-dark uppercase tracking-widest">贊助詳情設定 (Donation Settings)</h4>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div class="space-y-3">
-                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block">Platform Title (平台名稱)</label>
-                                    <input
-                                        type="text"
-                                        id="sys-donate-name"
-                                        class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner"
-                                        placeholder="例如：Buy Me a Coffee"
-                                        autocomplete="off"
-                                        data-lpignore="true"
-                                    />
-                                </div>
-                                <div class="space-y-3">
-                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block">Donation Link (贊助連結)</label>
-                                    <input
-                                        type="url"
-                                        id="sys-donate-url"
-                                        class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner"
-                                        placeholder="https://..."
-                                        autocomplete="off"
-                                        data-lpignore="true"
-                                    />
-                                </div>
-                            </div>
-
-                            <div class="space-y-3">
-                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block">Display Message (顯示內容)</label>
-                                <textarea
-                                    id="sys-donate-msg"
-                                    class="w-full bg-uu-base/10 border border-uu-sub/10 rounded-2xl p-8 text-sm leading-relaxed focus:outline-none focus:bg-white transition-all min-h-[160px] shadow-inner"
-                                    placeholder="輸入您想對贊助者說的話..."></textarea>
-                            </div>
-
-                            <div class="pt-2 flex justify-end">
-                                <button id="save-donation-btn" class="flex items-center gap-2.5 px-6 py-2.5 bg-uu-sub/5 text-uu-main border border-uu-sub/10 rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-white hover:shadow-md hover:border-uu-main/20 transition-all active:scale-95 group">
-                                    <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">save</span>
-                                    <span id="save-donation-text">儲存贊助設定</span>
-                                    <div id="save-donation-loader" class="hidden w-3 h-3 border-2 border-uu-main/20 border-t-uu-main rounded-full animate-spin"></div>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- GitHub Integration Section (New for Phase 3 - Schema D) -->
-                        <div class="bg-white border border-uu-sub/20 rounded-2xl p-8 space-y-8 shadow-sm">
-                            <div class="flex items-center gap-3 mb-2 pb-4 border-b border-uu-sub/10">
-                                <div class="w-8 h-8 rounded-lg bg-uu-main/5 flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-uu-main text-sm">hub</span>
-                                </div>
-                                <h4 class="text-xs font-black text-uu-dark uppercase tracking-widest">GitHub 整合設定 (GitHub Integration)</h4>
-                            </div>
-
-                            <div class="space-y-6">
-                                <div class="flex items-center gap-2 px-4 py-3 bg-uu-base/30 rounded-xl border border-uu-sub/10">
-                                    <span class="material-symbols-outlined text-uu-main/40 text-sm">lock</span>
-                                    <p class="text-[10px] text-uu-main/60 font-bold">資產存儲：此權杖將安全存儲於加密保管庫中，僅站長本人可讀取。</p>
-                                </div>
-
-                                <div class="space-y-3">
-                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block">GitHub Personal Access Token (PAT)</label>
-                                    <div class="relative">
-                                        <input
-                                            type="password"
-                                            id="sys-github-token"
-                                            class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner font-mono"
-                                            placeholder="ghp_xxxxxxxxxxxx"
-                                        />
-                                        <button id="toggle-token-visibility" class="absolute right-4 top-1/2 -translate-y-1/2 text-uu-main/30 hover:text-uu-main">
-                                            <span class="material-symbols-outlined text-sm">visibility</span>
-                                        </button>
-                                    </div>
-                                    <p class="text-[9px] text-uu-main/40 leading-relaxed mt-2">請使用具備存取此內容 Repo 權限的權杖。您可以從 GitHub Settings &gt; Developer settings 獲取。</p>
-                                </div>
-
-                                <div class="space-y-3">
-                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block">權杖備註 (Token Remark)</label>
-                                    <input
-                                        type="text"
-                                        id="sys-github-token-note"
-                                        class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner"
-                                        placeholder="例如：2024-12-31 到期 / 用於內容同步"
-                                    />
-                                    <p class="text-[9px] text-uu-main/40 leading-relaxed mt-1">此欄位僅供您備註，不會用於 API 驗證。</p>
-                                </div>
-
-                                <div class="pt-4 flex justify-end">
-                                     <button id="save-github-token-btn" class="flex items-center gap-2.5 px-6 py-2.5 bg-uu-sub/5 text-uu-main border border-uu-sub/10 rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-white hover:shadow-md hover:border-uu-main/20 transition-all active:scale-95 group">
-                                        <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">key</span>
-                                        <span id="save-token-btn-text">儲存 GitHub 權杖</span>
-                                        <div id="save-token-loader" class="hidden w-3 h-3 border-2 border-uu-main/20 border-t-uu-main rounded-full animate-spin"></div>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-                        <!-- NEW: Build Cleanup Section -->
-                        <div class="bg-white border border-uu-sub/20 rounded-2xl p-8 space-y-4 shadow-sm">
-                            <div class="flex items-center gap-3 mb-2 pb-4 border-b border-uu-sub/10">
-                                <div class="w-8 h-8 rounded-lg bg-uu-main/5 flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-uu-main/50 text-sm">bug_report</span>
-                                </div>
-                                <h4 class="text-xs font-black text-uu-dark uppercase tracking-widest">故障排除：清除建置錯誤 (Emergency Fix)</h4>
-                            </div>
-                            <p class="text-[10px] text-uu-main/50 leading-relaxed font-bold">如果在同步後 GitHub 建置失敗，可能是因為某些草稿檔案格式不正確（例如 <code class="bg-uu-base/40 px-1 rounded">test.md</code>）。管理員可點擊下方按鈕強制從 GitHub 遠端清理該損毀檔案。</p>
-                            <div class="pt-2 flex justify-end">
-                                <button id="cleanup-build-btn" class="flex items-center gap-2.5 px-6 py-2.5 bg-uu-sub/5 text-uu-main border border-uu-sub/10 rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-white hover:shadow-md hover:border-uu-main/20 transition-all active:scale-95 group">
-                                    <span class="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100">delete_forever</span>
-                                    <span>強制刪除 test.md 並修復建置</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                <PostManager />
+                <PostEditor />
+                <DraftTool />
+                <CommentManager />
+                <AuthorSettings />
+                <SystemSettings />
             </div>
         </div>
+
+        <ModalGlobal />
     </main>
-
-    <Footer />
-    
-    <!-- Custom Dialog Modal -->
-    <div id="custom-modal-container" class="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300">
-        <div id="custom-modal-backdrop" class="absolute inset-0 bg-uu-dark/60 backdrop-blur-sm"></div>
-        <div id="custom-modal-card" class="relative bg-white rounded-[2.5rem] p-8 max-w-sm w-full mx-4 shadow-2xl scale-95 transition-transform duration-300 border border-uu-sub/10">
-            <div class="flex flex-col items-center text-center space-y-6">
-                <div id="custom-modal-icon-bg" class="w-16 h-16 rounded-3xl bg-uu-sub/5 flex items-center justify-center">
-                    <span id="custom-modal-icon" class="material-symbols-outlined text-3xl text-uu-main">help</span>
-                </div>
-                <div class="space-y-2">
-                    <h3 id="custom-modal-title" class="text-xl font-black text-uu-dark tracking-tight">確認操作</h3>
-                    <p id="custom-modal-message" class="text-sm text-uu-main/60 leading-relaxed font-medium">確定要執行此操作嗎？</p>
-                </div>
-                <div class="flex items-center gap-3 w-full pt-2">
-                    <button id="custom-modal-cancel" class="flex-1 py-4 bg-uu-sub/10 text-uu-main/60 rounded-2xl text-[11px] font-black tracking-widest uppercase hover:bg-uu-sub/20 transition-all active:scale-95">取消</button>
-                    <button id="custom-modal-confirm" class="flex-1 py-4 bg-uu-main text-white rounded-2xl text-[11px] font-black tracking-widest uppercase hover:bg-uu-dark hover:shadow-lg hover:shadow-uu-main/20 transition-all active:scale-95">確定執行</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </Layout>
 
 <script>
     import { auth, db } from "../../lib/firebase";
     import { onAuthStateChanged } from "firebase/auth";
-    import { githubSync } from "../../lib/githubSync";
-    import {
-        doc,
-        getDoc,
-        setDoc,
-        collection,
-        query,
-        orderBy,
-        onSnapshot,
-        updateDoc,
-        deleteDoc,
-        addDoc,
-        serverTimestamp,
-    } from "firebase/firestore";
-    import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+    import { doc, getDoc } from "firebase/firestore";
 
-    if (typeof window !== "undefined") {
-    const GAS_URL =
-        "https://script.google.com/macros/s/AKfycbzIF6fuTnS-CPWBMe3UiVd3EtSKtj5CSde6BlPHGPVY6msOGJQupcY4L5QbmPHtKmdeGA/exec";
-
-    const loading = document.getElementById("auth-loading");
-    const loginUI = document.getElementById("admin-login-ui");
-    const dashboard = document.getElementById("admin-dashboard");
-    const emailSpan = document.getElementById("admin-email");
-    const adminLoginBtn = document.getElementById("admin-login-btn");
-    const unauthorizedMsg = document.getElementById("unauthorized-msg");
-    const deniedEmail = document.getElementById("denied-email");
-
-    const imageInput = document.getElementById(
-        "image-input"
-    ) as HTMLInputElement;
-    const imageQueue = document.getElementById("image-queue");
-
-    // --- Content Management State ---
-    let isEditMode = false;
-    let allPosts: any[] = [];
-    let currentPage = 1;
-    const itemsPerPage = 10;
-    let currentFilter = "all";
-    const finalPushBtn = document.getElementById("final-push-btn");
-    const slugInput = document.getElementById("post-slug") as HTMLInputElement;
-    const mdEditor = document.getElementById("md-content") as HTMLTextAreaElement;
-    const githubTokenInput = document.getElementById("sys-github-token") as HTMLInputElement;
-
-    // --- Custom Modal Logic ---
-    const modalContainer = document.getElementById("custom-modal-container");
-    const modalBackdrop = document.getElementById("custom-modal-backdrop");
-    const modalCard = document.getElementById("custom-modal-card");
-    const modalTitle = document.getElementById("custom-modal-title");
-    const modalMessage = document.getElementById("custom-modal-message");
-    const modalConfirmBtn = document.getElementById("custom-modal-confirm");
-    const modalCancelBtn = document.getElementById("custom-modal-cancel");
-    const modalIcon = document.getElementById("custom-modal-icon");
-    const modalIconBg = document.getElementById("custom-modal-icon-bg");
-
-    let modalResolve: ((value: boolean) => void) | null = null;
-
-    const CustomModal = {
-        confirm: ({ title = "確認", message = "", confirmText = "確定", cancelText = "取消", icon = "help", theme = "main" }) => {
-            return new Promise<boolean>((resolve) => {
-                if (!modalContainer || !modalCard || !modalTitle || !modalMessage || !modalConfirmBtn || !modalCancelBtn || !modalIcon) return resolve(false);
-                
-                modalTitle.textContent = title;
-                modalMessage.textContent = message;
-                modalConfirmBtn.textContent = confirmText;
-                modalCancelBtn.textContent = cancelText;
-                modalIcon.textContent = icon;
-                modalCancelBtn.classList.remove('hidden');
-
-                // Theme Logic
-                if (theme === 'danger') {
-                    modalIcon.className = "material-symbols-outlined text-3xl text-red-500";
-                    modalIconBg?.classList.remove('bg-uu-sub/5');
-                    modalIconBg?.classList.add('bg-red-50');
-                    modalConfirmBtn.className = "flex-1 py-4 bg-red-500 text-white rounded-2xl text-[11px] font-black tracking-widest uppercase hover:bg-red-600 hover:shadow-lg hover:shadow-red-500/20 transition-all active:scale-95";
-                } else {
-                    modalIcon.className = "material-symbols-outlined text-3xl text-uu-main";
-                    modalIconBg?.classList.remove('bg-red-50');
-                    modalIconBg?.classList.add('bg-uu-sub/5');
-                    modalConfirmBtn.className = "flex-1 py-4 bg-uu-main text-white rounded-2xl text-[11px] font-black tracking-widest uppercase hover:bg-uu-dark hover:shadow-lg hover:shadow-uu-main/20 transition-all active:scale-95";
-                }
-
-                modalResolve = resolve;
-                modalContainer.classList.remove("pointer-events-none", "opacity-0");
-                modalCard.classList.remove("scale-95");
-                modalCard.classList.add("scale-100");
-            });
-        },
-        alert({ title = "提示", message = "", confirmText = "了解", icon = "info", theme = "primary" }) {
-            return new Promise<void>((resolve) => {
-                const modalCancelBtn = document.getElementById('custom-modal-cancel');
-                if (modalCancelBtn) modalCancelBtn.classList.add('hidden');
-                
-                this.confirm({ title, message, confirmText, icon, theme, cancelText: "" }).then(() => {
-                    if (modalCancelBtn) modalCancelBtn.classList.remove('hidden');
-                    resolve();
-                });
-            });
-        },
-        close: (result: boolean) => {
-            if (!modalContainer || !modalCard) return;
-            modalContainer.classList.add("pointer-events-none", "opacity-0");
-            modalCard.classList.remove("scale-100");
-            modalCard.classList.add("scale-95");
-            if (modalResolve) {
-                modalResolve(result);
-                modalResolve = null;
-            }
-        }
-    };
+    const GAS_URL = import.meta.env.PUBLIC_GAS_URL;
+    (window as any).GAS_URL = GAS_URL;
 
     /**
-     * UUSelect: Custom Dropdown Component
-     * Replaces native <select> with a premium UI while keeping the original functional.
+     * UUSelect - 頂級自定義選擇器組件邏輯
+     * 負責將原生的 select 轉換為具備圖標與高級動畫的 UI
      */
-    const UUSelect = {
-        instances: new Map(),
-        
-        init(selectId, options = {}) {
-            const nativeSelect = document.getElementById(selectId) as HTMLSelectElement;
-            if (!nativeSelect) return;
-            
-            // Hide native select
-            nativeSelect.classList.add('hidden');
-            
-            // Cleanup existing container if re-initializing
-            const existingContainer = nativeSelect.closest('.uu-select-container');
-            if (existingContainer) {
-                existingContainer.querySelector('.uu-select-trigger')?.remove();
-                existingContainer.querySelector('.uu-select-dropdown')?.remove();
-            } else {
-                // Create container
-                const container = document.createElement('div');
-                container.className = 'uu-select-container';
-                nativeSelect.parentNode?.insertBefore(container, nativeSelect);
-                container.appendChild(nativeSelect);
-            }
-            
-            const container = nativeSelect.closest('.uu-select-container') as HTMLElement;
+    if (typeof window !== "undefined") {
+        const UUSelect = {
+            instances: new Map<string, any>(),
+            init(selectId: string, options: any = {}) {
+                const nativeSelect = document.getElementById(
+                    selectId
+                ) as HTMLSelectElement;
+                if (!nativeSelect) return;
 
-            // Create trigger
-            const trigger = document.createElement('div');
-            trigger.className = 'uu-select-trigger';
-            trigger.innerHTML = `
-                <div class="selected-content">
-                    <span class="material-symbols-outlined trigger-icon"></span>
-                    <span class="selected-text"></span>
-                </div>
-                <span class="material-symbols-outlined arrow-icon">expand_more</span>
-            `;
-            container.appendChild(trigger);
-            
-            // Create dropdown
-            const dropdown = document.createElement('div');
-            dropdown.className = 'uu-select-dropdown';
-            container.appendChild(dropdown);
-            
-            const instance = { nativeSelect, container, trigger, dropdown, options };
-            this.instances.set(selectId, instance);
-            
-            this.refresh(selectId);
-            
-            // Event listeners
-            trigger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.toggle(selectId);
-            });
-            
-            // Global click to close
-            if (!(window as any)._uuSelectGlobalHandled) {
-                document.addEventListener('click', (e) => {
-                    const target = e.target as HTMLElement;
-                    if (!target.closest('.uu-select-container')) {
-                        UUSelect.closeAll();
-                    }
-                });
-                (window as any)._uuSelectGlobalHandled = true;
-            }
-        },
-        
-        refresh(selectId) {
-            const instance = this.instances.get(selectId);
-            if (!instance) return;
-            
-            const { nativeSelect, trigger, dropdown, options } = instance;
-            const selectedOption = nativeSelect.options[nativeSelect.selectedIndex];
-            
-            const selectedText = trigger.querySelector('.selected-text');
-            const triggerIcon = trigger.querySelector('.trigger-icon') as HTMLElement;
-            
-            if (selectedText) selectedText.textContent = selectedOption ? selectedOption.textContent : '請選擇...';
-            
-            if (triggerIcon && selectedOption) {
-                const icon = options.icons ? options.icons[selectedOption.value] : (options.defaultIcon || 'label');
-                triggerIcon.textContent = icon;
-                triggerIcon.style.display = 'block';
-            } else if (triggerIcon) {
-                triggerIcon.style.display = 'none';
-            }
-            
-            // Build options
-            dropdown.innerHTML = '';
-            Array.from(nativeSelect.options).forEach((opt, index) => {
-                const item = document.createElement('div');
-                item.className = `uu-select-option ${index === nativeSelect.selectedIndex ? 'selected' : ''}`;
-                
-                // Optional icon support
-                const icon = options.icons ? options.icons[opt.value] : (options.defaultIcon || 'label');
-                item.innerHTML = `
-                    <span class="material-symbols-outlined option-icon">${icon}</span>
-                    <span>${opt.textContent}</span>
-                `;
-                
-                item.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    nativeSelect.value = opt.value;
-                    nativeSelect.dispatchEvent(new Event('change'));
-                    this.refresh(selectId);
-                    this.closeAll();
-                });
-                dropdown.appendChild(item);
-            });
-        },
-        
-        toggle(selectId) {
-            const instance = this.instances.get(selectId);
-            if (!instance) return;
-            
-            const isOpen = instance.dropdown.classList.contains('open');
-            
-            // Close others first
-            this.instances.forEach((inst, id) => {
-                if (id !== selectId) {
-                    inst.dropdown.classList.remove('open');
-                    inst.trigger.classList.remove('active');
+                const container = nativeSelect.closest(
+                    ".uu-select-container"
+                ) as HTMLElement;
+                if (!container) return;
+
+                // 建立或獲取 Trigger
+                let trigger = container.querySelector(
+                    ".uu-select-trigger"
+                ) as HTMLElement;
+                if (!trigger) {
+                    trigger = document.createElement("div");
+                    trigger.className = "uu-select-trigger";
+                    trigger.innerHTML = `<div class="selected-content"><span class="material-symbols-outlined trigger-icon"></span><span class="selected-text"></span></div><span class="material-symbols-outlined arrow-icon">expand_more</span>`;
+                    container.appendChild(trigger);
                 }
-            });
-            
-            if (isOpen) {
-                instance.dropdown.classList.remove('open');
-                instance.trigger.classList.remove('active');
-            } else {
-                instance.dropdown.classList.add('open');
-                instance.trigger.classList.add('active');
-            }
-        },
-        
-        closeAll() {
-            this.instances.forEach(inst => {
-                inst.dropdown.classList.remove('open');
-                inst.trigger.classList.remove('active');
-            });
-        }
-    };
-    (window as any).CustomModal = CustomModal;
 
-    modalConfirmBtn?.addEventListener("click", () => CustomModal.close(true));
-    modalCancelBtn?.addEventListener("click", () => CustomModal.close(false));
-    modalBackdrop?.addEventListener("click", () => CustomModal.close(false));
-
-    // --- Tab Logic ---
-    const tabBtns = document.querySelectorAll(".tab-btn");
-    const tabContents = document.querySelectorAll(".tab-content");
-
-    tabBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            const tabId = btn.getAttribute("data-tab");
-
-            // Switch Buttons
-            tabBtns.forEach((b) => {
-                b.classList.remove(
-                    "active",
-                    "bg-uu-main",
-                    "text-white",
-                    "shadow-sm"
-                );
-                b.classList.add(
-                    "text-uu-main/60",
-                    "hover:bg-uu-sub/10",
-                    "hover:text-uu-main"
-                );
-            });
-            btn.classList.add(
-                "active",
-                "bg-uu-main",
-                "text-white",
-                "shadow-sm"
-            );
-            btn.classList.remove(
-                "text-uu-main/60",
-                "hover:bg-uu-sub/10",
-                "hover:text-uu-main"
-            );
-
-            // Switch Content
-            tabContents.forEach((c) => c.classList.add("hidden"));
-            document.getElementById(`tab-${tabId}`)?.classList.remove("hidden");
-        });
-    });
-
-
-    // --- Logout ---
-
-    // --- System Settings Firestore Logic ---
-    const sysDonateName = document.getElementById(
-        "sys-donate-name"
-    ) as HTMLInputElement;
-    const sysDonateUrl = document.getElementById(
-        "sys-donate-url"
-    ) as HTMLInputElement;
-    const sysDonateMsg = document.getElementById(
-        "sys-donate-msg"
-    ) as HTMLTextAreaElement;
-    const sysDonateEnabled = document.getElementById(
-        "sys-donate-enabled"
-    ) as HTMLInputElement;
-    const saveDonationBtn = document.getElementById("save-donation-btn");
-    const saveDonationText = document.getElementById("save-donation-text");
-    const saveDonationLoader = document.getElementById("save-donation-loader");
-
-    async function fetchSystemConfig() {
-        try {
-            const docRef = doc(db, "site_config", "donation_settings");
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                if (sysDonateName)
-                    sysDonateName.value = data.platform_name || "";
-                if (sysDonateUrl) sysDonateUrl.value = data.link_url || "";
-                if (sysDonateMsg) sysDonateMsg.value = data.message || "";
-                if (sysDonateEnabled)
-                    sysDonateEnabled.checked = data.enabled ?? true;
-            }
-        } catch (err) {
-            console.error("Error fetching config:", err);
-        }
-    }
-
-    saveDonationBtn?.addEventListener("click", async () => {
-        if (!saveDonationText || !saveDonationLoader) return;
-
-        saveDonationText.textContent = "儲存中...";
-        saveDonationLoader.classList.remove("hidden");
-        saveDonationBtn.setAttribute("disabled", "true");
-
-        try {
-            await setDoc(doc(db, "site_config", "donation_settings"), {
-                platform_name: sysDonateName.value,
-                link_url: sysDonateUrl.value,
-                message: sysDonateMsg.value,
-                enabled: sysDonateEnabled.checked,
-            });
-
-            saveDonationText.textContent = "儲存成功";
-            setTimeout(() => {
-                saveDonationText.textContent = "儲存贊助設定";
-            }, 2000);
-        } catch (err) {
-            (window as any).showToast("儲存失敗: " + err, 'error');
-        } finally {
-            saveDonationLoader.classList.add("hidden");
-            saveDonationBtn.removeAttribute("disabled");
-        }
-    });
-
-    // --- Prompt Template Logic (New Firestore Integration) ---
-    async function fetchPromptConfig() {
-        const templateEl = document.getElementById("draft-template") as HTMLTextAreaElement;
-        if (!templateEl) return;
-        
-        try {
-            const docRef = doc(db, "site_config", "prompt_settings");
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                if (data.template_content) {
-                    templateEl.value = data.template_content;
-                    console.log("[System] Prompt template loaded from database.");
+                // 建立或獲取 Dropdown
+                let dropdown = container.querySelector(
+                    ".uu-select-dropdown"
+                ) as HTMLElement;
+                if (!dropdown) {
+                    dropdown = document.createElement("div");
+                    dropdown.className = "uu-select-dropdown";
+                    container.appendChild(dropdown);
                 }
-            }
-        } catch (err) {
-            console.error("Error fetching prompt config:", err);
-        }
-    }
 
-    const saveTemplateBtn = document.getElementById("save-template-btn");
-    saveTemplateBtn?.addEventListener("click", async () => {
-        const templateEl = document.getElementById("draft-template") as HTMLTextAreaElement;
-        if (!templateEl) return;
-
-        if (!(await CustomModal.confirm({
-            title: "儲存預設模板",
-            message: "確定要將目前的微調內容儲存為資料庫的『預設模板』嗎？儲存後重新整理頁面也會生效。",
-            confirmText: "儲存模板",
-            icon: "save_as"
-        }))) return;
-
-        const originalHtml = saveTemplateBtn.innerHTML;
-        saveTemplateBtn.innerHTML = `<span class="material-symbols-outlined text-xs animate-spin">sync</span> 儲存中...`;
-        saveTemplateBtn.setAttribute("disabled", "true");
-
-        try {
-            await setDoc(doc(db, "site_config", "prompt_settings"), {
-                template_content: templateEl.value,
-                updated_at: serverTimestamp()
-            });
-            (window as any).showToast("模板已成功保存至雲端", 'success');
-        } catch (err) {
-            (window as any).showToast("儲存失敗: " + err, 'error');
-        } finally {
-            saveTemplateBtn.innerHTML = originalHtml;
-            saveTemplateBtn.removeAttribute("disabled");
-        }
-    });
-
-
-    // --- GitHub Token Vault Logic ---
-    const githubTokenNote = document.getElementById("sys-github-token-note") as HTMLInputElement;
-    const saveTokenBtn = document.getElementById("save-github-token-btn");
-    const saveTokenText = document.getElementById("save-token-btn-text");
-    const saveTokenLoader = document.getElementById("save-token-loader");
-    const toggleTokenBtn = document.getElementById("toggle-token-visibility");
-
-    toggleTokenBtn?.addEventListener("click", () => {
-        const type = githubTokenInput.getAttribute("type") === "password" ? "text" : "password";
-        githubTokenInput.setAttribute("type", type);
-        const icon = toggleTokenBtn.querySelector(".material-symbols-outlined");
-        if (icon) icon.textContent = type === "password" ? "visibility" : "visibility_off";
-    });
-
-    async function fetchGithubConfig() {
-        try {
-            const docRef = doc(db, "admin_vault", "credentials");
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                if (githubTokenInput && data.github_token) {
-                    githubTokenInput.value = data.github_token;
-                }
-                if (githubTokenNote && data.github_token_note) {
-                    githubTokenNote.value = data.github_token_note;
-                }
-            }
-        } catch (err) {
-            console.error("[System] Failed to fetch GitHub Token (Expected if not set):", err);
-        }
-    }
-
-    saveTokenBtn?.addEventListener("click", async () => {
-        if (!saveTokenText || !saveTokenLoader || !githubTokenInput.value.trim()) {
-            (window as any).showToast("請輸入有效的權杖", 'info');
-            return;
-        }
-
-        saveTokenText.textContent = "更變儲存中...";
-        saveTokenLoader.classList.remove("hidden");
-        saveTokenBtn.setAttribute("disabled", "true");
-
-        try {
-            await setDoc(doc(db, "admin_vault", "credentials"), {
-                github_token: githubTokenInput.value.trim(),
-                github_token_note: githubTokenNote?.value.trim() || "",
-                updated_at: serverTimestamp(),
-                owner: "jing180804@gmail.com"
-            });
-
-            saveTokenText.textContent = "TOKEN SECURED!";
-            (window as any).showToast("GitHub 權杖已安全儲存", 'success');
-            setTimeout(() => {
-                saveTokenText.textContent = "儲存 GitHub 權杖";
-            }, 2000);
-        } catch (err) {
-            (window as any).showToast("儲存失敗: " + err, 'error');
-        } finally {
-            saveTokenLoader.classList.add("hidden");
-            saveTokenBtn.removeAttribute("disabled");
-        }
-    });
-
-
-    // --- Author Settings Logic ---
-    const authorPreview = document.getElementById("author-preview");
-    const authorEditor = document.getElementById("author-editor");
-    const authorEditToggle = document.getElementById("author-edit-toggle");
-    const authorCancelBtn = document.getElementById("author-cancel-btn");
-    const authorSaveBtn = document.getElementById("author-save-btn");
-    const authorMdEditor = document.getElementById("author-md-editor") as HTMLTextAreaElement;
-    const authorDisplayContent = document.getElementById("author-display-content");
-    const authorSaveLoader = document.getElementById("author-save-loader");
-
-    function renderAuthorPreview(content: string) {
-        if (!authorDisplayContent) return;
-        if (!content.trim()) {
-            authorDisplayContent.innerHTML = '<p class="text-uu-main/30 italic text-sm">尚無內容，請點擊編輯...</p>';
-            return;
-        }
-        const html = content
-            .split(/\n\n+/)
-            .filter((p: string) => p.trim())
-            .map((p: string) => `<p class="mb-4 text-uu-main/80 text-sm leading-relaxed">${p.trim().replace(/\n/g, '<br>')}</p>`)
-            .join('');
-        authorDisplayContent.innerHTML = html;
-    }
-
-    async function fetchAuthorConfig() {
-        try {
-            const docRef = doc(db, "site_config", "about_me");
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                const content = data.content || "";
-                if (authorMdEditor) authorMdEditor.value = content;
-                renderAuthorPreview(content);
-            } else {
-                renderAuthorPreview("");
-            }
-        } catch (err) {
-            console.error("Error fetching author config:", err);
-        }
-    }
-
-    authorEditToggle?.addEventListener("click", () => {
-        authorPreview?.classList.add("hidden");
-        authorEditor?.classList.remove("hidden");
-    });
-
-    authorCancelBtn?.addEventListener("click", () => {
-        authorEditor?.classList.add("hidden");
-        authorPreview?.classList.remove("hidden");
-    });
-
-    authorSaveBtn?.addEventListener("click", async () => {
-        if (!authorMdEditor || !authorSaveLoader) return;
-
-        const bodyContent = authorMdEditor.value.trim();
-        if (!bodyContent) {
-            (window as any).showToast("內容不可為空", 'info');
-            return;
-        }
-
-        if (!(await CustomModal.confirm({
-            title: "同步關於我",
-            message: "確定要將「關於我」的更新同步至 GitHub 嗎？這將觸發網站自動建置。",
-            confirmText: "開始同步",
-            icon: "sync_alt"
-        }))) return;
-
-        authorSaveLoader.classList.remove("hidden");
-        authorSaveBtn.setAttribute("disabled", "true");
-
-        // Build the full about.md file content (preserve frontmatter header)
-        const frontmatter = `---\ntitle: \"關於我\"\ndescription: \"UU MEMO — 記錄在日本交換的生活碎隙\"\n---\n\n<div class=\"flex flex-col items-center mb-10 text-center\">\n    <div class=\"w-32 h-32 rounded-full bg-uu-sub/30 mb-6 flex items-center justify-center relative overflow-hidden border-2 border-uu-sub/20\">\n        <img src=\"/uu-memo.png\" alt=\"UU Avatar\" class=\"w-full h-full object-cover\" />\n    <\/div>\n    <h2 class=\"text-2xl font-bold text-uu-main mb-2\">UU<\/h2>\n    <p class=\"text-sm text-uu-main/60 tracking-widest uppercase\">Writer / Photographer<\/p>\n<\/div>\n\n`;
-        const fullContent = frontmatter + bodyContent;
-        const encoded = btoa(unescape(encodeURIComponent(fullContent)));
-
-        try {
-            // 1. Cache in Firestore so preview stays consistent
-            await setDoc(doc(db, "site_config", "about_me"), {
-                content: bodyContent,
-                updated_at: serverTimestamp()
-            });
-
-            // 2. Push about.md to GitHub via GAS Bridge
-            await fetch(GAS_URL, {
-                method: "POST",
-                mode: "no-cors",
-                body: JSON.stringify({
-                    action: "upload_file",
-                    path: "src/content/pages/about.md",
-                    content: encoded,
-                    message: "Admin: Update 'About Me' page",
-                    branch: "main"
-                })
-            });
-
-            renderAuthorPreview(bodyContent);
-            (window as any).showToast("關於我已同步至 GitHub，網站將在約 1-2 分鐘後更新。", 'success');
-            authorEditor?.classList.add("hidden");
-            authorPreview?.classList.remove("hidden");
-        } catch (err) {
-            (window as any).showToast("同步失敗: " + err, 'error');
-        } finally {
-            authorSaveLoader.classList.add("hidden");
-            authorSaveBtn.removeAttribute("disabled");
-        }
-    });
-
-    // --- MD Upload & Drag/Drop ---
-    const dropzone = document.getElementById("md-dropzone");
-    const mdInput = document.getElementById(
-        "md-file-input"
-    ) as HTMLInputElement;
-
-    slugInput?.addEventListener("input", (e) => {
-        const dateStr = new Date().toISOString().split('T')[0].substring(2).replace(/-/g, '');
-        const newSlug = (e.target as HTMLInputElement).value.trim();
-        const inputs = document.querySelectorAll('.img-filename-input') as NodeListOf<HTMLInputElement>;
-        inputs.forEach(input => {
-            const currentVal = input.value;
-            const match = currentVal.match(/-(\d+)$/);
-            const num = match ? match[1] : '';
-            if (newSlug) {
-                input.value = num ? `${dateStr}-${newSlug}-${num}` : `${dateStr}-${newSlug}-`;
-            } else {
-                input.value = num ? `${dateStr}-${num}` : `${dateStr}-`;
-            }
-        });
-    });
-
-    dropzone?.addEventListener("click", () => mdInput.click());
-    dropzone?.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dropzone.classList.add("border-uu-main", "bg-uu-main/5");
-    });
-    dropzone?.addEventListener("dragleave", () => {
-        dropzone.classList.remove("border-uu-main", "bg-uu-main/5");
-    });
-    dropzone?.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dropzone.classList.remove("border-uu-main", "bg-uu-main/5");
-        const file = e.dataTransfer?.files[0];
-        if (file && file.name.endsWith(".md")) handleMd(file);
-    });
-    mdInput?.addEventListener("change", () => {
-        if (mdInput.files?.[0]) handleMd(mdInput.files[0]);
-    });
-
-    function handleMd(file: File) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            mdEditor.value = e.target?.result as string;
-            // Suggest slug
-            const base = file.name.replace(".md", "");
-            slugInput.value = base.toLowerCase().replace(/\s+/g, "-");
-            // Sync featured checkbox
-            updateFeaturedFromText();
-        };
-        reader.readAsText(file);
-    }
-
-    // --- Featured Post Sync Logic ---
-    const featuredCheckbox = document.getElementById("featured-checkbox") as HTMLInputElement;
-
-    function updateFeaturedFromText() {
-        if (!mdEditor || !featuredCheckbox) return;
-        const content = mdEditor.value;
-        const tagsMatch = content.match(/tags:\s*\[(.*?)\]/);
-        if (tagsMatch) {
-            const tagsStr = tagsMatch[1];
-            const isFeatured = tagsStr.includes('"精選"') || tagsStr.includes("'精選'") || tagsStr.includes("精選");
-            featuredCheckbox.checked = isFeatured;
-        } else {
-            featuredCheckbox.checked = false;
-        }
-    }
-
-    function updateTextFromFeatured() {
-        if (!mdEditor || !featuredCheckbox) return;
-        let content = mdEditor.value;
-        const isChecked = featuredCheckbox.checked;
-        
-        const tagsRegex = /tags:\s*\[(.*?)\]/;
-        const match = content.match(tagsRegex);
-
-        if (match) {
-            let tagsStr = match[1].trim();
-            let tagsArr = tagsStr ? tagsStr.split(',').map(t => t.trim().replace(/^['"]|['"]$/g, '')) : [];
-            
-            const index = tagsArr.indexOf("精選");
-            
-            if (isChecked && index === -1) {
-                tagsArr.push("精選");
-            } else if (!isChecked && index !== -1) {
-                tagsArr.splice(index, 1);
-            } else {
-                return; // No change needed
-            }
-
-            const newTagsLine = `tags: [${tagsArr.map(t => `"${t}"`).join(', ')}]`;
-            mdEditor.value = content.replace(tagsRegex, newTagsLine);
-        } else {
-            // If no tags line found, try to insert it before the closing --- of frontmatter
-            if (isChecked) {
-                const frontmatterEnd = content.indexOf('---', 3);
-                if (frontmatterEnd !== -1) {
-                    const beforeEnd = content.substring(0, frontmatterEnd);
-                    const afterEnd = content.substring(frontmatterEnd);
-                    mdEditor.value = beforeEnd + `tags: ["精選"]\n` + afterEnd;
-                }
-            }
-        }
-    }
-
-    mdEditor?.addEventListener("input", updateFeaturedFromText);
-    featuredCheckbox?.addEventListener("change", updateTextFromFeatured);
-
-    let processedImages: any[] = [];
-
-    imageInput?.addEventListener("change", async () => {
-        const files = imageInput.files;
-        if (!files) return;
-        for (const file of Array.from(files)) {
-            const processed = await processImage(file);
-            renderImagePreview(processed, file.name);
-        }
-    });
-
-    async function processImage(
-        file: File
-    ): Promise<{ id: string; url: string; type: string; w: number; h: number }> {
-        const result = await new Promise<{ id: string; url: string; type: string; w: number; h: number }>((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement("canvas");
-                    const ctx = canvas.getContext("2d")!;
-                    
-                    const MAX_EDGE = 1600;
-                    let tw, th, itype;
-
-                    if (img.width >= img.height) {
-                        // Landscape or Square
-                        itype = img.width === img.height ? "Square" : "Landscape";
-                        if (img.width > MAX_EDGE) {
-                            tw = MAX_EDGE;
-                            th = (img.height * MAX_EDGE) / img.width;
-                        } else {
-                            tw = img.width;
-                            th = img.height;
-                        }
-                    } else {
-                        // Portrait
-                        itype = "Portrait";
-                        if (img.height > MAX_EDGE) {
-                            th = MAX_EDGE;
-                            tw = (img.width * MAX_EDGE) / img.height;
-                        } else {
-                            tw = img.width;
-                            th = img.height;
-                        }
-                    }
-
-                    canvas.width = tw;
-                    canvas.height = th;
-                    ctx.drawImage(img, 0, 0, tw, th);
-
-                    resolve({
-                        id: Math.random().toString(36).substr(2, 9),
-                        url: canvas.toDataURL("image/jpeg", 0.9),
-                        type: itype,
-                        w: Math.round(tw),
-                        h: Math.round(th),
-                    });
+                const instance = {
+                    nativeSelect,
+                    container,
+                    trigger,
+                    dropdown,
+                    options,
                 };
-                img.src = e.target?.result as string;
-            };
-            reader.readAsDataURL(file);
-        });
-        processedImages.push(result);
-        return result;
-    }
+                this.instances.set(selectId, instance);
+                this.refresh(selectId);
 
-    // --- Comments Management Module ---
-    const commentsList = document.getElementById("comments-list");
-    const commentStats = document.getElementById("comment-stats");
-    const filterBtns = document.querySelectorAll(".comment-filter");
-    let activeFilter = "latest";
-    let allComments: any[] = [];
+                trigger.onclick = (e) => {
+                    e.stopPropagation();
+                    this.toggle(selectId);
+                };
 
-    function initCommentsModule() {
-        const q = query(
-            collection(db, "comments"),
-            orderBy("created_at", "asc") // Sort by asc so replies appear in order after grouping
-        );
- 
-        onSnapshot(q, async (snapshot) => {
-            let fetchedComments = snapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            } as any));
-            
-            // Dynamically fetch latest profiles for verified users (Recognition by UID)
-            const userUids = [...new Set(fetchedComments.filter((c: any) => c.author_uid).map((c: any) => c.author_uid))];
-            if (userUids.length > 0) {
-                try {
-                    const userPromises = userUids.map(uid => getDoc(doc(db, "users", uid as string)));
-                    const userDocs = await Promise.all(userPromises);
-                    const userMap: Record<string, any> = {};
-                    userDocs.forEach(d => {
-                        if (d.exists()) {
-                            userMap[d.id] = d.data();
-                        }
+                // 全局點擊關閉
+                if (!(window as any)._uuSelectGlobalHandled) {
+                    document.addEventListener("click", (e) => {
+                        const target = e.target as HTMLElement;
+                        if (target && !target.closest(".uu-select-container"))
+                            this.closeAll();
                     });
-                    
-                    // Update fetchedComments with dynamic user details (Strict UID mapping)
-                    fetchedComments = fetchedComments.map((c: any) => {
-                        const adminUid = 'P9G0w4qEa9gY6ZRY8K8oYVbS7zJ2';
-                        const isAdmin = c.author_uid === adminUid || c.author_email === 'jing180804@gmail.com' || c.author_email === 'uu-memo@outlook.com';
-                        
-                        let name = c.author_name;
-                        let avatar = c.author_avatar;
-
-                        // Priority 1: Latest Registered Profile from Firestore (by UID)
-                        if (c.author_uid && userMap[c.author_uid]) {
-                            const latest = userMap[c.author_uid];
-                            name = latest.nickname || name;
-                            avatar = latest.avatar_icon || avatar;
-                        }
-
-                        // Priority 2: Admin Fallback (only if name is default/empty)
-                        if (isAdmin) {
-                            if (!name || name === 'User' || name === '使用者' || name === 'Anonymous' || name === '匿名訪客') {
-                                name = 'UU (站長)';
-                            }
-                            if (!avatar || avatar.includes('person') || avatar.includes('account_circle')) {
-                                avatar = '/uu-memo.png';
-                            }
-                        }
-                        
-                        return {
-                            ...c,
-                            author_name: name,
-                            author_avatar: avatar,
-                            is_guest: !c.author_uid,
-                            is_admin: isAdmin
-                        };
-                    });
-                } catch (e) {
-                    console.error("Failed to fetch latest admin user profiles:", e);
+                    (window as any)._uuSelectGlobalHandled = true;
                 }
-            }
-            
-            allComments = fetchedComments;
+            },
+            refresh(selectId: string) {
+                const instance = this.instances.get(selectId);
+                if (!instance) return;
+                const { nativeSelect, trigger, dropdown, options } = instance;
+                const selectedOption = nativeSelect.options[
+                    nativeSelect.selectedIndex
+                ] as HTMLOptionElement;
+                const selectedText = trigger.querySelector(".selected-text");
+                const triggerIcon = trigger.querySelector(
+                    ".trigger-icon"
+                ) as HTMLElement;
 
-            // Sort local array descending for top-level display, but keep original for nested lookups
-            const sortedComments = [...allComments].sort((a,b) => (b.created_at?.seconds || 0) - (a.created_at?.seconds || 0));
-            renderComments(sortedComments);
-            if (commentStats)
-                commentStats.textContent = `${allComments.filter((c: any) => !c.parent_id).length} 原生留言`;
-        });
+                if (selectedText)
+                    selectedText.textContent = selectedOption
+                        ? selectedOption.textContent
+                        : "請選擇...";
 
- 
-        filterBtns.forEach((btn) => {
-            btn.addEventListener("click", () => {
-                filterBtns.forEach((b) => {
-                    b.classList.remove("active", "bg-white", "text-uu-dark");
-                    b.classList.add("text-uu-main/40");
+                if (triggerIcon && selectedOption) {
+                    const icon = options.icons
+                        ? options.icons[selectedOption.value]
+                        : options.defaultIcon || "label";
+                    triggerIcon.textContent = icon;
+                    triggerIcon.style.display = icon ? "block" : "none";
+                }
+
+                dropdown.innerHTML = "";
+                Array.from(nativeSelect.options).forEach((opt: any, index) => {
+                    const item = document.createElement("div");
+                    item.className = `uu-select-option ${
+                        index === nativeSelect.selectedIndex ? "selected" : ""
+                    }`;
+                    const icon = options.icons
+                        ? options.icons[opt.value]
+                        : options.defaultIcon || "label";
+                    item.innerHTML = `<span class="material-symbols-outlined option-icon">${icon}</span><span>${opt.textContent}</span>`;
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        nativeSelect.value = opt.value;
+                        nativeSelect.dispatchEvent(new Event("change"));
+                        this.refresh(selectId);
+                        this.closeAll();
+                    };
+                    dropdown.appendChild(item);
                 });
-                btn.classList.add("active", "bg-white", "text-uu-dark");
-                btn.classList.remove("text-uu-main/40");
-                activeFilter = btn.getAttribute("data-filter") || "latest";
-                renderComments(allComments);
-            });
-        });
-    }
-
-
-    function renderComments(comments: any[]) {
-        if (!commentsList) return;
-
-        // Separate top-level comments and replies
-        const topLevel = comments.filter(c => !c.parent_id);
-        const replies = comments.filter(c => c.parent_id);
-
-        const filtered = topLevel.filter((c) => {
-            if (activeFilter === "latest") return !c.is_read && !c.is_hidden && !c.is_deleted;
-            if (activeFilter === "hidden") return c.is_hidden && !c.is_deleted;
-            if (activeFilter === "deleted") return c.is_deleted;
-            return !c.is_hidden && !c.is_deleted; // Default view is ALL (includes read/unread, but not hidden/deleted)
-        });
-
-        if (filtered.length === 0) {
-            commentsList.innerHTML = `<div class="py-20 text-center opacity-30 text-xs font-bold tracking-widest uppercase">目前沒有符合條件的留言</div>`;
-            return;
-        }
-
-        commentsList.innerHTML = filtered
-            .map((c) => {
-                const date = c.created_at?.toDate ? c.created_at.toDate().toLocaleString() : "剛剛";
-                const belongsTo = c.post_slug || "全站";
-                
-                // Find replies to this comment
-                const myReplies = replies.filter(r => r.parent_id === c.id);
-
-                return `
-                <div class="bg-white border border-uu-sub/20 rounded-2xl p-6 transition-all hover:border-uu-main/30 group ${c.is_hidden ? "opacity-60 grayscale" : ""}">
-                    <!-- Main Comment Info -->
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center overflow-hidden border border-uu-sub/20">
-                                ${c.author_avatar && (c.author_avatar.startsWith('http') || c.author_avatar.startsWith('/')) 
-                                    ? `<img src="${c.author_avatar}" class="w-full h-full object-cover">` 
-                                    : c.author_avatar 
-                                        ? `<span class="material-symbols-outlined text-uu-main/40">${c.author_avatar}</span>`
-                                        : `<span class="material-symbols-outlined text-uu-main/40">person</span>`
-                                }
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-uu-dark flex items-center gap-2">
-                                    ${c.author_name || "訪客"}
-                                </h4>
-                                <p class="text-[10px] text-uu-main/40 font-mono italic">${c.author_email || "未提供信箱"}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-[10px] font-black text-uu-main/30 mb-1 uppercase tracking-tighter">
-                                來自：<a href="/posts/${c.post_slug}" target="_blank" class="text-uu-main/60 hover:text-uu-main hover:underline decoration-uu-sub/50 underline-offset-2">${belongsTo}</a>
-                            </p>
-                            <p class="text-[9px] text-uu-main/30">${date}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-uu-base/10 rounded-xl p-4 mb-4 text-sm text-uu-main/80 leading-relaxed">
-                        ${c.content}
-                    </div>
-
-                    <!-- My Replies Section -->
-                    ${myReplies.length > 0 ? `
-                        <div class="space-y-3 mb-4 mt-2 pl-6 border-l-2 border-uu-sub/20">
-                            ${myReplies.map(r => `
-                                <div class="bg-uu-main/5 rounded-xl p-4 border border-uu-main/10 relative">
-                                    <div class="flex items-center gap-3 mb-2">
-                                        <div class="w-6 h-6 rounded-full overflow-hidden border border-uu-main/20">
-                                            <img src="/uu-memo.png" class="w-full h-full object-cover">
-                                        </div>
-                                        <div class="flex-1 flex justify-between items-center">
-                                            <span class="text-[10px] font-black text-uu-main tracking-wider">UU (站長)</span>
-                                            <div class="flex items-center gap-4">
-                                                <span class="text-[8px] text-uu-main/40 font-mono">${r.created_at?.toDate ? r.created_at.toDate().toLocaleString() : '剛剛'}</span>
-                                                <button class="action-perm-delete opacity-40 hover:opacity-100 text-uu-main transition-opacity" data-id="${r.id}">
-                                                    <span class="material-symbols-outlined text-sm">delete</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p class="text-[11px] text-uu-main/80 leading-relaxed">${r.content}</p>
-                                </div>
-                            `).join('')}
-                        </div>
-                    ` : ''}
-
-                    <!-- Action Bar -->
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            ${!c.is_read && !c.is_deleted ? `<button class="action-read text-[10px] font-black text-uu-main hover:underline" data-id="${c.id}">標記已讀</button>` : ""}
-                            <button class="action-hide text-[10px] font-black text-uu-main/40 hover:text-uu-main" data-id="${c.id}">${c.is_hidden ? "取消隱藏" : "隱藏留言"}</button>
-                            <button class="action-delete text-[10px] font-black text-uu-main/40 hover:text-uu-main" data-id="${c.id}">${c.is_deleted ? '永久刪除' : '移至回收桶'}</button>
-                        </div>
-                        <button class="action-reply-toggle flex items-center gap-1.5 px-4 py-1.5 bg-uu-dark text-white rounded-lg text-[10px] font-bold hover:bg-uu-main transition-all" data-id="${c.id}">
-                            <span class="material-symbols-outlined text-xs">reply</span>
-                            回覆內容
-                        </button>
-                    </div>
-
-                    <!-- Hidden Reply Form -->
-                    <div id="reply-form-${c.id}" class="hidden mt-6 pt-6 border-t border-uu-sub/10">
-                        <div class="space-y-3">
-                            <label class="text-[9px] font-bold text-uu-main/40 uppercase tracking-widest">管理員回覆</label>
-                            <textarea class="reply-textarea w-full bg-white border border-uu-sub/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all h-24 shadow-inner" placeholder="輸入回覆內容..."></textarea>
-                            <div class="flex justify-end gap-2">
-                                <button class="cancel-reply text-[10px] font-bold text-uu-main/40 hover:text-uu-dark" data-id="${c.id}">取消</button>
-                                <button class="send-reply bg-uu-main text-white px-5 py-2 rounded-lg text-[10px] font-black tracking-widest uppercase hover:bg-uu-dark transition-all" data-id="${c.id}" data-slug="${c.post_slug}">發送回覆</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `;
-            }).join("");
-
-
-
-        // Attach Event Listeners
-        commentsList.querySelectorAll(".action-read").forEach((btn) => {
-            btn.addEventListener("click", () => markAsRead(btn.getAttribute("data-id")!));
-        });
-        commentsList.querySelectorAll(".action-hide").forEach((btn) => {
-            btn.addEventListener("click", () =>
-                toggleCommentVisibility(btn.getAttribute("data-id")!, true)
-            );
-        });
-        commentsList.querySelectorAll(".action-unhide").forEach((btn) => {
-            btn.addEventListener("click", () =>
-                toggleCommentVisibility(btn.getAttribute("data-id")!, false)
-            );
-        });
-        commentsList.querySelectorAll(".action-delete").forEach((btn) => {
-            btn.addEventListener("click", () =>
-                destructiveAction(btn.getAttribute("data-id")!)
-            );
-        });
-
-        // Specific Permanent Delete for nested replies
-        commentsList.querySelectorAll(".action-perm-delete").forEach((btn) => {
-            btn.addEventListener("click", async () => {
-                if(await CustomModal.confirm({
-                    title: "永久刪除回覆",
-                    message: "確定要永久刪除此條回覆？此操作不可恢復。",
-                    confirmText: "刪除回覆",
-                    theme: "danger",
-                    icon: "delete_forever"
-                })) {
-                    deleteDoc(doc(db, "comments", btn.getAttribute("data-id")!));
+            },
+            toggle(selectId: string) {
+                const instance = this.instances.get(selectId);
+                if (!instance) return;
+                const isOpen = instance.dropdown.classList.contains("open");
+                this.closeAll();
+                if (!isOpen) {
+                    instance.dropdown.classList.add("open");
+                    instance.trigger.classList.add("active");
                 }
-            });
-        });
-
-        // Reply UI Toggle
-        commentsList.querySelectorAll(".action-reply-toggle").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const id = btn.getAttribute("data-id");
-                const form = document.getElementById(`reply-form-${id}`);
-                form?.classList.toggle("hidden");
-            });
-        });
-
-        commentsList.querySelectorAll(".cancel-reply").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const id = btn.getAttribute("data-id");
-                const form = document.getElementById(`reply-form-${id}`);
-                form?.classList.add("hidden");
-            });
-        });
-
-        commentsList.querySelectorAll(".send-reply").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const id = btn.getAttribute("data-id");
-                const slug = btn.getAttribute("data-slug");
-                const textarea = document.querySelector(`#reply-form-${id} textarea`) as HTMLTextAreaElement;
-                if (textarea.value.trim()) {
-                    submitReply(id!, slug!, textarea.value);
-                }
-            });
-        });
-    }
-
-    async function markAsRead(id: string) {
-        try {
-            await updateDoc(doc(db, "comments", id), { is_read: true });
-        } catch (e) { console.error(e); }
-    }
-
-    async function toggleCommentVisibility(id: string, hide: boolean) {
-        try {
-            await updateDoc(doc(db, "comments", id), { is_hidden: hide });
-        } catch (e) {
-            (window as any).showToast("操作失敗: " + e, 'error');
-        }
-    }
-
-    async function destructiveAction(id: string) {
-        const comment = allComments.find(c => c.id === id);
-        if (!comment) return;
-
-        if (comment.is_deleted) {
-            // Permanent Delete
-            if (!(await CustomModal.confirm({
-                title: "徹底刪除留言",
-                message: "確定要將這條留言從資料庫徹底移除嗎？此操作不可恢復。",
-                confirmText: "徹底刪除",
-                theme: "danger",
-                icon: "delete_forever"
-            }))) return;
-            try {
-                await deleteDoc(doc(db, "comments", id));
-            } catch (e) { (window as any).showToast("刪除失敗: " + e, 'error'); }
-        } else {
-            // Move to Trash
-            if (!(await CustomModal.confirm({
-                title: "移至回收桶",
-                message: "確定要將此留言移至回收桶？您之後仍可以在回收分頁中復原。",
-                confirmText: "移至回收桶",
-                icon: "delete"
-            }))) return;
-            try {
-                await updateDoc(doc(db, "comments", id), { is_deleted: true });
-            } catch (e) { (window as any).showToast("移動失敗: " + e, 'error'); }
-        }
-    }
-
-    async function submitReply(parentId: string, postSlug: string, content: string) {
-        try {
-            await addDoc(collection(db, "comments"), {
-                author_uid: auth.currentUser?.uid || "admin", // Dynamic Admin UID
-                author_name: "UU (站長)",
-                author_email: "jing180804@gmail.com",
-                author_avatar: "/uu-memo.png",
-                content: content,
-                post_slug: postSlug,
-                parent_id: parentId, // Links to original comment
-                is_hidden: false,
-                is_deleted: false,
-                is_read: true,
-                is_guest: false,
-                created_at: serverTimestamp()
-            });
-            // Mark original as read
-            await markAsRead(parentId);
-            (window as any).showToast("回覆已發送", 'success');
-            const form = document.getElementById(`reply-form-${parentId}`);
-            form?.classList.add("hidden");
-        } catch (e) {
-            (window as any).showToast("發送失敗: " + e, 'error');
-        }
-    }
-
-
-    function renderImagePreview(
-        data: { url: string; type: string; w: number; h: number, id: string },
-        name: string
-    ) {
-        if (!imageQueue) return;
-        const card = document.createElement("div");
-        card.id = `img-card-${data.id}`;
-        card.className =
-            "bg-white border border-uu-sub/20 rounded-2xl p-4 flex gap-4 items-start group relative";
-
-        // Use aspect ratio based on type
-        let aspect = "aspect-auto";
-        if (data.type === "Landscape") aspect = "aspect-video"; 
-        if (data.type === "Portrait") aspect = "aspect-[3/4]";
-        if (data.type === "Square") aspect = "aspect-square";
-
-        const dateStr = new Date().toISOString().split('T')[0].substring(2).replace(/-/g, '');
-        const currentSlug = slugInput?.value.trim() || "";
-        const prefix = currentSlug ? `${dateStr}-${currentSlug}-` : `${dateStr}-`;
-
-        card.innerHTML = `
-            <div class="w-16 ${aspect} rounded-lg overflow-hidden bg-uu-sub/10 flex-shrink-0 border border-uu-sub/10">
-                <img src="${data.url}" class="w-full h-full object-cover" />
-            </div>
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="text-[9px] font-black bg-uu-main/10 text-uu-main px-1.5 py-0.5 rounded">${data.type}</span>
-                    <span class="text-[9px] text-uu-main/40 uppercase font-mono">${data.w} × ${data.h}</span>
-                </div>
-                <p class="text-[10px] font-bold text-uu-dark truncate mb-2">${name}</p>
-                <input type="text" data-id="${data.id}" placeholder="${dateStr}-slug-01" value="${prefix}" class="img-filename-input w-full bg-uu-base/10 shadow-inner border shadow-sm border-uu-sub/30 rounded-lg px-2 py-1.5 text-[11px] font-mono focus:outline-none focus:ring-1 focus:ring-uu-main/50 transition-all font-bold text-uu-dark" />
-            </div>
-            <button class="absolute top-2 right-2 text-uu-main/20 hover:text-uu-dark opacity-0 group-hover:opacity-100 transition-opacity" onclick="removeImage('${data.id}')">
-                <span class="material-symbols-outlined text-sm">close</span>
-            </button>
-        `;
-        imageQueue.appendChild(card);
-    }
-
-    (window as any).removeImage = (id: string) => {
-        processedImages = processedImages.filter(img => img.id !== id);
-        document.getElementById(`img-card-${id}`)?.remove();
-    };
-
-    // --- Sync to GitHub Logic ---
-
-    finalPushBtn?.addEventListener("click", async () => {
-        const slug = slugInput.value.trim();
-        const content = mdEditor.value.trim();
-        const status = (document.getElementById("post-status") as HTMLSelectElement).value;
-
-        if (!slug || !content) {
-            (window as any).showToast("請填寫 Slug 與 文章內容", 'info');
-            return;
-        }
-
-        if (!(await CustomModal.confirm({
-            title: "發布確認",
-            message: "確定要將文章與圖片同步至 GitHub 嗎？",
-            confirmText: "同步 GitHub",
-            icon: "cloud_sync"
-        }))) return;
-
-        (window as any).showToast("正在建立同步請求...", 'info');
-
-        const btnText = finalPushBtn.querySelector('span:not(.material-symbols-outlined)');
-        const btnIcon = finalPushBtn.querySelector('.material-symbols-outlined');
-        const originalText = btnText?.textContent || "";
-        
-        if (btnText) btnText.textContent = "SYNCING...";
-        finalPushBtn.setAttribute("disabled", "true");
-
-        try {
-            const files = [];
-            
-            // 1. 準備 Markdown 文章
-            const fileName = `${slug}.md`;
-            const filePath = `src/content/posts/${fileName}`;
-            files.push({
-                path: filePath,
-                content: btoa(unescape(encodeURIComponent(content)))
-            });
-
-            // 2. 準備圖片
-            const datePath = new Date().toISOString().split('T')[0].substring(2, 4) + new Date().toISOString().split('T')[0].substring(5, 7);
-            for (const img of processedImages) {
-                const imgInput = document.querySelector(`.img-filename-input[data-id="${img.id}"]`) as HTMLInputElement;
-                let finalName = imgInput?.value.trim() || img.id;
-                if (!finalName.includes('.')) finalName += ".jpg";
-                
-                const imgPath = `public/images/${datePath}/${finalName}`;
-                files.push({
-                    path: imgPath,
-                    content: img.url.split(',')[1]
+            },
+            closeAll() {
+                this.instances.forEach((i) => {
+                    i.dropdown.classList.remove("open");
+                    i.trigger.classList.remove("active");
                 });
-            }
-
-            // 3. 發起直接同步請求 (Phase 3 - Strategy D)
-            const token = githubTokenInput.value.trim();
-            const slug = slugInput.value.trim();
-            if (!token) {
-                throw new Error("找不到 GitHub 權杖，請先在全站設定中儲存。");
-            }
-
-            console.log("[Sync] Octokit batch uploading files:", files.map(f => f.path));
-            
-            await githubSync.batchUpload({
-                token,
-                owner: "uu-memo",
-                repo: "uu-memo.github.io",
-                message: `Admin: Sync "${slug}" (${files.length} files)`,
-                branch: "main"
-            }, files);
-
-            (window as any).showToast(`成功！已透過 Octokit 提交 ${files.length} 個檔案。`, 'success', 5000);
-            
-            // Reset Edit Mode if updated
-            if (isEditMode) {
-                isEditMode = false;
-                const pushBtnText = finalPushBtn?.querySelector('span:not(.material-symbols-outlined)');
-                if (pushBtnText) pushBtnText.textContent = "FINAL PUSH TO GITHUB";
-                if (finalPushBtn) finalPushBtn.classList.replace("bg-uu-dark", "bg-uu-main");
-            }
-        } catch (err: any) {
-            console.error("[Sync] Error:", err);
-            (window as any).showToast("同步失敗: " + (err.message || err), 'error');
-        } finally {
-            if (btnText) btnText.textContent = originalText;
-            finalPushBtn.removeAttribute("disabled");
-        }
-    });
-
-    // --- Cleanup Build Logic ---
-    const cleanupBtn = document.getElementById("cleanup-build-btn");
-    cleanupBtn?.addEventListener("click", async () => {
-        if (!(await CustomModal.confirm({
-            title: "緊急修復修復",
-            message: "確定要從 GitHub 刪除 test.md 嗎？這通常用於修復建置失敗。",
-            confirmText: "刪除檔案",
-            theme: "danger",
-            icon: "warning"
-        }))) return;
-        
-        const originalContent = cleanupBtn.innerHTML;
-        cleanupBtn.innerHTML = `<span class="material-symbols-outlined text-sm animate-spin">sync</span> 清理中...`;
-        cleanupBtn.setAttribute("disabled", "true");
-
-        try {
-            const token = githubTokenInput.value.trim();
-            if (!token) throw new Error("缺少 GitHub 權杖");
-
-            await githubSync.deleteFile({
-                token,
-                owner: "uu-memo",
-                repo: "uu-memo.github.io",
-                message: "Admin: Emergency cleanup of corrupted test.md"
-            }, "src/content/posts/test.md");
-
-            (window as any).showToast("清理成功！GitHub 上的 test.md 已移除。", 'success');
-        } catch (err: any) {
-            (window as any).showToast("清理失敗: " + (err.message || err), 'error');
-        } finally {
-            cleanupBtn.innerHTML = originalContent;
-            cleanupBtn.removeAttribute("disabled");
-        }
-    });
-
-    // --- Seeding Logic ---
-    const seedBtn = document.getElementById("seed-comments-btn");
-    seedBtn?.addEventListener("click", async () => {
-        if (!(await CustomModal.confirm({
-            title: "測試數據",
-            message: "確定要在 Firestore 中建立 3 條測試留言嗎？",
-            confirmText: "建立數據",
-            icon: "database"
-        }))) return;
-
-        const testData = [
-            {
-                author_name: "小林",
-                author_email: "lin@example.com",
-                content:
-                    "這篇文章寫得很有溫度，圖片的色調也配得很安靜。期待更多的分享！",
-                post_slug: "2024-spring-trip",
-                is_hidden: false,
-                is_deleted: false,
-                is_read: false,
-                created_at: serverTimestamp(),
             },
-            {
-                author_name: "Art Explorer",
-                author_email: "art@travel.io",
-                content:
-                    "關於膠卷攝影的那一段很有同感，那種等待沖洗的不確定感才是最迷人的地方。",
-                post_slug: "film-photography-essence",
-                is_hidden: true,
-                is_deleted: false,
-                is_read: false,
-                created_at: serverTimestamp(),
-            },
-            {
-                author_name: "匿名訪客",
-                author_email: "",
-                content: "請問這張照片是在哪裡拍的？構圖好美！",
-                post_slug: "kyoto-morning-walk",
-                is_hidden: false,
-                is_deleted: false,
-                is_read: true,
-                created_at: serverTimestamp(),
-            },
-        ];
+        };
+        (window as any).UUSelect = UUSelect;
+    }
 
-        try {
-            for (const item of testData) {
-                await addDoc(collection(db, "comments"), item);
-            }
-            await CustomModal.alert({ title: "數據建立成功", message: "測試留言已成功寫入 Firestore。", icon: "check_circle" });
-        } catch (e) {
-            await CustomModal.alert({ title: "建立失敗", message: "錯誤原因: " + e, theme: "danger", icon: "error" });
-        }
-    });
+    // --- Authentication & Initialization ---
 
-    // --- Logic for Login Button ---
-    adminLoginBtn?.addEventListener("click", async () => {
-        try {
-            const provider = new GoogleAuthProvider();
-            await signInWithPopup(auth, provider);
-        } catch (err: any) {
-            await CustomModal.alert({
-                title: "登入失敗",
-                message: "身份驗證過程中發生錯誤: " + err.message,
-                theme: "danger",
-                icon: "error"
-            });
-        }
-    });
-
-    // --- Authentication & Initialization Execution ---
     onAuthStateChanged(auth, async (user) => {
+        const loading = document.getElementById("auth-loading");
+        const dashboard = document.getElementById("admin-dashboard");
+        const emailSpan = document.getElementById("admin-email");
+
         if (!user) {
-            // No User -> Redirect to Shared Login
             window.location.replace("/login");
             return;
         }
 
-        // We have a user, now verify permission (Admin Trap)
         console.log("[Auth] User detected:", user.email);
-        
+
         try {
-            const credentialRef = doc(db, "admin_vault", "credentials");
-            await getDoc(credentialRef); // Permission trap
-            
-            // Access Granted
+            // Permission Trap: 只有管理員可以加載此頁面
+            const adminRef = doc(db, "admin_vault", "credentials");
+            await getDoc(adminRef);
+
             console.log("[System] Admin Verified.");
             if (emailSpan) emailSpan.textContent = user.email;
 
-            // Fetch Data
-            fetchSystemConfig();
-            fetchAuthorConfig();
-            fetchPromptConfig();
-            fetchGithubConfig();
-            initCommentsModule();
+            // 初始化 Tabs
+            initTabs();
 
-            // Transition UI
+            // 延遲初始化各組件邏輯，確保 DOM 已就緒
+            setTimeout(() => {
+                if ((window as any).SystemSettings)
+                    (window as any).SystemSettings.loadSettings();
+                if ((window as any).AuthorSettings)
+                    (window as any).AuthorSettings.loadSettings();
+                if ((window as any).initCommentsModule)
+                    (window as any).initCommentsModule();
+                if ((window as any).initDraftTool)
+                    (window as any).initDraftTool();
+                if ((window as any).PostManager)
+                    (window as any).PostManager.refresh();
+            }, 100);
+
+            // 顯示儀表板
             loading?.classList.add("opacity-0");
-            loginUI?.classList.add("hidden");
             setTimeout(() => {
                 loading?.classList.add("hidden");
                 dashboard?.classList.remove("hidden");
                 dashboard?.classList.add("opacity-100");
             }, 300);
-
-        } catch (err: any) {
-            // Access Denied (Logged in but no permission)
-            console.error("[Auth] Access Denied for", user.email, ":", err.code);
-            await CustomModal.alert({
-                title: "存取被拒絕",
-                message: "帳號 " + user.email + " 不具備管理員權限。正在返回個人中心...",
-                theme: "danger",
-                icon: "gpp_bad"
-            });
+        } catch (err) {
+            console.error("[Auth] Access Denied:", err);
             window.location.replace("/user");
         }
     });
+
+    // --- Tab Switching Logic ---
+    function initTabs() {
+        const tabBtns = document.querySelectorAll(".tab-btn");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabBtns.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const tab = btn.getAttribute("data-tab");
+
+                // 更新按鈕狀態
+                tabBtns.forEach((b) => {
+                    b.classList.remove(
+                        "active",
+                        "bg-uu-main",
+                        "text-white",
+                        "shadow-sm"
+                    );
+                    b.classList.add(
+                        "text-uu-main/60",
+                        "hover:bg-uu-sub/10",
+                        "hover:text-uu-main"
+                    );
+                });
+                btn.classList.add(
+                    "active",
+                    "bg-uu-main",
+                    "text-white",
+                    "shadow-sm"
+                );
+                btn.classList.remove(
+                    "text-uu-main/60",
+                    "hover:bg-uu-sub/10",
+                    "hover:text-uu-main"
+                );
+
+                // 切換內容顯示
+                tabContents.forEach((content) => {
+                    content.classList.add("hidden");
+                    if (content.id === `tab-${tab}`)
+                        content.classList.remove("hidden");
+                });
+
+                // 切換至管理分頁時自動刷新列表
+                if (tab === "manage" && (window as any).PostManager) {
+                    (window as any).PostManager.refresh();
+                }
+            });
+        });
+    }
 
     document.getElementById("logout-btn")?.addEventListener("click", () => {
         auth.signOut();
         window.location.reload();
     });
-    // --- Draft Tool Logic ---
-    const initDraftTool = () => {
-        const generateDraftBtn = document.getElementById("generate-draft-btn");
-        const copyPromptBtn = document.getElementById("copy-prompt-btn");
-        const draftResultContainer = document.getElementById("draft-result-container");
-        const draftResultArea = document.getElementById("draft-result") as HTMLTextAreaElement;
-
-        generateDraftBtn?.addEventListener("click", () => {
-            const q1 = (document.getElementById("draft-q1") as HTMLInputElement).value || "[未填寫]";
-            const q2 = (document.getElementById("draft-q2") as HTMLInputElement).value || "[未填寫]";
-            const q3 = (document.getElementById("draft-q3") as HTMLInputElement).value || "[未填寫]";
-            const q4 = (document.getElementById("draft-q4") as HTMLTextAreaElement).value || "[未填寫]";
-            const q5 = (document.getElementById("draft-q5") as HTMLTextAreaElement).value || "[未填寫]";
-            const q6 = (document.getElementById("draft-q6") as HTMLInputElement).value || "輕鬆幽默的個人隨筆";
-            const slug = (document.getElementById("draft-slug") as HTMLInputElement).value || "your-slug";
-            const cat = (document.getElementById("draft-cat") as HTMLInputElement).value || "";
-            const tags = (document.getElementById("draft-tags") as HTMLInputElement).value || "";
-
-            const today = new Date().toISOString().split('T')[0];
-            const datePath = today.substring(2, 4) + today.substring(5, 7); // YYMM
-            
-            // Handle Tags Logic (Dynamic Expansion if < 5)
-            let tagsOutput = "我回答的標籤，無則你負責生成，至少 6 個";
-            if (tags.trim()) {
-                const tagsArr = tags.split(',').map(t => t.trim()).filter(t => t);
-                if (tagsArr.length > 0 && tagsArr.length < 5) {
-                    tagsOutput = `${tagsArr.join(', ')}，請以此為基礎擴增到至少 6 個以上`;
-                } else if (tagsArr.length >= 5) {
-                    tagsOutput = tagsArr.join(', ');
-                }
-            }
-
-            // Get template string
-            const templateEl = document.getElementById("draft-template") as HTMLTextAreaElement;
-            let prompt = templateEl ? templateEl.value : "";
-            
-            // Format q4 to handle line breaks properly if not empty
-            const formattedQ4 = q4 !== "[未填寫]" 
-                ? q4.split('\n').filter(l => l.trim()).map(line => `   ${line.trim().startsWith('-') ? '' : '- '}${line}`).join('\n')
-                : q4;
-
-            // Replace variables placeholders with actual values
-            prompt = prompt.replace(/\{\{q1\}\}/g, q1)
-                           .replace(/\{\{q2\}\}/g, q2)
-                           .replace(/\{\{q3\}\}/g, q3)
-                           .replace(/\{\{q4\}\}/g, formattedQ4)
-                           .replace(/\{\{q5\}\}/g, q5)
-                           .replace(/\{\{q6\}\}/g, q6)
-                           .replace(/\{\{slug\}\}/g, slug)
-                           .replace(/\{\{cat\}\}/g, cat || '我回答的分類，無則你負責生成')
-                           .replace(/\{\{tags\}\}/g, tagsOutput)
-                           .replace(/\{\{date\}\}/g, today)
-                           .replace(/\{\{datePath\}\}/g, datePath);
-
-            if (draftResultArea) draftResultArea.value = prompt;
-            draftResultContainer?.classList.remove("hidden");
-            draftResultContainer?.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        copyPromptBtn?.addEventListener("click", () => {
-            if (draftResultArea) {
-                draftResultArea.select();
-                document.execCommand("copy");
-                const originalText = copyPromptBtn.innerHTML;
-                copyPromptBtn.innerHTML = `<span class="material-symbols-outlined text-sm">done</span> 已複製`;
-                setTimeout(() => {
-                    copyPromptBtn.innerHTML = originalText;
-                }, 2000);
-            }
-        });
-    }
-
-    // --- Content Management Logic ---
-    const postsTableBody = document.getElementById("posts-table-body");
-    const postsCountInfo = document.getElementById("posts-count-info");
-    const paginationContainer = document.getElementById("manage-pagination");
-    const categoryFilter = document.getElementById("manage-category-filter") as HTMLSelectElement;
-    const refreshPostsBtn = document.getElementById("refresh-posts-btn");
-
-    async function loadPosts() {
-        if (!postsTableBody) return;
-        
-        postsTableBody.innerHTML = `
-            <tr>
-                <td colspan="4" class="px-6 py-20 text-center">
-                    <div class="flex flex-col items-center gap-4">
-                        <span class="material-symbols-outlined animate-spin text-uu-main/20 text-4xl">sync</span>
-                        <p class="text-uu-main/40 text-xs italic">正在與 GitHub 同步清單...</p>
-                    </div>
-                </td>
-            </tr>
-        `;
-
-        const token = githubTokenInput.value.trim();
-        if (!token) {
-            postsTableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-20 text-center text-uu-main/40 text-xs italic">請先在全站設定中儲存 GitHub 權杖。</td></tr>`;
-            return;
-        }
-
-        try {
-            allPosts = await githubSync.listPosts({
-                token,
-                owner: "uu-memo",
-                repo: "uu-memo.github.io"
-            });
-
-            updateCategoryFilter();
-            renderPosts();
-        } catch (err) {
-            console.error("Failed to load posts:", err);
-            postsTableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-20 text-center text-red-400 text-xs italic">載入失敗，請檢查權杖權限。</td></tr>`;
-        }
-    }
-
-    function updateCategoryFilter() {
-        if (!categoryFilter) return;
-        const categories = new Set(allPosts.map(p => p.category));
-        const currentVal = categoryFilter.value;
-        categoryFilter.innerHTML = '<option value="all">所有分類 (All)</option>';
-        categories.forEach(cat => {
-            const option = document.createElement("option");
-            option.value = cat;
-            option.textContent = cat;
-            categoryFilter.appendChild(option);
-        });
-        categoryFilter.value = currentVal;
-        
-        // Refresh custom select
-        UUSelect.refresh("manage-category-filter");
-    }
-
-    function renderPosts() {
-        if (!postsTableBody || !postsCountInfo || !paginationContainer) return;
-
-        const filtered = currentFilter === "all" 
-            ? allPosts 
-            : allPosts.filter(p => p.category === currentFilter);
-
-        const totalPages = Math.ceil(filtered.length / itemsPerPage);
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const paginated = filtered.slice(start, end);
-
-        postsCountInfo.textContent = `Showing ${start + 1}-${Math.min(end, filtered.length)} of ${filtered.length} posts`;
-
-        if (paginated.length === 0) {
-            postsTableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-20 text-center text-uu-main/40 text-xs italic">找不到相關文章。</td></tr>`;
-        } else {
-            postsTableBody.innerHTML = paginated.map(post => `
-                <tr class="hover:bg-uu-base/5 transition-colors group">
-                    <td class="px-6 py-4">
-                        <span class="text-[11px] font-mono text-uu-main/60">${post.publishDate}</span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="flex flex-col">
-                            <span class="text-sm font-bold text-uu-dark group-hover:text-uu-main transition-colors">${post.title}</span>
-                            <span class="text-[10px] text-uu-main/30 font-mono">${post.name}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="inline-block px-2 py-1 rounded-md bg-uu-sub/10 text-uu-main/60 text-[9px] font-black uppercase tracking-wider">${post.category}</span>
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex items-center justify-end gap-2">
-                            <button class="edit-post-btn p-2 rounded-lg hover:bg-uu-main hover:text-white text-uu-main/40 transition-all active:scale-95" data-path="${post.path}" data-name="${post.name.replace(".md","")}">
-                                <span class="material-symbols-outlined text-sm">edit_note</span>
-                            </button>
-                            <a href="https://uu-memo.github.io/posts/${post.name.replace(".md","")}" target="_blank" class="p-2 rounded-lg hover:bg-uu-sub/20 text-uu-main/40 transition-all">
-                                <span class="material-symbols-outlined text-sm">open_in_new</span>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-
-            document.querySelectorAll(".edit-post-btn").forEach(btn => {
-                btn.addEventListener("click", async () => {
-                    const path = btn.getAttribute("data-path")!;
-                    const slug = btn.getAttribute("data-name")!;
-                    await startEditPost(path, slug);
-                });
-            });
-        }
-
-        paginationContainer.innerHTML = '';
-        for (let i = 1; i <= totalPages; i++) {
-            const btn = document.createElement("button");
-            btn.className = `w-8 h-8 rounded-lg text-[10px] font-black transition-all ${i === currentPage ? 'bg-uu-main text-white shadow-lg' : 'bg-uu-sub/10 text-uu-main/40 hover:bg-uu-sub/20'}`;
-            btn.textContent = i.toString();
-            btn.addEventListener("click", () => {
-                currentPage = i;
-                renderPosts();
-            });
-            paginationContainer.appendChild(btn);
-        }
-    }
-
-    async function startEditPost(path: string, slug: string) {
-        const token = githubTokenInput.value.trim();
-        if (!token) return;
-
-        (window as any).showToast("正在載入文章內容...", 'info');
-        
-        try {
-            const content = await githubSync.getPostContent({
-                token,
-                owner: "uu-memo",
-                repo: "uu-memo.github.io",
-                path
-            });
-
-            mdEditor.value = content;
-            slugInput.value = slug;
-            isEditMode = true;
-            
-            updateFeaturedFromText();
-            const pushBtnText = finalPushBtn?.querySelector('span:not(.material-symbols-outlined)');
-            if (pushBtnText) pushBtnText.textContent = "UPDATE POST";
-            if (finalPushBtn) finalPushBtn.classList.replace("bg-uu-dark", "bg-uu-main");
-
-            const editorTabBtn = document.querySelector('[data-tab="editor"]') as HTMLButtonElement;
-            editorTabBtn?.click();
-            
-            (window as any).showToast("文章已載入，您可以開始編輯。", 'success');
-        } catch (err) {
-            (window as any).showToast("載入內容失敗: " + err, 'error');
-        }
-    }
-
-    refreshPostsBtn?.addEventListener("click", () => {
-        currentPage = 1;
-        loadPosts();
-    });
-
-    // Initialize Custom Selects
-    UUSelect.init("post-status", {
-        icons: {
-            'public': 'public',
-            'private': 'lock'
-        }
-    });
-    
-    UUSelect.init("manage-category-filter", {
-        defaultIcon: 'category'
-    });
-
-    categoryFilter?.addEventListener("change", () => {
-        currentFilter = categoryFilter.value;
-        currentPage = 1;
-        renderPosts();
-    });
-
-    const manageTabBtn = document.querySelector('[data-tab="manage"]');
-    manageTabBtn?.addEventListener("click", () => {
-        if (allPosts.length === 0) loadPosts();
-    });
-
-    initDraftTool();
-}
 </script>
 
 <style is:global>
-    /* Custom Select Component Styles (Global to ensure visibility to JS-injected elements) */
+    /* UUSelect Global Styles */
     .uu-select-container {
         position: relative;
         width: 100%;
-        box-sizing: border-box;
-    }
-    .uu-select-container * {
-        box-sizing: border-box;
     }
     .uu-select-trigger {
         display: flex;
@@ -2453,13 +325,11 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
         color: #4a301e;
         cursor: pointer;
         transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        user-select: none;
         backdrop-filter: blur(10px);
     }
     .uu-select-trigger:hover {
         border-color: rgba(109, 73, 47, 0.4);
         background: white;
-        box-shadow: 0 4px 20px rgba(109, 73, 47, 0.06);
     }
     .uu-select-trigger.active {
         border-color: #6d492f;
@@ -2471,11 +341,6 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
         align-items: center;
         gap: 0.625rem;
     }
-    .uu-select-trigger .trigger-icon {
-        font-size: 1.125rem;
-        color: #6d492f;
-        opacity: 0.7;
-    }
     .uu-select-trigger .arrow-icon {
         font-size: 1.125rem;
         transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -2485,7 +350,6 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
         transform: rotate(180deg);
         color: #6d492f;
     }
-    
     .uu-select-dropdown {
         position: absolute;
         top: calc(100% + 0.5rem);
@@ -2495,67 +359,45 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
         backdrop-filter: blur(20px);
         border: 1px solid rgba(109, 73, 47, 0.12);
         border-radius: 1rem;
-        box-shadow: 0 25px 50px -12px rgba(109, 73, 47, 0.2), 0 10px 20px -5px rgba(109, 73, 47, 0.1);
-        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(109, 73, 47, 0.2);
         z-index: 2000;
         opacity: 0;
         visibility: hidden;
         transform: translateY(-12px) scale(0.96);
-        pointer-events: none;
-        transition: 
-            opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1),
-            transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1),
-            visibility 0.3s;
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
         padding: 0.625rem;
     }
     .uu-select-dropdown.open {
         opacity: 1;
         visibility: visible;
         transform: translateY(0) scale(1);
-        pointer-events: auto;
     }
     .uu-select-option {
         padding: 0.75rem 1rem;
         font-size: 0.8125rem;
         color: #6d492f;
         cursor: pointer;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
         gap: 0.75rem;
         border-radius: 0.75rem;
-        margin-bottom: 0.25rem;
-    }
-    .uu-select-option:last-child {
-        margin-bottom: 0;
+        transition: all 0.2s;
     }
     .uu-select-option:hover {
         background: rgba(109, 73, 47, 0.04);
         transform: translateX(4px);
-        color: #4a301e;
     }
     .uu-select-option.selected {
         background: #6d492f;
         color: white;
-        font-weight: 600;
-        box-shadow: 0 10px 20px -5px rgba(109, 73, 47, 0.4);
-    }
-    .uu-select-option .option-icon {
-        font-size: 1.125rem;
-        opacity: 0.4;
-    }
-    .uu-select-option.selected .option-icon {
-        opacity: 1;
     }
 </style>
 
 <style>
-    /* Reuse User Dashboard Styles */
     .dashboard-layout {
         display: grid;
         grid-template-columns: 288px minmax(0, 1fr);
         gap: 2.5rem;
-        align-items: start;
         width: 100%;
     }
     .dashboard-sidebar {
@@ -2566,10 +408,7 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
     .dashboard-content {
         min-width: 0;
         width: 100%;
-        overflow: hidden;
     }
-
-    /* Mobile Responsive */
     @media (max-width: 767px) {
         .dashboard-layout {
             display: flex;
@@ -2580,16 +419,4 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
             position: static;
         }
     }
-
-    /* Scrollbar for editor */
-    #md-content::-webkit-scrollbar {
-        width: 6px;
-    }
-    #md-content::-webkit-scrollbar-thumb {
-        background: rgba(26, 26, 26, 0.1);
-        border-radius: 10px;
-    }
-
-
-
 </style>

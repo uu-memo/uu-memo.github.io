@@ -748,21 +748,15 @@ const postsJson = allPosts.map((post: any) => ({
                                     let name = c.author_name;
                                     let avatar = c.author_avatar;
 
-                                    // Priority 1: Latest Registered Profile (by UID)
-                                    if (c.author_uid && userMap[c.author_uid]) {
+                                    // Priority 0 (Highest): Admin identity lock
+                                    if (isAdmin) {
+                                        name = "UU";
+                                        avatar = "/uu-memo.png";
+                                    } else if (c.author_uid && userMap[c.author_uid]) {
+                                        // Priority 1: Latest Registered Profile (by UID)
                                         const latest = userMap[c.author_uid];
                                         name = latest.nickname || name;
                                         avatar = latest.avatar_icon || avatar;
-                                    }
-
-                                    // Priority 2: Admin Fallback
-                                    if (isAdmin) {
-                                        if (!name || name === "User" || name === "使用者" || name === "Anonymous" || name === "匿名訪客") {
-                                            name = "UU (站長)";
-                                        }
-                                        if (!avatar || avatar.includes('person') || avatar.includes('account_circle')) {
-                                            avatar = "/uu-memo.png";
-                                        }
                                     }
 
                                     c.author_name = name;
@@ -788,30 +782,17 @@ const postsJson = allPosts.map((post: any) => ({
                                                 r.author_email === "jing180804@gmail.com" ||
                                                 r.author_email === "uu-memo@outlook.com";
 
-                                            // Apply real-time sampling to replies
-                                            if (
-                                                r.author_uid &&
-                                                userMap[r.author_uid]
-                                            ) {
-                                                const latest =
-                                                    userMap[r.author_uid];
-                                                r.author_name =
-                                                    latest.nickname ||
-                                                    r.author_name;
-                                                r.author_avatar =
-                                                    latest.avatar_icon ||
-                                                    r.author_avatar;
+                                            // Priority 0: Admin identity lock for replies
+                                            if (rIsAdmin) {
+                                                r.author_name = "UU";
+                                                r.author_avatar = "/uu-memo.png";
+                                            } else if (r.author_uid && userMap[r.author_uid]) {
+                                                // Priority 1: Latest profile for replies
+                                                const latest = userMap[r.author_uid];
+                                                r.author_name = latest.nickname || r.author_name;
+                                                r.author_avatar = latest.avatar_icon || r.author_avatar;
                                             }
 
-                                            // Priority 2: Admin Fallback for replies
-                                            if (rIsAdmin) {
-                                                if (!r.author_name || r.author_name === 'User' || r.author_name === '使用者' || r.author_name === 'Anonymous' || r.author_name === '匿名訪客') {
-                                                    r.author_name = "UU (站長)";
-                                                }
-                                                if (!r.author_avatar || r.author_avatar.includes('person') || r.author_avatar.includes('account_circle')) {
-                                                    r.author_avatar = "/uu-memo.png";
-                                                }
-                                            }
                                             return { ...r, rIsAdmin };
                                         });
 

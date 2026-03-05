@@ -173,17 +173,30 @@ export const githubSync = {
             const content = decodeURIComponent(escape(atob(contentData.content)));
 
             // Simple Frontmatter Parser (regex)
+            // Support both 'pubDate' and 'publishDate' field names (Astro schema uses pubDate)
             const titleMatch = content.match(/title:\s*["']?(.*?)["']?(\r?\n|$)/);
-            const dateMatch = content.match(/publishDate:\s*(.*?)(\r?\n|$)/);
+            const dateMatch = content.match(/pubDate:\s*(.*?)(\r?\n|$)/) || content.match(/publishDate:\s*(.*?)(\r?\n|$)/);
             const categoryMatch = content.match(/category:\s*\[?(.*?)\]?(\r?\n|$)/);
+            const draftMatch = content.match(/draft:\s*(true|false)(\r?\n|$)/);
+            const visibleMatch = content.match(/isVisible:\s*(true|false)(\r?\n|$)/);
+
+            // Normalize date to YYYY-MM-DD for display
+            const rawDate = dateMatch ? dateMatch[1].trim().replace(/["|']/g, '') : '';
+            let displayDate = 'Unknown';
+            if (rawDate) {
+              const d = new Date(rawDate);
+              displayDate = !isNaN(d.getTime()) ? d.toISOString().slice(0, 10) : rawDate;
+            }
 
             return {
               name: file.name,
               path: file.path,
               sha: file.sha,
               title: titleMatch ? titleMatch[1] : file.name,
-              publishDate: dateMatch ? dateMatch[1].trim() : "Unknown",
-              category: categoryMatch ? categoryMatch[1].replace(/["']/g, "").split(",")[0].trim() : "Uncategorized"
+              publishDate: displayDate,
+              category: categoryMatch ? categoryMatch[1].replace(/["']/g, "").split(",")[0].trim() : "Uncategorized",
+              draft: draftMatch ? draftMatch[1] === "true" : false,
+              isVisible: visibleMatch ? visibleMatch[1] === "true" : true
             };
           } catch (e) {
             return {

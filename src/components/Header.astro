@@ -3,14 +3,13 @@
 
 <header
     class="sticky top-0 z-50 w-full bg-uu-base/80 backdrop-blur-md border-b border-uu-sub"
-    x-data="{ open: false }"
 >
     <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
         <!-- Logotype -->
         <div
             class="font-logo text-3xl tracking-tighter text-uu-main relative z-50"
         >
-            <a href="/" @click="open = false">UU MEMO</a>
+            <a href="/">UU MEMO</a>
         </div>
 
         <!-- Desktop Navigation & Search -->
@@ -193,19 +192,23 @@
     import { onAuthStateChanged } from "firebase/auth";
 
     onAuthStateChanged(auth, async (user) => {
-        const profileLinks = document.querySelectorAll('a[href="/login"], a[href="/user"], a[href="/admin"]');
-        
+        const profileLinks = document.querySelectorAll(
+            'a[href="/login"], a[href="/user"], a[href="/admin"]'
+        );
+
         if (user) {
             // Check for admin permission (Email list for quick check, or it will be handled by /login dispatcher)
-            const isAdmin = user.email === "jing180804@gmail.com" || user.email === "uu-memo@outlook.com";
-            
+            const isAdmin =
+                user.email === "jing180804@gmail.com" ||
+                user.email === "uu-memo@outlook.com";
+
             profileLinks.forEach((link) => {
                 link.setAttribute("href", isAdmin ? "/admin" : "/user");
                 link.setAttribute("title", isAdmin ? "管理後台" : "個人中心");
                 const span = link.querySelector("span");
                 if (span) {
                     span.classList.add("text-uu-main");
-                    if (isAdmin) span.textContent = 'admin_panel_settings';
+                    if (isAdmin) span.textContent = "admin_panel_settings";
                 }
             });
         } else {
@@ -215,7 +218,7 @@
                 const span = link.querySelector("span");
                 if (span) {
                     span.classList.remove("text-uu-main");
-                    span.textContent = 'account_circle';
+                    span.textContent = "account_circle";
                 }
             });
         }

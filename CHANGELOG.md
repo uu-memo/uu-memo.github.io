@@ -1060,3 +1060,33 @@ All notable changes to this project will be documented in this file.
 - None. Improved UX friction by simplifying card navigation while maintaining branding.
 
 *優化首頁文章卡片的互動體驗，將整個卡片設為可點擊區域並移除冗餘的「閱讀全文」連結。同時將下方「看所有文章」的引導按鈕改回簡約優質感的手寫文字箭頭樣式，提升整體的留白與視覺質感。*
+
+### [2026-03-05] - Admin Panel Core Refactoring & Modularization
+
+#### Summary of changes
+- Completed a comprehensive refactor of the Admin Dashboard by modularizing the monolithic JavaScript block.
+- Migrated feature-specific logic into dedicated Astro components for better maintainability and encapsulation.
+- Resolved all TypeScript type-checking errors in the main management script.
+- Restored and verified the Google Apps Script (GAS) cloud backup integration.
+
+#### Technical details
+- Devised "Component-Scoped Script" orchestration: business logic now resides within `PostEditor.astro`, `PostManager.astro`, `SystemSettings.astro`, `AuthorSettings.astro`, `DraftTool.astro`, and `CommentManager.astro`.
+- Implemented a unified global API layer via `window` objects (e.g., `window.PostEditor`, `window.UUSelect`) for seamless cross-component interaction.
+- Fixed TypeScript linting issues through explicit type assertions (`as HTMLSelectElement`, `as any`) and interface refinements.
+- Synchronized `GAS_URL` from environment variables to the browser context to re-enable automated post backups to Google Drive.
+- Streamlined the authentication lifecycle to sequentially verify identity before initializing specific feature modules.
+
+#### Affected files
+- `src/pages/admin/index.astro`
+- `src/components/admin/PostEditor.astro`
+- `src/components/admin/PostManager.astro`
+- `src/components/admin/SystemSettings.astro`
+- `src/components/admin/AuthorSettings.astro`
+- `src/components/admin/DraftTool.astro`
+- `src/components/admin/CommentManager.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None. System stability improved through better error handling and initialization sequencing.
+
+**中文說明：完成管理員後臺核心重構與模組化。將龐大的腳本塊拆分至各個功能組件內，顯著提升維護效率。同時修復了全站 TypeScript 類型錯誤，並確保雲端備份（GAS）與 GitHub 同步功能完美運作。**

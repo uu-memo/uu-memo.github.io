@@ -346,7 +346,7 @@ const { postSlug } = Astro.props;
 
                 const success = await submitComment({
                     author_uid: user.uid,
-                    author_name: isAdmin ? "UU (站長)" : (userData.nickname || user.displayName || "使用者"),
+                    author_name: isAdmin ? "UU" : (userData.nickname || user.displayName || "使用者"),
                     author_email: isAdmin ? "jing180804@gmail.com" : user.email,
                     author_avatar: isAdmin ? "/uu-memo.png" : (userData.avatar_icon || user.photoURL || ""),
                     content: content,
@@ -410,21 +410,15 @@ const { postSlug } = Astro.props;
                         let name = c.author_name;
                         let avatar = c.author_avatar;
 
-                        // Priority 1: Latest Registered Profile from Firestore (by UID)
-                        if (c.author_uid && userMap[c.author_uid]) {
+                        // Priority 0 (Highest): Admin identity lock — always display 'UU' + site avatar
+                        if (isAdmin) {
+                            name = 'UU';
+                            avatar = '/uu-memo.png';
+                        } else if (c.author_uid && userMap[c.author_uid]) {
+                            // Priority 1: Latest Registered Profile from Firestore (by UID)
                             const latest = userMap[c.author_uid];
                             name = latest.nickname || name;
                             avatar = latest.avatar_icon || avatar;
-                        }
-
-                        // Priority 2: Admin Fallback (only if name is default/empty)
-                        if (isAdmin) {
-                            if (!name || name === 'User' || name === '使用者' || name === 'Anonymous' || name === '匿名訪客') {
-                                name = 'UU (站長)';
-                            }
-                            if (!avatar || avatar.includes('person') || avatar.includes('account_circle')) {
-                                avatar = '/uu-memo.png';
-                            }
                         }
                         
                         return {

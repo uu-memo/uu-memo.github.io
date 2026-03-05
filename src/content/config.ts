@@ -15,6 +15,8 @@ const posts = defineCollection({
         category: z.union([z.string(), z.array(z.string())]).optional(),
         tags: z.array(z.string()).optional(),
         lang: z.string().optional().default('zh'),
+        draft: z.boolean().optional().default(false),
+        isVisible: z.boolean().optional().default(true),
     }).transform(data => ({
         ...data,
         // Normalize pubDate

@@ -1,0 +1,638 @@
+---
+---
+
+<div
+    id="tab-editor"
+    class="tab-content animate-in fade-in slide-in-from-bottom-4 duration-500"
+>
+    <!-- Editor Header -->
+    <div
+        class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8"
+    >
+        <div class="space-y-4 flex-1">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 bg-uu-main text-white rounded-2xl flex items-center justify-center shadow-lg shadow-uu-main/20"
+                >
+                    <span class="material-symbols-outlined text-xl"
+                        >edit_square</span
+                    >
+                </div>
+                <h2 class="text-2xl font-black text-uu-dark tracking-tight">
+                    內容編輯器 <span
+                        class="text-uu-main/20 ml-2 font-mono text-xs uppercase tracking-widest"
+                        >Markdown Editor</span
+                    >
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                    <label
+                        class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest pl-1"
+                        >文章網址名稱 (Post Slug)</label
+                    >
+                    <div class="relative group">
+                        <input
+                            type="text"
+                            id="post-slug"
+                            placeholder="my-new-post"
+                            class="w-full bg-white border border-uu-sub/30 rounded-2xl px-5 py-3.5 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-uu-main/5 focus:border-uu-main transition-all shadow-sm"
+                        />
+                        <div
+                            class="absolute inset-y-0 right-5 flex items-center pointer-events-none text-uu-main/20"
+                        >
+                            <span class="text-[10px] font-mono">.md</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-1.5">
+                    <label
+                        class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest pl-1"
+                        >發布狀態 (Publish Status)</label
+                    >
+                    <select id="post-publish-status" class="hidden">
+                        <option value="public" data-icon="public"
+                            >公開發布 (Public)</option
+                        >
+                        <option value="hidden" data-icon="visibility_off"
+                            >私人收藏 (Hidden)</option
+                        >
+                        <option value="draft" data-icon="edit_document"
+                            >草案備忘 (Draft)</option
+                        >
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div
+                class="flex items-center gap-3 bg-white p-2 rounded-2xl border border-uu-sub/20 shadow-sm"
+            >
+                <label
+                    class="flex items-center gap-2 px-3 py-2 cursor-pointer group"
+                >
+                    <input
+                        type="checkbox"
+                        id="featured-checkbox"
+                        class="hidden peer"
+                    />
+                    <div
+                        class="w-5 h-5 border-2 border-uu-sub/30 rounded-md peer-checked:bg-uu-main peer-checked:border-uu-main transition-all flex items-center justify-center"
+                    >
+                        <span
+                            class="material-symbols-outlined text-white text-[14px] opacity-0 peer-checked:opacity-100 scale-50 peer-checked:scale-100 transition-all"
+                            >star</span
+                        >
+                    </div>
+                    <span
+                        class="text-[11px] font-black text-uu-main/40 group-hover:text-uu-main transition-colors uppercase tracking-widest"
+                        >精選文章</span
+                    >
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Editor -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div class="lg:col-span-2 space-y-4">
+            <div
+                class="bg-white rounded-[2rem] border border-uu-sub/20 shadow-2xl shadow-uu-main/5 overflow-hidden flex flex-col min-h-[600px] border-b-4 border-b-uu-main"
+            >
+                <!-- Toolbar Area -->
+                <div
+                    class="px-6 py-4 bg-uu-base/10 border-b border-uu-sub/10 flex items-center justify-between"
+                >
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="flex items-center gap-1 bg-white/50 p-1 rounded-xl border border-uu-sub/10"
+                        >
+                            <button
+                                class="w-8 h-8 flex items-center justify-center rounded-lg text-uu-main/40 hover:bg-uu-main hover:text-white transition-all"
+                                id="editor-bold-btn"
+                                ><span class="material-symbols-outlined text-lg"
+                                    >format_bold</span
+                                >
+                            </button>
+                            <button
+                                class="w-8 h-8 flex items-center justify-center rounded-lg text-uu-main/40 hover:bg-uu-main hover:text-white transition-all"
+                                id="editor-link-btn"
+                                ><span class="material-symbols-outlined text-lg"
+                                    >link</span
+                                >
+                            </button>
+                            <button
+                                class="w-8 h-8 flex items-center justify-center rounded-lg text-uu-main/40 hover:bg-uu-main hover:text-white transition-all"
+                                id="editor-image-btn"
+                                ><span class="material-symbols-outlined text-lg"
+                                    >image</span
+                                >
+                            </button>
+                        </div>
+                    </div>
+                    <div
+                        id="editor-sync-indicator"
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/50 border border-uu-sub/5"
+                    >
+                        <div
+                            class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]"
+                        >
+                        </div>
+                        <span
+                            class="text-[9px] font-black text-uu-main/40 uppercase tracking-widest"
+                            >Ready to Sync</span
+                        >
+                    </div>
+                </div>
+                <!-- Content -->
+                <textarea
+                    id="md-content"
+                    placeholder="Write your story here in Markdown..."
+                    class="flex-1 w-full bg-transparent p-10 text-[15px] leading-relaxed text-uu-dark focus:outline-none resize-none font-medium placeholder:text-uu-main/10"
+                    >--- title: "未命名文章" pubDate: "2024-03-01" description:
+                    "這是一段關於文章的簡短描述..." author: "UU" image: url:
+                    "/images/post-placeholder.jpg" alt: "Post Image" tags:
+                    ["memo", "life"] category: ["生活"] draft: false isVisible:
+                    true ---
+                </textarea>
+            </div>
+
+            <!-- Final Push Button -->
+            <button
+                id="final-push-btn"
+                class="w-full py-6 bg-uu-dark text-white rounded-[2rem] font-black tracking-[0.3em] uppercase flex items-center justify-center gap-4 hover:shadow-2xl hover:shadow-uu-main/30 hover:-translate-y-1 active:scale-[0.98] transition-all group overflow-hidden relative"
+            >
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"
+                >
+                </div>
+                <span
+                    class="material-symbols-outlined text-2xl group-hover:rotate-12 group-hover:scale-110 transition-all"
+                    >cloud_upload</span
+                >
+                <span>Push to GitHub & Backup</span>
+            </button>
+        </div>
+
+        <!-- Sidebar / Media Manager -->
+        <div class="space-y-6 sticky top-24">
+            <!-- Media Dropzone -->
+            <div
+                class="bg-white rounded-3xl border border-dashed border-uu-sub/40 p-1 group hover:border-uu-main transition-colors"
+            >
+                <div
+                    id="md-dropzone"
+                    class="bg-uu-base/10 rounded-[1.25rem] p-8 flex flex-col items-center justify-center text-center gap-3 border border-uu-sub/10 group-hover:bg-uu-main/5 transition-all cursor-pointer relative overflow-hidden"
+                >
+                    <input
+                        type="file"
+                        id="image-input"
+                        multiple
+                        accept="image/*"
+                        class="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                    <div
+                        class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm text-uu-main group-hover:scale-110 group-hover:rotate-3 transition-all"
+                    >
+                        <span class="material-symbols-outlined text-3xl"
+                            >add_photo_alternate</span
+                        >
+                    </div>
+                    <div>
+                        <p
+                            class="text-xs font-black text-uu-dark uppercase tracking-widest"
+                        >
+                            上傳文章圖片
+                        </p>
+                        <p class="text-[10px] text-uu-main/40 mt-1">
+                            Drag & drop or click to upload
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Preview Queue -->
+            <div id="image-queue" class="space-y-4">
+                <!-- JS Injected Cards -->
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    import { githubSync } from "../../lib/githubSync";
+
+    if (typeof window !== "undefined") {
+        const mdEditor = document.getElementById(
+            "md-content"
+        ) as HTMLTextAreaElement;
+        const slugInput = document.getElementById(
+            "post-slug"
+        ) as HTMLInputElement;
+        const finalPushBtn = document.getElementById("final-push-btn");
+        const githubTokenInput = document.getElementById(
+            "sys-github-token"
+        ) as HTMLInputElement;
+        const statusSelect = document.getElementById(
+            "post-publish-status"
+        ) as HTMLSelectElement;
+        const featuredCheckbox = document.getElementById(
+            "featured-checkbox"
+        ) as HTMLInputElement;
+        const editorSyncIndicator = document.getElementById(
+            "editor-sync-indicator"
+        );
+        const imageInput = document.getElementById(
+            "image-input"
+        ) as HTMLInputElement;
+        const imageQueue = document.getElementById("image-queue");
+
+        let isEditMode = false;
+        let uploadedImages: { name: string; content: string }[] = [];
+
+        // --- Helper: Update Status from Frontmatter ---
+        function updateStatusFromText() {
+            if (!mdEditor) return;
+            const text = mdEditor.value;
+            const draftMatch = text.match(/draft:\s*(true|false)/);
+            const visibleMatch = text.match(/isVisible:\s*(true|false)/);
+
+            if (draftMatch) {
+                statusSelect.value =
+                    draftMatch[1] === "true" ? "draft" : "public";
+            }
+            if (visibleMatch && visibleMatch[1] === "false") {
+                statusSelect.value = "hidden";
+            }
+
+            // Sync featured checkbox
+            const featuredMatch = text.match(/featured:\s*(true|false)/);
+            if (featuredMatch && featuredCheckbox) {
+                featuredCheckbox.checked = featuredMatch[1] === "true";
+            }
+
+            // Refresh custom select if available
+            if ((window as any).UUSelect)
+                (window as any).UUSelect.refresh("post-publish-status");
+        }
+
+        // --- Helper: Update Text from Status ---
+        function updateTextFromStatus() {
+            if (!mdEditor) return;
+            let text = mdEditor.value;
+            const status = statusSelect.value;
+
+            if (status === "draft") {
+                text = text.replace(/draft:\s*(true|false)/, "draft: true");
+                text = text.replace(
+                    /isVisible:\s*(true|false)/,
+                    "isVisible: true"
+                );
+            } else if (status === "hidden") {
+                text = text.replace(/draft:\s*(true|false)/, "draft: false");
+                text = text.replace(
+                    /isVisible:\s*(true|false)/,
+                    "isVisible: false"
+                );
+            } else {
+                text = text.replace(/draft:\s*(true|false)/, "draft: false");
+                text = text.replace(
+                    /isVisible:\s*(true|false)/,
+                    "isVisible: true"
+                );
+            }
+
+            // Sync featured
+            const isFeatured = featuredCheckbox?.checked;
+            if (text.includes("featured:")) {
+                text = text.replace(
+                    /featured:\s*(true|false)/,
+                    `featured: ${isFeatured}`
+                );
+            } else {
+                // If missing, try to inject into frontmatter
+                text = text.replace(
+                    /---\s*\n/,
+                    `---\nfeatured: ${isFeatured}\n`
+                );
+            }
+
+            mdEditor.value = text;
+        }
+
+        // --- Image Handling ---
+        async function processImage(file: File) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const base64Content = (e.target?.result as string).split(
+                    ","
+                )[1];
+                const slug = slugInput.value.trim() || "post";
+                const timestamp = Date.now();
+                const fileName = `${slug}-${timestamp}-${file.name.replace(
+                    /\s+/g,
+                    "-"
+                )}`;
+
+                uploadedImages.push({ name: fileName, content: base64Content });
+                renderImagePreview(fileName, e.target?.result as string);
+                if ((window as any).showToast)
+                    (window as any).showToast(
+                        `圖片 ${file.name} 已加入清單`,
+                        "success"
+                    );
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderImagePreview(fileName: string, dataUrl: string) {
+            if (!imageQueue) return;
+            const card = document.createElement("div");
+            card.className =
+                "relative group bg-white border border-uu-sub/20 rounded-2xl p-4 flex items-center gap-4 animate-fade-in";
+            card.innerHTML = `
+                <div class="w-16 h-16 rounded-xl overflow-hidden bg-uu-base/10 shrink-0 border border-uu-sub/10">
+                    <img src="${dataUrl}" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-[10px] font-mono text-uu-main/40 truncate">${fileName}</p>
+                    <div class="flex items-center gap-2 mt-2">
+                        <button class="copy-syntax-btn px-3 py-1 bg-uu-main/5 text-uu-main rounded-md text-[9px] font-black uppercase tracking-widest hover:bg-uu-main hover:text-white transition-all" data-name="${fileName}">Copy Syntax</button>
+                        <button class="remove-img-btn p-1 text-uu-main/20 hover:text-uu-dark transition-colors" data-name="${fileName}">
+                            <span class="material-symbols-outlined text-sm">delete</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            card.querySelector(".copy-syntax-btn")?.addEventListener(
+                "click",
+                () => {
+                    const syntax = `![Image Description](/images/posts/${fileName})`;
+                    navigator.clipboard.writeText(syntax);
+                    if ((window as any).showToast)
+                        (window as any).showToast(
+                            "Markdown 語法已複製",
+                            "info"
+                        );
+                }
+            );
+
+            card.querySelector(".remove-img-btn")?.addEventListener(
+                "click",
+                () => {
+                    uploadedImages = uploadedImages.filter(
+                        (img) => img.name !== fileName
+                    );
+                    card.remove();
+                }
+            );
+
+            imageQueue.appendChild(card);
+        }
+
+        // --- Post Editor API ---
+        const PostEditor = {
+            async loadPost(path: string, slug: string) {
+                const token = githubTokenInput?.value.trim();
+                if (!token) return;
+
+                if ((window as any).showToast)
+                    (window as any).showToast("正在載入文章內容...", "info");
+
+                try {
+                    const content = await githubSync.getPostContent({
+                        token,
+                        owner: "uu-memo",
+                        repo: "uu-memo.github.io",
+                        path,
+                    });
+
+                    if (mdEditor) mdEditor.value = content;
+                    if (slugInput) slugInput.value = slug;
+                    isEditMode = true;
+
+                    updateStatusFromText();
+
+                    const pushBtnText = finalPushBtn?.querySelector(
+                        "span:not(.material-symbols-outlined)"
+                    );
+                    if (pushBtnText) pushBtnText.textContent = "UPDATE POST";
+                    if (finalPushBtn)
+                        finalPushBtn.classList.replace(
+                            "bg-uu-dark",
+                            "bg-uu-main"
+                        );
+
+                    // Clear images
+                    if (imageQueue) imageQueue.innerHTML = "";
+                    uploadedImages = [];
+
+                    // Switch Tab
+                    const editorTabBtn = document.querySelector(
+                        '[data-tab="editor"]'
+                    ) as HTMLButtonElement;
+                    editorTabBtn?.click();
+
+                    if ((window as any).showToast)
+                        (window as any).showToast(
+                            "文章已載入，您可以開始編輯。",
+                            "success"
+                        );
+                } catch (err) {
+                    if ((window as any).showToast)
+                        (window as any).showToast(
+                            "載入內容失敗: " + err,
+                            "error"
+                        );
+                }
+            },
+
+            reset() {
+                isEditMode = false;
+                if (slugInput) slugInput.value = "";
+                if (mdEditor)
+                    mdEditor.value = `---
+title: "未命名文章"
+pubDate: "${new Date().toISOString().split("T")[0]}"
+description: "這是一段關於文章的簡短描述..."
+author: "UU"
+image:
+  url: "/images/post-placeholder.jpg"
+  alt: "Post Image"
+tags: ["memo", "life"]
+category: ["生活"]
+draft: false
+isVisible: true
+---`;
+                const pushBtnText = finalPushBtn?.querySelector(
+                    "span:not(.material-symbols-outlined)"
+                );
+                if (pushBtnText)
+                    pushBtnText.textContent = "Push to GitHub & Backup";
+                if (finalPushBtn)
+                    finalPushBtn.classList.replace("bg-uu-main", "bg-uu-dark");
+                updateStatusFromText();
+
+                if (imageQueue) imageQueue.innerHTML = "";
+                uploadedImages = [];
+            },
+        };
+
+        (window as any).PostEditor = PostEditor;
+
+        // --- Event Listeners ---
+        statusSelect?.addEventListener("change", updateTextFromStatus);
+        featuredCheckbox?.addEventListener("change", updateTextFromStatus);
+
+        mdEditor?.addEventListener("input", () => {
+            if (editorSyncIndicator) {
+                const statusSpan = editorSyncIndicator.querySelector("span");
+                const dotDiv = editorSyncIndicator.querySelector("div");
+                if (statusSpan) statusSpan.textContent = "Unsaved Changes";
+                if (dotDiv)
+                    dotDiv.classList.replace("bg-green-500", "bg-amber-500");
+            }
+        });
+
+        imageInput?.addEventListener("change", (e: any) => {
+            const files = Array.from(e.target.files) as File[];
+            files.forEach(processImage);
+        });
+
+        slugInput?.addEventListener("input", () => {
+            if (!isEditMode && mdEditor) {
+                // Update image URL in frontmatter if it matches the placeholder
+                let text = mdEditor.value;
+                const slug = slugInput.value.trim();
+                if (slug && text.includes("post-placeholder.jpg")) {
+                    text = text.replace(
+                        "/images/post-placeholder.jpg",
+                        `/images/posts/${slug}.jpg`
+                    );
+                    mdEditor.value = text;
+                }
+            }
+        });
+
+        finalPushBtn?.addEventListener("click", async () => {
+            const token = githubTokenInput?.value.trim();
+            if (!token) {
+                if ((window as any).showToast)
+                    (window as any).showToast(
+                        "請先在全站設定中儲存 GitHub 權杖。",
+                        "error"
+                    );
+                return;
+            }
+
+            const slug = slugInput?.value.trim();
+            if (!slug) {
+                if ((window as any).showToast)
+                    (window as any).showToast(
+                        "請輸入文章網址名稱 (Slug)。",
+                        "error"
+                    );
+                return;
+            }
+
+            const path = `src/content/posts/${slug}.md`;
+            const content = mdEditor?.value;
+            if (!content) return;
+
+            if (
+                !(await (window as any).CustomModal.confirm({
+                    title: isEditMode ? "更新 GitHub 文章" : "發布新文章",
+                    message: isEditMode
+                        ? `確定要將更動推送到「${slug}.md」嗎？這將覆蓋現有內容。`
+                        : `確定要將「${slug}.md」發布到 GitHub 嗎？這將觸發網站重新建置。`,
+                    confirmText: "執行推送",
+                    theme: "main",
+                    icon: "cloud_upload",
+                }))
+            )
+                return;
+
+            if ((window as any).showToast)
+                (window as any).showToast("正在處理推送與備份...", "info");
+
+            try {
+                // 1. Prepare files
+                const filesToUpload = [
+                    {
+                        path,
+                        content: btoa(unescape(encodeURIComponent(content))),
+                    },
+                ];
+
+                // Add images
+                uploadedImages.forEach((img) => {
+                    filesToUpload.push({
+                        path: `public/images/posts/${img.name}`,
+                        content: img.content,
+                    });
+                });
+
+                // 2. GitHub Sync
+                await githubSync.batchUpload(
+                    {
+                        token,
+                        owner: "uu-memo",
+                        repo: "uu-memo.github.io",
+                        message: `Admin: ${
+                            isEditMode ? "Update" : "Create"
+                        } post "${slug}"`,
+                    },
+                    filesToUpload
+                );
+
+                // 3. GAS Backup
+                const GAS_URL = (window as any).GAS_URL;
+                if (GAS_URL) {
+                    fetch(GAS_URL, {
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            action: "backup_post",
+                            slug,
+                            content,
+                        }),
+                    }).catch((e) =>
+                        console.warn("GAS Backup non-critical fail:", e)
+                    );
+                }
+
+                if ((window as any).showToast)
+                    (window as any).showToast(
+                        "推送成功！網站正在建置中。",
+                        "success"
+                    );
+
+                if (editorSyncIndicator) {
+                    const statusSpan =
+                        editorSyncIndicator.querySelector("span");
+                    const dotDiv = editorSyncIndicator.querySelector("div");
+                    if (statusSpan) statusSpan.textContent = "Ready to Sync";
+                    if (dotDiv)
+                        dotDiv.classList.replace(
+                            "bg-amber-500",
+                            "bg-green-500"
+                        );
+                }
+
+                // If in Manage mode, refresh list
+                if (
+                    (window as any).PostManager &&
+                    (window as any).PostManager.refresh
+                ) {
+                    (window as any).PostManager.refresh();
+                }
+            } catch (err) {
+                if ((window as any).showToast)
+                    (window as any).showToast("操作失敗: " + err, "error");
+            }
+        });
+    }
+</script>

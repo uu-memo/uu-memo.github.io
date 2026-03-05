@@ -68,16 +68,54 @@ function doPost(e) {
  * 聯絡表單發信邏輯
  */
 function sendContactEmail(targetEmail, name, email, subject, message) {
+  const brand = {
+    base: '#f5f0e7',
+    sub: '#ddccb3',
+    main: '#6d492f',
+    dark: '#4a301e',
+    light: '#ffffff'
+  };
+
   const htmlBody = `
-    <div style="font-family: sans-serif; max-width: 600px; border: 1px solid #eee; border-radius: 12px; padding: 20px;">
-      <h2 style="color: #1a1a1a; border-bottom: 1px solid #eee; padding-bottom: 10px;">[UU MEMO] 新聯絡訊息</h2>
-      <p><strong>寄件者:</strong> ${name}</p>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>主旨:</strong> ${subject}</p>
-      <div style="background: #f9f9f9; padding: 15px; border-left: 4px solid #1a1a1a; margin-top: 20px;">
-        <p style="white-space: pre-wrap;">${message}</p>
+    <div style="font-family: 'Noto Sans TC', sans-serif, Arial; max-width: 600px; margin: 0 auto; background-color: ${brand.base}; border-radius: 24px; overflow: hidden; border: 1px solid ${brand.sub};">
+      <!-- Header -->
+      <div style="background-color: ${brand.main}; padding: 40px 20px; text-align: center;">
+        <h1 style="color: ${brand.base}; margin: 0; font-size: 20px; letter-spacing: 4px; font-weight: 700;">UU MEMO</h1>
+        <p style="color: ${brand.sub}; margin: 10px 0 0 0; font-size: 10px; text-transform: uppercase; letter-spacing: 2px;">New Contact Notification</p>
       </div>
-      <p style="font-size: 11px; color: #aaa; margin-top: 20px; text-align: center;">Sent via Unified Bridge (GAS)</p>
+
+      <!-- Content -->
+      <div style="padding: 40px 30px; background-color: ${brand.base};">
+        <div style="margin-bottom: 30px;">
+          <h2 style="color: ${brand.dark}; font-size: 16px; margin: 0 0 20px 0; border-bottom: 2px solid ${brand.sub}; padding-bottom: 10px; display: inline-block;">聯絡詳情</h2>
+          
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 10px 0; color: ${brand.main}; font-size: 12px; width: 80px; font-weight: bold;">寄件姓名</td>
+              <td style="padding: 10px 0; color: ${brand.dark}; font-size: 14px;">${name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: ${brand.main}; font-size: 12px; font-weight: bold;">電子郵件</td>
+              <td style="padding: 10px 0; font-size: 14px;"><a href="mailto:${email}" style="color: ${brand.main}; text-decoration: underline;">${email}</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: ${brand.main}; font-size: 12px; font-weight: bold;">訊息主旨</td>
+              <td style="padding: 10px 0; color: ${brand.dark}; font-size: 14px; font-weight: bold;">${subject}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="background-color: ${brand.light}; padding: 30px; border-radius: 16px; border: 1px solid ${brand.sub}; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);">
+          <h3 style="color: ${brand.main}; font-size: 11px; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px;">訊息內容 Message</h3>
+          <p style="color: ${brand.dark}; font-size: 15px; line-height: 1.8; white-space: pre-wrap; margin: 0;">${message}</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="padding: 30px; text-align: center; border-top: 1px solid ${brand.sub};">
+        <p style="color: ${brand.main}; font-size: 11px; opacity: 0.6; margin: 0;">此郵件由 UU MEMO 自動備份系統發出</p>
+        <p style="color: ${brand.sub}; font-size: 9px; margin-top: 5px;">Sent via Unified Bridge (GAS)</p>
+      </div>
     </div>
   `;
   
