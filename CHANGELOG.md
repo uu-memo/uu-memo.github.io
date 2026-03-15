@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### [2026-03-15] - UI/UX Refinement & Post Management Module
+
+#### Summary of changes
+- Modernized the Admin Dashboard by relocating article fetching and loading into a dedicated "Article Management" tab.
+- Performed a comprehensive site-wide color audit, replacing all prohibited bright red and green elements with unified brand tokens (`uu-main`, `uu-sub`).
+- Refactored post loading logic to ensure seamless integration between the management list and the editor component.
+
+#### Technical details
+- **UI Logic**: Introduced a standalone "Article Management" section in `index.astro`, mirroring the high-fidelity design of the Content Editor.
+- **State Management**: Implemented tab-switching logic that automatically scrolls to the top and triggers the preview refresher when an article is loaded for editing.
+- **Color Standardization**: Replaced legacy `text-red-500`, `bg-red-500`, and `text-green-500` classes with brand-compliant variants like `text-uu-main/60` and `bg-uu-main/10`.
+- **Environment Variables**: Optimized client-side script in `index.astro` to properly ingest `PUBLIC_GAS_URL` and `PUBLIC_GAS_SECRET` via `import.meta.env`.
+
+#### Affected files
+- `src/pages/admin/index.astro`
+- `src/pages/contact.astro`
+- `src/components/Comments.astro`
+- `src/pages/posts/[...slug].astro`
+- `src/styles/global.css`
+
+#### Side effects
+- None anticipated.
+
+**中文說明：管理員後台 UI 升級與配色優化。將「文章管理」獨立成專屬分頁，並實作點擊文章自動跳轉至編輯器的流暢體驗。同時完成全站色彩規範掃描，將所有舊式的警告紅與亮綠提示更換為品牌統一配色。**
+
 ### [2026-03-15] - Firestore Security Fix & Ad-blocker Bypass
 
 #### Summary of changes
@@ -1228,3 +1253,32 @@ All notable changes to this project will be documented in this file.
 - None anticipated. Users' custom templates are preserved and only augmented if they lack the new feature's variable.
 
 **中文說明：修復草稿工具 q7 變數遺失問題。實作了模板自動遷移邏輯，當從資料庫載入不含 `{{q7}}` 的舊模板時，系統會自動補齊相關指令，確保新功能可立即在生成結果中生效，無需手動修改雲端模板。**
+
+### [2026-03-15.4] - FEAT: Existing Article Management & GitHub Integration
+
+#### Summary of changes
+- Implemented the "Manage Existing Posts" module within the Admin Dashboard.
+- Integrated seamless GitHub content retrieval for editing published articles.
+- Extended the Google Apps Script (GAS) Bridge to handle GitHub repository file operations securely.
+
+#### Technical details
+- **GAS Bridge Extension**: Added `list_posts` and `get_content` actions to `gh-bridge.gs`.
+  - `list_posts`: Fetches all `.md` files from `src/content/posts`.
+  - `get_content`: Retrieves raw content (Base64) of a specific file for editing.
+- **Frontend Integration**:
+  - Added a toggleable "Management Container" in the article editing tab.
+  - Implemented an asynchronous fetching logic in `src/pages/admin/index.astro` to populate the article list.
+  - Created the `loadPostContent` function to decode GitHub content and populate the editor fields (`md-content`, `post-slug`) automatically.
+- **UI/UX & Branding**:
+  - Maintained strict adherence to the brand color palette (`uu-main`, `uu-sub`).
+  - Implemented Skeleton-style loading states and robust error handling for API failures.
+  - Integrated with the existing auto-preview mechanism to immediately show changes.
+
+#### Affected files
+- `gh-bridge.gs`
+- `src/pages/admin/index.astro`
+
+#### Side effects
+- GitHub API rate limits apply; however, since operations are performed on-demand by the admin, this is not an issue for normal usage.
+
+**中文說明：實作「既有文章管理」與 GitHub 整合編輯功能。透過擴展 GAS Bridge 支援讀取 GitHub 檔案清單與內容，管理員現在可以在後台一鍵載入已發佈的文章並直接修改，大幅優化了維護效率。介面完全符合品牌色彩規範，並具備完善的載入狀態與錯誤提示。**

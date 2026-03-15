@@ -63,6 +63,17 @@ function doPost(e) {
         })).setMimeType(ContentService.MimeType.JSON);
     }
 
+    // 5. 獲取文章列表
+    if (action === 'list_posts') {
+        return listPostsFromGitHub(owner, repo, branch, token);
+    }
+
+    // 6. 獲取單一文章內容
+    if (action === 'get_content') {
+        if (!path) throw new Error("Missing path for get_content");
+        return getFileContentFromGitHub(owner, repo, path, branch, token);
+    }
+
     // 相容舊版單一檔案上傳
     if (action === 'upload_file') {
       saveToDrive(path, content);
@@ -285,6 +296,49 @@ function uploadToGitHub(owner, repo, path, contentBase64, message, branch, token
     payload: JSON.stringify(payload),
     muteHttpExceptions: true
   };
+  const response = UrlFetchApp.fetch(url, options);
+  return ContentService.createTextOutput(response.getContentText()).setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * 獲取文章清單 (僅限 .md 檔案)
+ */
+function listPostsFromGitHub(owner, repo, branch, token) {
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/src/content/posts?ref=${branch}`;
+  const options = {
+    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' },
+    muteHttpExceptions: true
+  };
+  
+  const response = UrlFetchApp.fetch(url, options);
+  if (response.getResponseCode() !== 200) {
+    return ContentService.createTextOutput(response.getContentText()).setMimeType(ContentService.MimeType.JSON);
+  }
+  
+  const files = JSON.parse(response.getContentText());
+  const posts = files.filter(f => f.name.endsWith('.md')).map(f => ({
+    name: f.name,
+    path: f.path,
+    sha: f.sha,
+    size: f.size
+  }));
+  
+  return ContentService.createTextOutput(JSON.stringify({
+    status: 'success',
+    posts: posts
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * 獲取特定檔案內容 (Markdown 格式)
+ */
+function getFileContentFromGitHub(owner, repo, path, branch, token) {
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
+  const options = {
+    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' },
+    muteHttpExceptions: true
+  };
+  
   const response = UrlFetchApp.fetch(url, options);
   return ContentService.createTextOutput(response.getContentText()).setMimeType(ContentService.MimeType.JSON);
 }
