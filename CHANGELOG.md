@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### [2026-03-15] - Firestore Security Fix & Ad-blocker Bypass
+
+#### Summary of changes
+- Resolved "Access Denied" issue for Admin users by deploying correct Firestore security rules.
+- Implemented an intelligent Ad-blocker Bypass mechanism using Google Apps Script (GAS) as a fallback.
+- Optimized the Admin authentication flow to detect connection blocks and maintain functionality without requiring users to disable security extensions.
+
+#### Technical details
+- **Security Rules**: Deployed standardized `firestore.rules` to the `uu-memo` project, replacing mismatched legacy rules.
+- **GAS Bridge**: Added `verify_admin` action to `gh-bridge.gs` to perform secondary server-side identity verification via email.
+- **Frontend Logic**: Updated `src/pages/admin/index.astro` to catch `permission-denied` and `net::ERR_BLOCKED_BY_CLIENT` errors, triggering an automatic fallback to the GAS Bridge for authentication.
+- **User Feedback**: Added a non-intrusive Toast notification when the system enters "Bypass Mode" to inform the user of the backup connection.
+
+#### Affected files
+- `firestore.rules`
+- `gh-bridge.gs`
+- `src/pages/admin/index.astro`
+
+#### Side effects
+- Admin authentication may take slightly longer (~1-2 seconds) when the fallback mechanism is active.
+
+**中文說明：修復 Firestore 權限錯誤並實作廣告攔截器（Ad-blocker）自動繞過機制。透過部署正確的安全規則並結合 GAS Bridge 備援驗證，管理員現在即使開啟攔截器也能無礙進入後台，不需手動關閉安全外掛。**
+
 ### [2026-02-12] - Responsive UX Improvements
 
 #### Summary of changes
@@ -1090,3 +1113,118 @@ All notable changes to this project will be documented in this file.
 - None. System stability improved through better error handling and initialization sequencing.
 
 **中文說明：完成管理員後臺核心重構與模組化。將龐大的腳本塊拆分至各個功能組件內，顯著提升維護效率。同時修復了全站 TypeScript 類型錯誤，並確保雲端備份（GAS）與 GitHub 同步功能完美運作。**
+
+### [2026-03-15.2] - Draft Tool Optimization: Mandatory Phrases & Structured Output
+
+#### Summary of changes
+- Enhanced the "Draft Tool" by adding a dedicated field for mandatory phrases and style samples.
+- Optimized the AI prompt template to produce more structured output, separating the article body from image suggestions.
+- Implemented a specific bulleted format for image suggestions to improve editorial workflow.
+
+#### Technical details
+- **Frontend**: Added a new `textarea` with ID `draft-q7` to the `DraftTool.astro` component for "Mandatory Phrases".
+- **Prompt Engineering**: 
+    - Updated the default prompt in `draft-template` to include the `{{q7}}` variable.
+    - Added explicit instructions for two output blocks: "**Article Body**" (including YAML Frontmatter) and "**Image Suggestions**".
+    - Enforced the format `[H2 Title - Section Image]: Recommended Layout/Content` for image suggestions.
+- **Scripting**: Modified the `initDraftTool` function to capture the value of `draft-q7` and perform the dynamic replacement of `{{q7}}` placeholders in the final prompt.
+
+#### Affected files
+- `src/components/admin/DraftTool.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None. The new field is optional and defaults to "無特定必用語句" (No specific phrases) if left blank.
+
+**中文說明：優化草稿工具。新增「必用語句」欄位並更新 AI 指令模板，現在輸出的 Prompt 會要求 AI 將內容區分為文章本體與配圖建議，且配圖建議會以指定的標題索引格式條列輸出。**
+
+### [2026-03-15.3] - Fix: GitHub API 401 Error & Initialization Race Condition
+
+#### Summary of changes
+- Resolved the intermittent GitHub API 401 (Unauthorized) error encountered on the admin dashboard.
+- Redesigned the component initialization lifecycle to ensure proper sequencing of asynchronous data fetching.
+- Improved diagnostic logging and error feedback for GitHub token management.
+
+#### Technical details
+- **Race Condition Fix**: Refactored `index.astro` to use a deterministic `async/await` initialization sequence. The dashboard now guarantees that `SystemSettings.loadSettings()` completes (populating the token in the DOM) before `PostManager.refresh()` is invoked.
+- **Enhanced Diagnostics**: 
+    - Updated `SystemSettings.astro` to log token loading status and provide a masked preview of the loaded token for verification.
+    - Updated `PostManager.astro` to log the exact moment of API invocation and include specific error messages for 401 (Bad Credentials) and 404 (Not Found) statuses.
+- **UI Improvements**: Added user-friendly error hints in the article list table, guiding users to check their token settings if authentication fails.
+
+#### Affected files
+- `src/pages/admin/index.astro`
+- `src/components/admin/SystemSettings.astro`
+- `src/components/admin/PostManager.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None. System boot time might be slightly more structured, but perceived performance remains smooth due to loading state management.
+
+**中文說明：修復 GitHub API 401 錯誤。重構後台初始化流程，解決組件載入順序導致的 Race Condition，確保 Token 載入完成後才抓取文章清單。同時強化了報錯提示與日誌診斷功能，方便排查權杖失效問題。**
+
+### [2026-03-15.4] - Fix: Admin UI Layout & Prohibited Colors
+
+#### Summary of changes
+- Fixed layout misalignment in the admin sidebar navigation.
+- Removed prohibited bright green colors and neon effects from the UI.
+- Improved vertical alignment for Material Icons and text labels in the dashboard.
+
+#### Technical details
+- **Sidebar Layout**: Added `shrink-0` to Material Icons in `Sidebar.astro` to prevent compression in narrow viewports. Added `pt-0.5` and removed `leading-none` where necessary to ensure precise horizontal alignment between icons and labels.
+- **Color Standardization**: Replaced `bg-green-500` (prohibited bright green) with `bg-uu-main` (brand brown) in `PostEditor.astro` sync indicator.
+- **Shadow Refinement**: Swapped neon green shadows for a subtle brand-colored alternative (`shadow-uu-main/30`).
+- **Logic Sync**: Updated `PostEditor.astro` JavaScript to correctly toggle between `bg-uu-main` and `bg-amber-500` based on unsaved changes.
+
+#### Affected files
+- `src/components/admin/Sidebar.astro`
+- `src/components/admin/PostEditor.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None. UI feels more premium and remains consistent with the project's color palette.
+
+**中文說明：修正後台 UI 跑版與顏色問題。修復側邊欄圖標與文字對齊，並將「內容編輯器」中違規的亮綠色 (bg-green-500) 替換為品牌主色調，同時優化了同步狀態燈的視覺質感。**
+### [2026-03-15.2] - Admin Dashboard Stabilization & Draft Tool Enhancement
+
+#### Summary of changes
+- Restored Admin Dashboard layout stability by reverting to a monolithic single-file structure (`caf330` baseline).
+- Enhanced the "Article Draft Tool" with a new content dimension field (`q7`).
+- Optimized the AI Prompt Template to support tiered tripartite output.
+- Enforced site-wide color compliance by removing prohibited bright green variants.
+
+#### Technical details
+- **Layout Recovery**: Re-consolidated modular components into `src/pages/admin/index.astro` to eliminate navigation "running off" (跑版) issues caused by fragmented CSS/JS scopes.
+- **Draft Tool Upgrades**:
+    - Added `draft-q7` field for "Required Phrases and Style Hints".
+    - Updated `initDraftTool` JavaScript to include `{{q7}}` variable replacement.
+    - Redesigned the default prompt template to output three distinct sections: Meta Data (YAML), Main Content (Markdown), and Image Suggestions.
+- **Syntax Correction**: Replaced raw double curly braces in the `.astro` template with HTML entities (`&#123;&#123;`) to prevent conflicts with Astro's template engine during build.
+- **Color Correction**: Replaced all instances of `bg-green-500`, `bg-emerald-500`, and related prohibited green shades with the brand color `bg-uu-main`.
+
+#### Affected files
+- `src/pages/admin/index.astro`
+
+#### Side effects
+- Direct modifications to modular files (e.g., `DraftTool.astro`) are now deprecated as the system has returned to the atomic `index.astro` structure for stability.
+
+**中文說明：修復管理後台跑版問題並強化草稿工具。透過回歸單一文件結構確保佈局穩定，解決了側邊欄錯位。草稿工具新增「必用語句」欄位，並優化 Prompt 模板為三段式輸出（中繼資料、正文、配圖建議）。同時移除了所有禁止使用的亮綠色，統一使用品牌色。**
+
+### [2026-03-15.3] - FIX: Draft Tool Template Auto-Migration
+
+#### Summary of changes
+- Resolved the issue where the `q7` (Required Phrases) variable was missing from generated prompts.
+- Implemented an intelligent template auto-migration logic to bridge the gap between hardcoded HTML defaults and stale Firestore data.
+
+#### Technical details
+- **Auto-Migration Logic**: Modified `fetchPromptConfig` in `src/pages/admin/index.astro` to detect if a loaded template from Firestore lacks the `{{q7}}` placeholder.
+- **Dynamic Injection**: If missing, the system now automatically injects `{{q7}}` into the "Input Form" section and updates the AI instructions to emphasize the use of `q7` phrases.
+- **Benefit**: Ensures that users who have previously saved custom templates can immediately benefit from the new "Required Phrases" feature without manual template editing.
+
+#### Affected files
+- `src/pages/admin/index.astro`
+
+#### Side effects
+- None anticipated. Users' custom templates are preserved and only augmented if they lack the new feature's variable.
+
+**中文說明：修復草稿工具 q7 變數遺失問題。實作了模板自動遷移邏輯，當從資料庫載入不含 `{{q7}}` 的舊模板時，系統會自動補齊相關指令，確保新功能可立即在生成結果中生效，無需手動修改雲端模板。**

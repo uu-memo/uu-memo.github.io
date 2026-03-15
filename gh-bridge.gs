@@ -47,6 +47,22 @@ function doPost(e) {
         return deleteFileFromGitHub(owner, repo, path, message || `Admin: Auto-cleanup ${path}`, branch, token);
     }
 
+    // 4. 管理員身份驗證 (繞過 Ad-blocker)
+    if (action === 'verify_admin') {
+        const { email } = data;
+        const adminEmails = [
+            'jing180804@gmail.com',
+            'uu-memo@outlook.com'
+        ];
+        
+        const isVerified = adminEmails.includes(email);
+        return ContentService.createTextOutput(JSON.stringify({ 
+            status: isVerified ? 'success' : 'error', 
+            isAdmin: isVerified,
+            message: isVerified ? 'Admin verified via Bridge' : 'Access denied'
+        })).setMimeType(ContentService.MimeType.JSON);
+    }
+
     // 相容舊版單一檔案上傳
     if (action === 'upload_file') {
       saveToDrive(path, content);

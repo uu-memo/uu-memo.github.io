@@ -3,16 +3,6 @@ import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import PrimaryButton from "../../components/PrimaryButton.astro";
-
-// New Modular Components
-import Sidebar from "../../components/admin/Sidebar.astro";
-import PostManager from "../../components/admin/PostManager.astro";
-import PostEditor from "../../components/admin/PostEditor.astro";
-import DraftTool from "../../components/admin/DraftTool.astro";
-import CommentManager from "../../components/admin/CommentManager.astro";
-import AuthorSettings from "../../components/admin/AuthorSettings.astro";
-import SystemSettings from "../../components/admin/SystemSettings.astro";
-import ModalGlobal from "../../components/admin/ModalGlobal.astro";
 ---
 
 <Layout title="Admin Management | UU MEMO">
@@ -37,367 +27,1751 @@ import ModalGlobal from "../../components/admin/ModalGlobal.astro";
             </p>
         </div>
 
-        <!-- Admin Dashboard Container -->
+        <!-- Admin Login UI (Intermediate Page) -->
+        <div
+            id="admin-login-ui"
+            class="hidden fixed inset-0 z-50 bg-uu-base flex flex-col items-center justify-center px-6"
+        >
+            <div class="max-w-md w-full bg-white rounded-[2rem] p-10 shadow-xl border border-uu-sub/20 text-center space-y-8 animate-in fade-in zoom-in duration-500">
+                <div class="w-20 h-20 bg-uu-main/10 rounded-full flex items-center justify-center mx-auto border-4 border-white shadow-sm">
+                    <span class="material-symbols-outlined text-uu-main text-4xl">admin_panel_settings</span>
+                </div>
+                
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-bold text-uu-dark font-logo uppercase tracking-wider">Restricted Access</h2>
+                    <p class="text-sm text-uu-main/60 leading-relaxed">This area is reserved for administrators only. Please sign in with an authorized Google account to continue.</p>
+                </div>
+
+                <div id="unauthorized-msg" class="hidden p-4 bg-red-50 rounded-xl border border-red-100">
+                    <p class="text-[10px] text-red-500 font-bold uppercase tracking-widest mb-1">Access Denied</p>
+                    <p id="denied-email" class="text-xs text-red-400 font-mono italic mb-3"></p>
+                    <p class="text-[10px] text-red-400 leading-tight">Please ensure your email is granted permission in Firestore rules.</p>
+                </div>
+
+                <button
+                    id="admin-login-btn"
+                    class="w-full py-4 bg-uu-dark text-white rounded-2xl flex items-center justify-center gap-3 font-black tracking-[0.2em] uppercase hover:bg-uu-main transition-all active:scale-95 shadow-lg shadow-uu-dark/10 group"
+                >
+                    <span class="material-symbols-outlined group-hover:rotate-12 transition-transform">login</span>
+                    Sign in with Google
+                </button>
+
+                <p class="text-[10px] text-uu-main/30 font-bold uppercase tracking-[0.3em]">Authorized Personnel Only</p>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard Container (Exact Mirror of User Dashboard Layout) -->
         <div
             id="admin-dashboard"
             class="hidden opacity-0 transition-opacity duration-500 dashboard-layout w-full"
         >
-            <Sidebar adminEmail="" />
+            <!-- LEFT COLUMN: Sidebar -->
+            <aside class="dashboard-sidebar">
+                <div
+                    class="bg-uu-light p-8 rounded-2xl border border-uu-sub/30 shadow-sm flex flex-col items-center text-center"
+                >
+                    <div
+                        class="w-20 h-20 bg-uu-main/10 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-sm mb-4 shrink-0"
+                    >
+                        <span
+                            class="material-symbols-outlined text-uu-main text-4xl"
+                            >admin_panel_settings</span
+                        >
+                    </div>
+
+                    <div class="w-full">
+                        <h1
+                            class="text-lg font-bold font-logo text-uu-dark mb-0.5 truncate px-2"
+                        >
+                            ADMINISTRATOR
+                        </h1>
+                        <p
+                            id="admin-email"
+                            class="text-[10px] text-uu-main/60 tracking-wider font-mono truncate px-2"
+                        >
+                        </p>
+                    </div>
+
+                    <div
+                        class="w-8 h-0.5 bg-uu-sub/20 rounded-full my-6 shrink-0"
+                    >
+                    </div>
+
+                    <nav class="w-full flex flex-col gap-1.5">
+                        <button
+                            class="tab-btn active group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full bg-uu-main text-white shadow-sm text-left"
+                            data-tab="editor"
+                        >
+                            <span class="material-symbols-outlined text-xl"
+                                >edit_note</span
+                            >
+                            <span
+                                class="text-sm font-bold tracking-widest leading-none"
+                                >文章編輯</span
+                            >
+                        </button>
+                        <button
+                            class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
+                            data-tab="draft"
+                        >
+                            <span class="material-symbols-outlined text-xl"
+                                >auto_fix</span
+                            >
+                            <span
+                                class="text-sm font-bold tracking-widest leading-none"
+                                >草稿工具</span
+                            >
+                        </button>
+                        <button
+                            class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
+                            data-tab="comments"
+                        >
+                            <span class="material-symbols-outlined text-xl"
+                                >forum</span
+                            >
+                            <span
+                                class="text-sm font-bold tracking-widest leading-none"
+                                >留言管理</span
+                            >
+                        </button>
+                        <button
+                            class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
+                            data-tab="author"
+                        >
+                            <span class="material-symbols-outlined text-xl"
+                                >person_edit</span
+                            >
+                            <span
+                                class="text-sm font-bold tracking-widest leading-none"
+                                >作者設定</span
+                            >
+                        </button>
+                        <button
+                            class="tab-btn group flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all w-full text-uu-main/60 hover:bg-uu-sub/10 hover:text-uu-main text-left"
+                            data-tab="system"
+                        >
+                            <span class="material-symbols-outlined text-xl"
+                                >tune</span
+                            >
+                            <span
+                                class="text-sm font-bold tracking-widest leading-none"
+                                >全站設定</span
+                            >
+                        </button>
+
+                        <div class="h-2"></div>
+
+                        <button
+                            id="logout-btn"
+                            class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-uu-main/40 hover:text-uu-main hover:bg-uu-sub/10 transition-all group border border-transparent hover:border-uu-sub/20 text-left mt-2 cursor-pointer"
+                        >
+                            <span class="material-symbols-outlined text-xl"
+                                >logout</span
+                            >
+                            <span
+                                class="text-sm font-bold tracking-widest leading-none"
+                                >登出</span
+                            >
+                        </button>
+                    </nav>
+                </div>
+            </aside>
 
             <!-- RIGHT COLUMN: Content -->
             <div
                 class="dashboard-content bg-uu-light rounded-2xl border border-uu-sub/30 shadow-sm min-h-[700px] flex flex-col overflow-hidden"
             >
-                <PostManager />
-                <PostEditor />
-                <DraftTool />
-                <CommentManager />
-                <AuthorSettings />
-                <SystemSettings />
+                <!-- CONTENT: EDITOR -->
+                <section
+                    id="tab-editor"
+                    class="tab-content w-full flex-1 flex flex-col p-10"
+                >
+                    <div
+                        class="flex items-center gap-3.5 mb-8 pb-6 border-b border-uu-sub/20"
+                    >
+                        <div
+                            class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main"
+                        >
+                            <span class="material-symbols-outlined"
+                                >description</span
+                            >
+                        </div>
+                        <h3 class="font-bold text-xl text-uu-dark">內容創作</h3>
+                    </div>
+
+                    <div class="space-y-8 flex-1">
+                        <!-- Top Meta -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label
+                                    class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest"
+                                    >Article Slug</label
+                                >
+                                <input
+                                    id="post-slug"
+                                    type="text"
+                                    class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all"
+                                    placeholder="例如: 2024-spring-trip"
+                                />
+                            </div>
+                            <div class="space-y-2">
+                                <label
+                                    class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest"
+                                    >Visibility</label
+                                >
+                                <div class="relative">
+                                    <select
+                                        id="post-status"
+                                        class="w-full appearance-none bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all pr-10"
+                                    >
+                                        <option value="public"
+                                            >立即發佈 (Public)</option
+                                        >
+                                        <option value="private"
+                                            >私密閱讀 (Private)</option
+                                        >
+                                    </select>
+                                    <span
+                                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-uu-main/40 pointer-events-none"
+                                        >expand_more</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Markdown Upload Dropzone -->
+                        <div
+                            id="md-dropzone"
+                            class="border-2 border-dashed border-uu-sub/30 rounded-2xl py-12 flex flex-col items-center justify-center gap-3 transition-colors hover:border-uu-main/50 hover:bg-uu-sub/5 group cursor-pointer"
+                        >
+                            <input
+                                type="file"
+                                id="md-file-input"
+                                accept=".md"
+                                class="hidden"
+                            />
+                            <span
+                                class="material-symbols-outlined text-4xl text-uu-main/30 group-hover:text-uu-main transition-colors"
+                                >cloud_upload</span
+                            >
+                            <div class="text-center">
+                                <p class="text-xs font-bold text-uu-main/60">
+                                    拖移 .md 檔案至此，或點擊選擇
+                                </p>
+                                <p
+                                    class="text-[10px] text-uu-main/30 mt-1 italic"
+                                >
+                                    系統將自動讀取內容並嘗試生成 Slug
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Editor -->
+                        <div class="space-y-2 flex-1 flex flex-col">
+                            <label
+                                class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest"
+                                >Markdown Editor</label
+                            >
+                            <textarea
+                                id="md-content"
+                                class="w-full flex-1 min-h-[500px] bg-uu-base/10 border border-uu-sub/10 rounded-2xl p-8 text-sm font-mono leading-relaxed focus:outline-none focus:bg-white transition-all shadow-inner"
+                                placeholder="# 標題..."></textarea>
+                        </div>
+
+                        <!-- Image Workshop -->
+                        <div class="space-y-6 pt-6 border-t border-uu-sub/20">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="material-symbols-outlined text-uu-main"
+                                        >image</span
+                                    >
+                                    <h4 class="font-bold text-sm text-uu-dark">
+                                        影像工坊
+                                    </h4>
+                                </div>
+                                <input
+                                    type="file"
+                                    id="image-input"
+                                    multiple
+                                    accept="image/*"
+                                    class="hidden"
+                                />
+                                <button
+                                    onclick="document.getElementById('image-input').click()"
+                                    class="px-4 py-2 bg-uu-sub/10 text-uu-main hover:bg-uu-main hover:text-white rounded-lg text-[10px] font-black tracking-widest uppercase transition-all active:scale-95"
+                                    >批次上傳照片</button
+                                >
+                            </div>
+
+                            <div
+                                id="image-queue"
+                                class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                            >
+                                <!-- Dynamic Preview Cards -->
+                            </div>
+                        </div>
+
+                        <div class="pt-8">
+                            <PrimaryButton 
+                                id="final-push-btn" 
+                                text="SYNC TO GITHUB" 
+                                icon="send"
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CONTENT: DRAFT TOOL -->
+                <section id="tab-draft" class="tab-content hidden w-full flex-1 flex flex-col p-10">
+                    <div class="flex items-center gap-3.5 mb-8 pb-6 border-b border-uu-sub/20">
+                        <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main">
+                            <span class="material-symbols-outlined">auto_fix</span>
+                        </div>
+                        <h3 class="font-bold text-xl text-uu-dark">文章草稿工具</h3>
+                    </div>
+
+                    <div class="space-y-8 flex-1 overflow-y-auto pr-4 no-scrollbar">
+                        <div class="grid grid-cols-1 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">1. 文章暫定標題或主題方向</label>
+                                <input id="draft-q1" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="請在此填寫">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">2. 目標受眾（這篇文章寫給誰看）</label>
+                                <input id="draft-q2" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="請在此填寫">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">3. 核心觀點與目的</label>
+                                <input id="draft-q3" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="讀完這篇文章，讀者能帶走什麼？">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">4. 關鍵段落與大綱（列出 3-5 個重點）</label>
+                                <textarea id="draft-q4" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all min-h-[120px]" placeholder="- 重點 1：&#10;- 重點 2：&#10;- 重點 3："></textarea>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">5. 個人獨特經驗與細節（文章的靈魂）</label>
+                                <textarea id="draft-q5" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all min-h-[150px]" placeholder="請在此填寫你想放入的具體細節"></textarea>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">6. 行文語氣與風格</label>
+                                <input id="draft-q6" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="預設：輕鬆幽默的個人隨筆">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">7. 必用語句或重點風格提示 (Optional)</label>
+                                <textarea id="draft-q7" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all min-h-[100px]" placeholder="如果有特定的口頭禪、關鍵詞，或希望模仿的特定風格，請在此填寫 (例如：文橫排版、多用分號...)"></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">文章短網址 (Slug)</label>
+                                    <input id="draft-slug" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="例如: 2024-trip">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">分類 (Category)</label>
+                                    <input id="draft-cat" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="例如：生活隨筆">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">標籤 (Tags)</label>
+                                    <input id="draft-tags" type="text" class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all" placeholder="用逗號分隔">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 mt-6 p-6 bg-uu-main/5 rounded-2xl border border-uu-main/10 shadow-inner">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="text-[10px] font-black text-uu-main uppercase tracking-widest flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">settings_suggest</span>
+                                    進階：編輯預設指令模板 (Prompt Template)
+                                </label>
+                                <button id="save-template-btn" class="flex items-center gap-1.5 px-3 py-1 bg-white border border-uu-main/20 text-uu-main rounded-lg text-[10px] font-black tracking-widest uppercase hover:bg-uu-main hover:text-white transition-all shadow-sm">
+                                    <span class="material-symbols-outlined text-xs">cloud_upload</span>
+                                    儲存到資料庫
+                                </button>
+                            </div>
+                            <textarea id="draft-template" class="w-full bg-white border border-uu-sub/20 rounded-xl px-4 py-3 text-[11px] focus:outline-none focus:border-uu-main transition-all min-h-[400px] font-mono leading-relaxed" placeholder="在這裡設定你的 Prompt 骨架..."># Role: 部落格作家與內容策略師
+
+請根據我下方提供的【文章草稿表單】資訊，為我撰寫一篇結構完整、引人入勝且具備個人觀點的部落格文章。
+
+## 📥 【文章草稿表單】（User Input）
+
+1. **文章暫定標題或主題方向：** &#123;&#123;q1&#125;&#125;
+2. **目標受眾（這篇文章寫給誰看）：** &#123;&#123;q2&#125;&#125;
+3. **核心觀點與目的（讀完這篇文章，讀者能帶走什麼？）：** &#123;&#123;q3&#125;&#125;
+4. **關鍵段落與大綱（列出 3-5 個重點）：**
+&#123;&#123;q4&#125;&#125;
+5. **個人獨特經驗與細節（必填，這是文章的靈魂）：**
+   &#123;&#123;q5&#125;&#125;
+6. **行文語氣與風格：**
+   &#123;&#123;q6&#125;&#125;
+7. **必用語句或風格提示：**
+   &#123;&#123;q7&#125;&#125;
+
+---
+
+## 📤 輸出要求 (Output Requirements)
+
+請分段為我產出以下三個區塊內容：
+
+### 第一部分：Meta Data (YAML)
+請直接產出 .md 的 Frontmatter 區塊：
+```markdown
+---
+title: "【&#123;&#123;cat&#125;&#125;】幫我想一個吸睛的主題標題"
+description: "請根據文章內容生成約 50 字的溫暖 SEO 摘要"
+publishDate: &#123;&#123;date&#125;&#125;
+category: [&#123;&#123;cat&#125;&#125;]
+tags: [&#123;&#123;tags&#125;&#125;]
+heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&#125;-&#123;&#123;slug&#125;&#125;-01.jpg'
+---
+```
+
+### 第二部分：文章正文 (Markdown)
+請嚴格遵守以下規則撰寫文章：
+1. **Markdown 格式**：請使用標準 Markdown 語法（包含 H2 ##、H3 ### 標題、粗體、條列式清單、引用區塊等）。
+2. **吸引人的開場**：第一段必須點出痛點或引起共鳴，直接破題。
+3. **無縫融入細節**：將表單第 5 點的「經驗」與第 7 點的「必用語句」自然融合，增加「人味」。
+4. **有力量的結尾**：總結觀點並提供 Call to Action。
+
+### 第三部分：配圖建議與關鍵字
+針對本文內容，請提供 3-5 個適合的配圖場景描述，並附上 DALL-E 或攝影關鍵字。</textarea>
+                            <p class="text-[9px] text-uu-main/40 mt-1">您可以使用 <code class="bg-white px-1 py-0.5 rounded shadow-sm border border-uu-sub/10 opacity-80">&#123;&#123;變數&#125;&#125;</code> 來替換上方表單內容，例如：&#123;&#123;q1&#125;&#125;, &#123;&#123;cat&#125;&#125;, &#123;&#123;tags&#125;&#125;, &#123;&#123;q7&#125;&#125;</p>
+                        </div>
+
+                        <div class="pt-6">
+                            <PrimaryButton id="generate-draft-btn" text="生成文章草稿 PROMPT" icon="temp_preferences_custom" />
+                        </div>
+
+                        <div id="draft-result-container" class="hidden space-y-4 animate-fade-in pb-10">
+                            <div class="flex items-center justify-between">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">生成的 AI PROMPT</label>
+                                <button id="copy-prompt-btn" class="flex items-center gap-2 px-3 py-1.5 bg-uu-main/10 text-uu-main rounded-lg text-[10px] font-black tracking-widest uppercase hover:bg-uu-main hover:text-white transition-all">
+                                    <span class="material-symbols-outlined text-sm">content_copy</span>
+                                    複製內容
+                                </button>
+                            </div>
+                            <textarea id="draft-result" readonly class="w-full bg-white border border-uu-sub/30 rounded-2xl p-6 text-xs font-mono leading-relaxed h-[400px] focus:outline-none shadow-sm"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CONTENT: COMMENTS -->
+                <section
+                    id="tab-comments"
+                    class="tab-content hidden w-full flex-1 flex flex-col p-10"
+                >
+                    <div
+                        class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20"
+                    >
+                        <div class="flex items-center gap-3.5">
+                            <div
+                                class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main"
+                            >
+                                <span class="material-symbols-outlined"
+                                    >forum</span
+                                >
+                            </div>
+                            <h3 class="font-bold text-xl text-uu-dark">
+                                留言管理
+                            </h3>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button
+                                id="seed-comments-btn"
+                                class="px-3 py-1.5 border border-uu-sub/30 rounded-full text-[9px] font-black text-uu-main/40 hover:bg-uu-main hover:text-white transition-all uppercase tracking-widest"
+                                >Seed Test Data</button
+                            >
+                            <div
+                                id="comment-stats"
+                                class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest bg-uu-base/50 px-3 py-1.5 rounded-full border border-uu-sub/20"
+                            >
+                                Loading...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="flex gap-2 mb-6">
+                        <button class="comment-filter active px-4 py-2 rounded-full text-[10px] font-bold tracking-widest border border-uu-sub/30 bg-white text-uu-dark transition-all hover:border-uu-main" data-filter="latest">最新 (未讀)</button>
+                        <button class="comment-filter px-4 py-2 rounded-full text-[10px] font-bold tracking-widest border border-uu-sub/30 text-uu-main/40 transition-all hover:border-uu-main" data-filter="all">所有留言</button>
+                        <button class="comment-filter px-4 py-2 rounded-full text-[10px] font-bold tracking-widest border border-uu-sub/30 text-uu-main/40 transition-all hover:border-uu-main" data-filter="hidden">隱藏中</button>
+                        <button class="comment-filter px-4 py-2 rounded-full text-[10px] font-bold tracking-widest border border-uu-sub/30 text-uu-main/40 transition-all hover:border-uu-main" data-filter="deleted">回收桶</button>
+                    </div>
+
+                    <!-- Comments List -->
+                    <div
+                        id="comments-list"
+                        class="flex-1 space-y-4 overflow-y-auto pr-2 no-scrollbar min-h-[500px]"
+                    >
+                        <!-- Dynamic Comment Cards -->
+                        <div
+                            class="flex flex-col items-center justify-center h-full opacity-20 py-20"
+                        >
+                            <span
+                                class="material-symbols-outlined text-6xl mb-4"
+                                >history_edu</span
+                            >
+                            <p
+                                class="text-sm font-bold tracking-widest uppercase"
+                            >
+                                Fetching conversations...
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CONTENT: AUTHOR SETTINGS -->
+                <section id="tab-author" class="tab-content hidden w-full flex-1 flex flex-col p-10">
+                    <div class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main">
+                                <span class="material-symbols-outlined">person_edit</span>
+                            </div>
+                            <h3 class="font-bold text-xl text-uu-dark">作者設定</h3>
+                        </div>
+                        <button id="author-edit-toggle" class="flex items-center gap-2 px-4 py-2 bg-uu-sub/10 text-uu-main rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-uu-sub/20 transition-all">
+                            <span class="material-symbols-outlined text-sm">edit</span>
+                            編輯關於我
+                        </button>
+                    </div>
+
+                    <div id="author-preview" class="space-y-6 animate-fade-in">
+                        <div class="flex items-center gap-6 p-6 bg-uu-base/10 rounded-2xl border border-uu-sub/10">
+                            <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-sm shrink-0">
+                                <img src="/uu-memo.png" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-uu-dark mb-1">關於站長</h4>
+                                <p class="text-xs text-uu-main/60">目前顯示於「關於我」頁面的內容預覽</p>
+                            </div>
+                        </div>
+                        <div id="author-display-content" class="prose prose-sm max-w-none text-uu-main/80 p-8 bg-white rounded-2xl border border-uu-sub/20 min-h-[300px]">
+                            <!-- Content will be injected here -->
+                        </div>
+                    </div>
+
+                    <div id="author-editor" class="hidden space-y-6 animate-fade-in flex-1 flex flex-col">
+                        <div class="flex items-center gap-2 px-4 py-3 bg-uu-main/5 rounded-xl border border-uu-main/10 mb-2">
+                            <span class="material-symbols-outlined text-uu-main text-sm">info</span>
+                            <p class="text-[10px] text-uu-main font-bold">正在編輯：請使用 Markdown 語法撰寫您的自我介紹</p>
+                        </div>
+                        <div class="flex-1 flex flex-col">
+                            <textarea
+                                id="author-md-editor"
+                                class="w-full flex-1 min-h-[500px] bg-uu-base/10 border border-uu-sub/10 rounded-2xl p-8 text-sm font-mono leading-relaxed focus:outline-none focus:bg-white transition-all shadow-inner"
+                                placeholder="# 關於我..."></textarea>
+                        </div>
+                        <div class="pt-6 mt-4">
+                            <div class="flex flex-col gap-3">
+                                <PrimaryButton
+                                    id="author-save-btn"
+                                    text="儲存設定"
+                                    showLoader={true}
+                                    loaderId="author-save-loader"
+                                />
+                                <button id="author-cancel-btn" class="text-[10px] font-bold text-uu-main/40 uppercase tracking-[0.2em] hover:text-uu-main transition-all py-2">取消更變</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CONTENT: SYSTEM -->
+                <section id="tab-system" class="tab-content hidden w-full flex-1 flex flex-col p-10">
+                    <div class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main">
+                                <span class="material-symbols-outlined">payments</span>
+                            </div>
+                            <h3 class="font-bold text-xl text-uu-dark">全站設定</h3>
+                        </div>
+                        <div class="flex items-center gap-4 bg-uu-base/20 px-5 py-2.5 rounded-2xl border border-uu-sub/10">
+                            <span class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest">贊助模組狀態</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="sys-donate-enabled" class="sr-only peer" checked />
+                                <div class="w-11 h-6 bg-uu-sub/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-uu-sub/30 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-uu-main"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="space-y-10">
+                        <!-- Donation Config Section -->
+                        <div class="bg-white border border-uu-sub/20 rounded-2xl p-8 space-y-8 shadow-sm">
+                            <div class="flex items-center gap-3 mb-2 pb-4 border-b border-uu-sub/10">
+                                <div class="w-8 h-8 rounded-lg bg-uu-main/5 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-uu-main text-sm">settings_heart</span>
+                                </div>
+                                <h4 class="text-xs font-black text-uu-dark uppercase tracking-widest">贊助詳情設定 (Donation Settings)</h4>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="space-y-3">
+                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block">Platform Title (平台名稱)</label>
+                                    <input
+                                        type="text"
+                                        id="sys-donate-name"
+                                        class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner"
+                                        placeholder="例如：Buy Me a Coffee"
+                                    />
+                                </div>
+                                <div class="space-y-3">
+                                    <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block">Donation Link (贊助連結)</label>
+                                    <input
+                                        type="text"
+                                        id="sys-donate-url"
+                                        class="w-full bg-uu-base/20 border border-uu-sub/20 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-inner"
+                                        placeholder="https://..."
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block">Display Message (顯示內容)</label>
+                                <textarea
+                                    id="sys-donate-msg"
+                                    class="w-full bg-uu-base/10 border border-uu-sub/10 rounded-2xl p-8 text-sm leading-relaxed focus:outline-none focus:bg-white transition-all min-h-[160px] shadow-inner"
+                                    placeholder="輸入您想對贊助者說的話..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 mt-4">
+                            <PrimaryButton
+                                id="save-sys-btn"
+                                text="SAVE CONFIGURATION"
+                                textId="save-btn-text"
+                                showLoader={true}
+                                loaderId="save-btn-loader"
+                            />
+                        </div>
+
+                        <!-- NEW: Build Cleanup Section -->
+                        <div class="bg-red-50/50 border border-red-100 rounded-2xl p-8 space-y-4">
+                            <div class="flex items-center gap-3 mb-2 pb-4 border-b border-red-100">
+                                <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-red-600 text-sm">pests</span>
+                                </div>
+                                <h4 class="text-xs font-black text-red-900 uppercase tracking-widest">故障排除：清除建置錯誤 (Emergency Fix)</h4>
+                            </div>
+                            <p class="text-[10px] text-red-700/70 leading-relaxed font-medium">如果在同步後 GitHub 建置失敗，可能是因為某些草稿檔案格式不正確（例如 <code class="bg-red-100 px-1 rounded">test.md</code>）。點擊下方按鈕將會從 GitHub 遠端強制刪除該損毀檔案。</p>
+                            <div class="pt-2">
+                                <button id="cleanup-build-btn" class="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-red-700 transition-all shadow-lg shadow-red-200">
+                                    <span class="material-symbols-outlined text-sm">delete_forever</span>
+                                    強制刪除 test.md 並修復建置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
-
-        <ModalGlobal />
     </main>
+
+    <Footer />
 </Layout>
 
 <script>
     import { auth, db } from "../../lib/firebase";
     import { onAuthStateChanged } from "firebase/auth";
-    import { doc, getDoc } from "firebase/firestore";
+    import {
+        doc,
+        getDoc,
+        setDoc,
+        collection,
+        query,
+        orderBy,
+        onSnapshot,
+        updateDoc,
+        deleteDoc,
+        addDoc,
+        serverTimestamp,
+    } from "firebase/firestore";
+    import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
-    const GAS_URL = import.meta.env.PUBLIC_GAS_URL;
-    (window as any).GAS_URL = GAS_URL;
-
-    /**
-     * UUSelect - 頂級自定義選擇器組件邏輯
-     * 負責將原生的 select 轉換為具備圖標與高級動畫的 UI
-     */
     if (typeof window !== "undefined") {
-        const UUSelect = {
-            instances: new Map<string, any>(),
-            init(selectId: string, options: any = {}) {
-                const nativeSelect = document.getElementById(
-                    selectId
-                ) as HTMLSelectElement;
-                if (!nativeSelect) return;
+    const GAS_URL =
+        "https://script.google.com/macros/s/AKfycbzIF6fuTnS-CPWBMe3UiVd3EtSKtj5CSde6BlPHGPVY6msOGJQupcY4L5QbmPHtKmdeGA/exec";
 
-                const container = nativeSelect.closest(
-                    ".uu-select-container"
-                ) as HTMLElement;
-                if (!container) return;
+    const loading = document.getElementById("auth-loading");
+    const loginUI = document.getElementById("admin-login-ui");
+    const dashboard = document.getElementById("admin-dashboard");
+    const emailSpan = document.getElementById("admin-email");
+    const adminLoginBtn = document.getElementById("admin-login-btn");
+    const unauthorizedMsg = document.getElementById("unauthorized-msg");
+    const deniedEmail = document.getElementById("denied-email");
 
-                // 建立或獲取 Trigger
-                let trigger = container.querySelector(
-                    ".uu-select-trigger"
-                ) as HTMLElement;
-                if (!trigger) {
-                    trigger = document.createElement("div");
-                    trigger.className = "uu-select-trigger";
-                    trigger.innerHTML = `<div class="selected-content"><span class="material-symbols-outlined trigger-icon"></span><span class="selected-text"></span></div><span class="material-symbols-outlined arrow-icon">expand_more</span>`;
-                    container.appendChild(trigger);
-                }
+    const imageInput = document.getElementById(
+        "image-input"
+    ) as HTMLInputElement;
+    const imageQueue = document.getElementById("image-queue");
 
-                // 建立或獲取 Dropdown
-                let dropdown = container.querySelector(
-                    ".uu-select-dropdown"
-                ) as HTMLElement;
-                if (!dropdown) {
-                    dropdown = document.createElement("div");
-                    dropdown.className = "uu-select-dropdown";
-                    container.appendChild(dropdown);
-                }
+    // --- Tab Logic ---
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    const tabContents = document.querySelectorAll(".tab-content");
 
-                const instance = {
-                    nativeSelect,
-                    container,
-                    trigger,
-                    dropdown,
-                    options,
-                };
-                this.instances.set(selectId, instance);
-                this.refresh(selectId);
+    tabBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const tabId = btn.getAttribute("data-tab");
 
-                trigger.onclick = (e) => {
-                    e.stopPropagation();
-                    this.toggle(selectId);
-                };
-
-                // 全局點擊關閉
-                if (!(window as any)._uuSelectGlobalHandled) {
-                    document.addEventListener("click", (e) => {
-                        const target = e.target as HTMLElement;
-                        if (target && !target.closest(".uu-select-container"))
-                            this.closeAll();
-                    });
-                    (window as any)._uuSelectGlobalHandled = true;
-                }
-            },
-            refresh(selectId: string) {
-                const instance = this.instances.get(selectId);
-                if (!instance) return;
-                const { nativeSelect, trigger, dropdown, options } = instance;
-                const selectedOption = nativeSelect.options[
-                    nativeSelect.selectedIndex
-                ] as HTMLOptionElement;
-                const selectedText = trigger.querySelector(".selected-text");
-                const triggerIcon = trigger.querySelector(
-                    ".trigger-icon"
-                ) as HTMLElement;
-
-                if (selectedText)
-                    selectedText.textContent = selectedOption
-                        ? selectedOption.textContent
-                        : "請選擇...";
-
-                if (triggerIcon && selectedOption) {
-                    const icon = options.icons
-                        ? options.icons[selectedOption.value]
-                        : options.defaultIcon || "label";
-                    triggerIcon.textContent = icon;
-                    triggerIcon.style.display = icon ? "block" : "none";
-                }
-
-                dropdown.innerHTML = "";
-                Array.from(nativeSelect.options).forEach((opt: any, index) => {
-                    const item = document.createElement("div");
-                    item.className = `uu-select-option ${
-                        index === nativeSelect.selectedIndex ? "selected" : ""
-                    }`;
-                    const icon = options.icons
-                        ? options.icons[opt.value]
-                        : options.defaultIcon || "label";
-                    item.innerHTML = `<span class="material-symbols-outlined option-icon">${icon}</span><span>${opt.textContent}</span>`;
-                    item.onclick = (e) => {
-                        e.stopPropagation();
-                        nativeSelect.value = opt.value;
-                        nativeSelect.dispatchEvent(new Event("change"));
-                        this.refresh(selectId);
-                        this.closeAll();
-                    };
-                    dropdown.appendChild(item);
-                });
-            },
-            toggle(selectId: string) {
-                const instance = this.instances.get(selectId);
-                if (!instance) return;
-                const isOpen = instance.dropdown.classList.contains("open");
-                this.closeAll();
-                if (!isOpen) {
-                    instance.dropdown.classList.add("open");
-                    instance.trigger.classList.add("active");
-                }
-            },
-            closeAll() {
-                this.instances.forEach((i) => {
-                    i.dropdown.classList.remove("open");
-                    i.trigger.classList.remove("active");
-                });
-            },
-        };
-        (window as any).UUSelect = UUSelect;
-    }
-
-    // --- Authentication & Initialization ---
-
-    onAuthStateChanged(auth, async (user) => {
-        const loading = document.getElementById("auth-loading");
-        const dashboard = document.getElementById("admin-dashboard");
-        const emailSpan = document.getElementById("admin-email");
-
-        if (!user) {
-            window.location.replace("/login");
-            return;
-        }
-
-        console.log("[Auth] User detected:", user.email);
-
-        try {
-            // Permission Trap: 只有管理員可以加載此頁面
-            const adminRef = doc(db, "admin_vault", "credentials");
-            await getDoc(adminRef);
-
-            console.log("[System] Admin Verified.");
-            if (emailSpan) emailSpan.textContent = user.email;
-
-            // 初始化 Tabs
-            initTabs();
-
-            // 延遲初始化各組件邏輯，確保 DOM 已就緒
-            setTimeout(() => {
-                if ((window as any).SystemSettings)
-                    (window as any).SystemSettings.loadSettings();
-                if ((window as any).AuthorSettings)
-                    (window as any).AuthorSettings.loadSettings();
-                if ((window as any).initCommentsModule)
-                    (window as any).initCommentsModule();
-                if ((window as any).initDraftTool)
-                    (window as any).initDraftTool();
-                if ((window as any).PostManager)
-                    (window as any).PostManager.refresh();
-            }, 100);
-
-            // 顯示儀表板
-            loading?.classList.add("opacity-0");
-            setTimeout(() => {
-                loading?.classList.add("hidden");
-                dashboard?.classList.remove("hidden");
-                dashboard?.classList.add("opacity-100");
-            }, 300);
-        } catch (err) {
-            console.error("[Auth] Access Denied:", err);
-            window.location.replace("/user");
-        }
-    });
-
-    // --- Tab Switching Logic ---
-    function initTabs() {
-        const tabBtns = document.querySelectorAll(".tab-btn");
-        const tabContents = document.querySelectorAll(".tab-content");
-
-        tabBtns.forEach((btn) => {
-            btn.addEventListener("click", () => {
-                const tab = btn.getAttribute("data-tab");
-
-                // 更新按鈕狀態
-                tabBtns.forEach((b) => {
-                    b.classList.remove(
-                        "active",
-                        "bg-uu-main",
-                        "text-white",
-                        "shadow-sm"
-                    );
-                    b.classList.add(
-                        "text-uu-main/60",
-                        "hover:bg-uu-sub/10",
-                        "hover:text-uu-main"
-                    );
-                });
-                btn.classList.add(
+            // Switch Buttons
+            tabBtns.forEach((b) => {
+                b.classList.remove(
                     "active",
                     "bg-uu-main",
                     "text-white",
                     "shadow-sm"
                 );
-                btn.classList.remove(
+                b.classList.add(
                     "text-uu-main/60",
                     "hover:bg-uu-sub/10",
                     "hover:text-uu-main"
                 );
+            });
+            btn.classList.add(
+                "active",
+                "bg-uu-main",
+                "text-white",
+                "shadow-sm"
+            );
+            btn.classList.remove(
+                "text-uu-main/60",
+                "hover:bg-uu-sub/10",
+                "hover:text-uu-main"
+            );
 
-                // 切換內容顯示
-                tabContents.forEach((content) => {
-                    content.classList.add("hidden");
-                    if (content.id === `tab-${tab}`)
-                        content.classList.remove("hidden");
+            // Switch Content
+            tabContents.forEach((c) => c.classList.add("hidden"));
+            document.getElementById(`tab-${tabId}`)?.classList.remove("hidden");
+        });
+    });
+
+
+    // --- Logout ---
+
+    // --- System Settings Firestore Logic ---
+    const sysDonateName = document.getElementById(
+        "sys-donate-name"
+    ) as HTMLInputElement;
+    const sysDonateUrl = document.getElementById(
+        "sys-donate-url"
+    ) as HTMLInputElement;
+    const sysDonateMsg = document.getElementById(
+        "sys-donate-msg"
+    ) as HTMLTextAreaElement;
+    const sysDonateEnabled = document.getElementById(
+        "sys-donate-enabled"
+    ) as HTMLInputElement;
+    const saveSysBtn = document.getElementById("save-sys-btn");
+    const saveBtnText = document.getElementById("save-btn-text");
+    const saveBtnLoader = document.getElementById("save-btn-loader");
+
+    async function fetchSystemConfig() {
+        try {
+            const docRef = doc(db, "site_config", "donation_settings");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (sysDonateName)
+                    sysDonateName.value = data.platform_name || "";
+                if (sysDonateUrl) sysDonateUrl.value = data.link_url || "";
+                if (sysDonateMsg) sysDonateMsg.value = data.message || "";
+                if (sysDonateEnabled)
+                    sysDonateEnabled.checked = data.enabled ?? true;
+            }
+        } catch (err) {
+            console.error("Error fetching config:", err);
+        }
+    }
+
+    saveSysBtn?.addEventListener("click", async () => {
+        if (!saveBtnText || !saveBtnLoader) return;
+
+        saveBtnText.textContent = "SAVING...";
+        saveBtnLoader.classList.remove("hidden");
+        saveSysBtn.setAttribute("disabled", "true");
+
+        try {
+            await setDoc(doc(db, "site_config", "donation_settings"), {
+                platform_name: sysDonateName.value,
+                link_url: sysDonateUrl.value,
+                message: sysDonateMsg.value,
+                enabled: sysDonateEnabled.checked,
+            });
+
+            saveBtnText.textContent = "SAVED SUCCESS!";
+            setTimeout(() => {
+                saveBtnText.textContent = "SAVE CONFIGURATION";
+            }, 2000);
+        } catch (err) {
+            (window as any).showToast("儲存失敗: " + err, 'error');
+        } finally {
+            saveBtnLoader.classList.add("hidden");
+            saveSysBtn.removeAttribute("disabled");
+        }
+    });
+
+    // --- Prompt Template Logic (New Firestore Integration) ---
+    async function fetchPromptConfig() {
+        const templateEl = document.getElementById("draft-template") as HTMLTextAreaElement;
+        if (!templateEl) return;
+        
+        try {
+            const docRef = doc(db, "site_config", "prompt_settings");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.template_content) {
+                    let remoteTemplate = data.template_content;
+                    
+                    // Auto-migrate: check for q7 support (Added 2026-03-15)
+                    if (!remoteTemplate.includes("{{q7}}")) {
+                        console.log("[System] Stale template detected, auto-injecting q7 support...");
+                        
+                        // 1. Add to Form Section
+                        if (remoteTemplate.includes("{{q6}}")) {
+                            remoteTemplate = remoteTemplate.replace(
+                                "6. **行文語氣與風格：**\n   {{q6}}",
+                                "6. **行文語氣與風格：**\n   {{q6}}\n7. **必用語句或風格提示：**\n   {{q7}}"
+                            );
+                        }
+                        
+                        // 2. Add to Instruction Section
+                        if (remoteTemplate.includes("表單第 5 點的「個人獨特經驗」")) {
+                            remoteTemplate = remoteTemplate.replace(
+                                "表單第 5 點的「個人獨特經驗」",
+                                "表單第 5 點的「經驗」與第 7 點的「必用語句」"
+                            );
+                        }
+                    }
+                    
+                    templateEl.value = remoteTemplate;
+                    console.log("[System] Prompt template loaded from database.");
+                }
+            }
+        } catch (err) {
+            console.error("Error fetching prompt config:", err);
+        }
+    }
+
+    const saveTemplateBtn = document.getElementById("save-template-btn");
+    saveTemplateBtn?.addEventListener("click", async () => {
+        const templateEl = document.getElementById("draft-template") as HTMLTextAreaElement;
+        if (!templateEl) return;
+
+        if (!confirm("確定要將目前的微調內容儲存為資料庫的『預設模板』嗎？\n儲存後，未來重新整理頁面也會以此次修改為準。")) return;
+
+        const originalHtml = saveTemplateBtn.innerHTML;
+        saveTemplateBtn.innerHTML = `<span class="material-symbols-outlined text-xs animate-spin">sync</span> 儲存中...`;
+        saveTemplateBtn.setAttribute("disabled", "true");
+
+        try {
+            await setDoc(doc(db, "site_config", "prompt_settings"), {
+                template_content: templateEl.value,
+                updated_at: serverTimestamp()
+            });
+            (window as any).showToast("模板已成功保存至雲端", 'success');
+        } catch (err) {
+            (window as any).showToast("儲存失敗: " + err, 'error');
+        } finally {
+            saveTemplateBtn.innerHTML = originalHtml;
+            saveTemplateBtn.removeAttribute("disabled");
+        }
+    });
+
+
+    // --- Author Settings Logic ---
+    const authorPreview = document.getElementById("author-preview");
+    const authorEditor = document.getElementById("author-editor");
+    const authorEditToggle = document.getElementById("author-edit-toggle");
+    const authorCancelBtn = document.getElementById("author-cancel-btn");
+    const authorSaveBtn = document.getElementById("author-save-btn");
+    const authorMdEditor = document.getElementById("author-md-editor") as HTMLTextAreaElement;
+    const authorDisplayContent = document.getElementById("author-display-content");
+    const authorSaveLoader = document.getElementById("author-save-loader");
+
+    function renderAuthorPreview(content: string) {
+        if (!authorDisplayContent) return;
+        if (!content.trim()) {
+            authorDisplayContent.innerHTML = '<p class="text-uu-main/30 italic text-sm">尚無內容，請點擊編輯...</p>';
+            return;
+        }
+        const html = content
+            .split(/\n\n+/)
+            .filter((p: string) => p.trim())
+            .map((p: string) => `<p class="mb-4 text-uu-main/80 text-sm leading-relaxed">${p.trim().replace(/\n/g, '<br>')}</p>`)
+            .join('');
+        authorDisplayContent.innerHTML = html;
+    }
+
+    async function fetchAuthorConfig() {
+        try {
+            const docRef = doc(db, "site_config", "about_me");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const content = data.content || "";
+                if (authorMdEditor) authorMdEditor.value = content;
+                renderAuthorPreview(content);
+            } else {
+                renderAuthorPreview("");
+            }
+        } catch (err) {
+            console.error("Error fetching author config:", err);
+        }
+    }
+
+    authorEditToggle?.addEventListener("click", () => {
+        authorPreview?.classList.add("hidden");
+        authorEditor?.classList.remove("hidden");
+    });
+
+    authorCancelBtn?.addEventListener("click", () => {
+        authorEditor?.classList.add("hidden");
+        authorPreview?.classList.remove("hidden");
+    });
+
+    authorSaveBtn?.addEventListener("click", async () => {
+        if (!authorMdEditor || !authorSaveLoader) return;
+
+        const bodyContent = authorMdEditor.value.trim();
+        if (!bodyContent) {
+            (window as any).showToast("內容不可為空", 'info');
+            return;
+        }
+
+        if (!confirm("確定要將「關於我」的更新同步至 GitHub 嗎？\n這將觸發一次網站自動建置（約 1-2 分鐘後生效）。")) return;
+
+        authorSaveLoader.classList.remove("hidden");
+        authorSaveBtn.setAttribute("disabled", "true");
+
+        // Build the full about.md file content (preserve frontmatter header)
+        const frontmatter = `---\ntitle: \"關於我\"\ndescription: \"UU MEMO — 記錄在日本交換的生活碎隙\"\n---\n\n<div class=\"flex flex-col items-center mb-10 text-center\">\n    <div class=\"w-32 h-32 rounded-full bg-uu-sub/30 mb-6 flex items-center justify-center relative overflow-hidden border-2 border-uu-sub/20\">\n        <img src=\"/uu-memo.png\" alt=\"UU Avatar\" class=\"w-full h-full object-cover\" />\n    <\/div>\n    <h2 class=\"text-2xl font-bold text-uu-main mb-2\">UU<\/h2>\n    <p class=\"text-sm text-uu-main/60 tracking-widest uppercase\">Writer / Photographer<\/p>\n<\/div>\n\n`;
+        const fullContent = frontmatter + bodyContent;
+        const encoded = btoa(unescape(encodeURIComponent(fullContent)));
+
+        try {
+            // 1. Cache in Firestore so preview stays consistent
+            await setDoc(doc(db, "site_config", "about_me"), {
+                content: bodyContent,
+                updated_at: serverTimestamp()
+            });
+
+            // 2. Push about.md to GitHub via GAS Bridge
+            await fetch(GAS_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify({
+                    action: "upload_file",
+                    path: "src/content/pages/about.md",
+                    content: encoded,
+                    message: "Admin: Update 'About Me' page",
+                    branch: "main"
+                })
+            });
+
+            renderAuthorPreview(bodyContent);
+            (window as any).showToast("關於我已同步至 GitHub，網站將在約 1-2 分鐘後更新。", 'success');
+            authorEditor?.classList.add("hidden");
+            authorPreview?.classList.remove("hidden");
+        } catch (err) {
+            (window as any).showToast("同步失敗: " + err, 'error');
+        } finally {
+            authorSaveLoader.classList.add("hidden");
+            authorSaveBtn.removeAttribute("disabled");
+        }
+    });
+
+    // --- MD Upload & Drag/Drop ---
+    const dropzone = document.getElementById("md-dropzone");
+    const mdInput = document.getElementById(
+        "md-file-input"
+    ) as HTMLInputElement;
+    const mdEditor = document.getElementById(
+        "md-content"
+    ) as HTMLTextAreaElement;
+    const slugInput = document.getElementById("post-slug") as HTMLInputElement;
+
+    slugInput?.addEventListener("input", (e) => {
+        const dateStr = new Date().toISOString().split('T')[0].substring(2).replace(/-/g, '');
+        const newSlug = (e.target as HTMLInputElement).value.trim();
+        const inputs = document.querySelectorAll('.img-filename-input') as NodeListOf<HTMLInputElement>;
+        inputs.forEach(input => {
+            const currentVal = input.value;
+            const match = currentVal.match(/-(\d+)$/);
+            const num = match ? match[1] : '';
+            if (newSlug) {
+                input.value = num ? `${dateStr}-${newSlug}-${num}` : `${dateStr}-${newSlug}-`;
+            } else {
+                input.value = num ? `${dateStr}-${num}` : `${dateStr}-`;
+            }
+        });
+    });
+
+    dropzone?.addEventListener("click", () => mdInput.click());
+    dropzone?.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropzone.classList.add("border-uu-main", "bg-uu-main/5");
+    });
+    dropzone?.addEventListener("dragleave", () => {
+        dropzone.classList.remove("border-uu-main", "bg-uu-main/5");
+    });
+    dropzone?.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropzone.classList.remove("border-uu-main", "bg-uu-main/5");
+        const file = e.dataTransfer?.files[0];
+        if (file && file.name.endsWith(".md")) handleMd(file);
+    });
+    mdInput?.addEventListener("change", () => {
+        if (mdInput.files?.[0]) handleMd(mdInput.files[0]);
+    });
+
+    function handleMd(file: File) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            mdEditor.value = e.target?.result as string;
+            // Suggest slug
+            const base = file.name.replace(".md", "");
+            slugInput.value = base.toLowerCase().replace(/\s+/g, "-");
+        };
+        reader.readAsText(file);
+    }
+
+    let processedImages: any[] = [];
+
+    imageInput?.addEventListener("change", async () => {
+        const files = imageInput.files;
+        if (!files) return;
+        for (const file of Array.from(files)) {
+            const processed = await processImage(file);
+            renderImagePreview(processed, file.name);
+        }
+    });
+
+    async function processImage(
+        file: File
+    ): Promise<{ id: string; url: string; type: string; w: number; h: number }> {
+        const result = await new Promise<{ id: string; url: string; type: string; w: number; h: number }>((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d")!;
+                    
+                    const MAX_EDGE = 1600;
+                    let tw, th, itype;
+
+                    if (img.width >= img.height) {
+                        // Landscape or Square
+                        itype = img.width === img.height ? "Square" : "Landscape";
+                        if (img.width > MAX_EDGE) {
+                            tw = MAX_EDGE;
+                            th = (img.height * MAX_EDGE) / img.width;
+                        } else {
+                            tw = img.width;
+                            th = img.height;
+                        }
+                    } else {
+                        // Portrait
+                        itype = "Portrait";
+                        if (img.height > MAX_EDGE) {
+                            th = MAX_EDGE;
+                            tw = (img.width * MAX_EDGE) / img.height;
+                        } else {
+                            tw = img.width;
+                            th = img.height;
+                        }
+                    }
+
+                    canvas.width = tw;
+                    canvas.height = th;
+                    ctx.drawImage(img, 0, 0, tw, th);
+
+                    resolve({
+                        id: Math.random().toString(36).substr(2, 9),
+                        url: canvas.toDataURL("image/jpeg", 0.9),
+                        type: itype,
+                        w: Math.round(tw),
+                        h: Math.round(th),
+                    });
+                };
+                img.src = e.target?.result as string;
+            };
+            reader.readAsDataURL(file);
+        });
+        processedImages.push(result);
+        return result;
+    }
+
+    // --- Comments Management Module ---
+    const commentsList = document.getElementById("comments-list");
+    const commentStats = document.getElementById("comment-stats");
+    const filterBtns = document.querySelectorAll(".comment-filter");
+    let activeFilter = "latest";
+    let allComments: any[] = [];
+
+    function initCommentsModule() {
+        const q = query(
+            collection(db, "comments"),
+            orderBy("created_at", "asc") // Sort by asc so replies appear in order after grouping
+        );
+ 
+        onSnapshot(q, async (snapshot) => {
+            let fetchedComments = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            } as any));
+            
+            // Dynamically fetch latest profiles for verified users (Recognition by UID)
+            const userUids = [...new Set(fetchedComments.filter((c: any) => c.author_uid).map((c: any) => c.author_uid))];
+            if (userUids.length > 0) {
+                try {
+                    const userPromises = userUids.map(uid => getDoc(doc(db, "users", uid as string)));
+                    const userDocs = await Promise.all(userPromises);
+                    const userMap: Record<string, any> = {};
+                    userDocs.forEach(d => {
+                        if (d.exists()) {
+                            userMap[d.id] = d.data();
+                        }
+                    });
+                    
+                    // Update fetchedComments with dynamic user details (Strict UID mapping)
+                    fetchedComments = fetchedComments.map((c: any) => {
+                        const adminUid = 'P9G0w4qEa9gY6ZRY8K8oYVbS7zJ2';
+                        
+                        // Priority 1: Admin Identity (UID or verified emails)
+                        if (c.author_uid === adminUid || c.author_email === 'uu-memo@outlook.com' || c.author_email === 'jing180804@gmail.com') {
+                            return {
+                                ...c,
+                                author_name: 'UU (站長)',
+                                author_avatar: '/uu-memo.png',
+                                is_guest: false
+                            };
+                        }
+
+                        // Priority 2: Registered User Identity (Mapped by UID)
+                        if (c.author_uid && userMap[c.author_uid]) {
+                            const latestData = userMap[c.author_uid];
+                            return {
+                                ...c,
+                                author_name: latestData.nickname || c.author_name,
+                                author_avatar: latestData.avatar_icon || c.author_avatar,
+                                is_guest: false
+                            };
+                        }
+                        
+                        return c;
+                    });
+                } catch (e) {
+                    console.error("Failed to fetch latest admin user profiles:", e);
+                }
+            }
+            
+            allComments = fetchedComments;
+
+            // Sort local array descending for top-level display, but keep original for nested lookups
+            const sortedComments = [...allComments].sort((a,b) => (b.created_at?.seconds || 0) - (a.created_at?.seconds || 0));
+            renderComments(sortedComments);
+            if (commentStats)
+                commentStats.textContent = `${allComments.filter((c: any) => !c.parent_id).length} 原生留言`;
+        });
+
+ 
+        filterBtns.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                filterBtns.forEach((b) => {
+                    b.classList.remove("active", "bg-white", "text-uu-dark");
+                    b.classList.add("text-uu-main/40");
                 });
+                btn.classList.add("active", "bg-white", "text-uu-dark");
+                btn.classList.remove("text-uu-main/40");
+                activeFilter = btn.getAttribute("data-filter") || "latest";
+                renderComments(allComments);
+            });
+        });
+    }
 
-                // 切換至管理分頁時自動刷新列表
-                if (tab === "manage" && (window as any).PostManager) {
-                    (window as any).PostManager.refresh();
+
+    function renderComments(comments: any[]) {
+        if (!commentsList) return;
+
+        // Separate top-level comments and replies
+        const topLevel = comments.filter(c => !c.parent_id);
+        const replies = comments.filter(c => c.parent_id);
+
+        const filtered = topLevel.filter((c) => {
+            if (activeFilter === "latest") return !c.is_read && !c.is_hidden && !c.is_deleted;
+            if (activeFilter === "hidden") return c.is_hidden && !c.is_deleted;
+            if (activeFilter === "deleted") return c.is_deleted;
+            return !c.is_hidden && !c.is_deleted; // Default view is ALL (includes read/unread, but not hidden/deleted)
+        });
+
+        if (filtered.length === 0) {
+            commentsList.innerHTML = `<div class="py-20 text-center opacity-30 text-xs font-bold tracking-widest uppercase">目前沒有符合條件的留言</div>`;
+            return;
+        }
+
+        commentsList.innerHTML = filtered
+            .map((c) => {
+                const date = c.created_at?.toDate ? c.created_at.toDate().toLocaleString() : "剛剛";
+                const belongsTo = c.post_slug || "全站";
+                
+                // Find replies to this comment
+                const myReplies = replies.filter(r => r.parent_id === c.id);
+
+                return `
+                <div class="bg-white border border-uu-sub/20 rounded-2xl p-6 transition-all hover:border-uu-main/30 group ${c.is_hidden ? "opacity-60 grayscale" : ""}">
+                    <!-- Main Comment Info -->
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center overflow-hidden border border-uu-sub/20">
+                                ${c.author_avatar && (c.author_avatar.startsWith('http') || c.author_avatar.startsWith('/')) 
+                                    ? `<img src="${c.author_avatar}" class="w-full h-full object-cover">` 
+                                    : c.author_avatar 
+                                        ? `<span class="material-symbols-outlined text-uu-main/40">${c.author_avatar}</span>`
+                                        : `<span class="material-symbols-outlined text-uu-main/40">person</span>`
+                                }
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-uu-dark flex items-center gap-2">
+                                    ${c.author_name || "訪客"}
+                                </h4>
+                                <p class="text-[10px] text-uu-main/40 font-mono italic">${c.author_email || "未提供信箱"}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] font-black text-uu-main/30 mb-1 uppercase tracking-tighter">
+                                來自：<a href="/posts/${c.post_slug}" target="_blank" class="text-uu-main/60 hover:text-uu-main hover:underline decoration-uu-sub/50 underline-offset-2">${belongsTo}</a>
+                            </p>
+                            <p class="text-[9px] text-uu-main/30">${date}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-uu-base/10 rounded-xl p-4 mb-4 text-sm text-uu-main/80 leading-relaxed">
+                        ${c.content}
+                    </div>
+
+                    <!-- My Replies Section -->
+                    ${myReplies.length > 0 ? `
+                        <div class="space-y-3 mb-4 mt-2 pl-6 border-l-2 border-uu-sub/20">
+                            ${myReplies.map(r => `
+                                <div class="bg-uu-main/5 rounded-xl p-4 border border-uu-main/10 relative">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <div class="w-6 h-6 rounded-full overflow-hidden border border-uu-main/20">
+                                            <img src="/uu-memo.png" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="flex-1 flex justify-between items-center">
+                                            <span class="text-[10px] font-black text-uu-main tracking-wider">UU (站長)</span>
+                                            <div class="flex items-center gap-4">
+                                                <span class="text-[8px] text-uu-main/40 font-mono">${r.created_at?.toDate ? r.created_at.toDate().toLocaleString() : '剛剛'}</span>
+                                                <button class="action-perm-delete opacity-40 hover:opacity-100 text-uu-main transition-opacity" data-id="${r.id}">
+                                                    <span class="material-symbols-outlined text-sm">delete</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-[11px] text-uu-main/80 leading-relaxed">${r.content}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+
+                    <!-- Action Bar -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            ${!c.is_read && !c.is_deleted ? `<button class="action-read text-[10px] font-black text-uu-main hover:underline" data-id="${c.id}">標記已讀</button>` : ""}
+                            <button class="action-hide text-[10px] font-black text-uu-main/40 hover:text-uu-main" data-id="${c.id}">${c.is_hidden ? "取消隱藏" : "隱藏留言"}</button>
+                            <button class="action-delete text-[10px] font-black text-uu-main/40 hover:text-uu-main" data-id="${c.id}">${c.is_deleted ? '永久刪除' : '移至回收桶'}</button>
+                        </div>
+                        <button class="action-reply-toggle flex items-center gap-1.5 px-4 py-1.5 bg-uu-dark text-white rounded-lg text-[10px] font-bold hover:bg-uu-main transition-all" data-id="${c.id}">
+                            <span class="material-symbols-outlined text-xs">reply</span>
+                            回覆內容
+                        </button>
+                    </div>
+
+                    <!-- Hidden Reply Form -->
+                    <div id="reply-form-${c.id}" class="hidden mt-6 pt-6 border-t border-uu-sub/10">
+                        <div class="space-y-3">
+                            <label class="text-[9px] font-bold text-uu-main/40 uppercase tracking-widest">管理員回覆</label>
+                            <textarea class="reply-textarea w-full bg-white border border-uu-sub/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-uu-main transition-all h-24 shadow-inner" placeholder="輸入回覆內容..."></textarea>
+                            <div class="flex justify-end gap-2">
+                                <button class="cancel-reply text-[10px] font-bold text-uu-main/40 hover:text-uu-dark" data-id="${c.id}">取消</button>
+                                <button class="send-reply bg-uu-main text-white px-5 py-2 rounded-lg text-[10px] font-black tracking-widest uppercase hover:bg-uu-dark transition-all" data-id="${c.id}" data-slug="${c.post_slug}">發送回覆</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join("");
+
+
+
+        // Attach Event Listeners
+        commentsList.querySelectorAll(".action-read").forEach((btn) => {
+            btn.addEventListener("click", () => markAsRead(btn.getAttribute("data-id")!));
+        });
+        commentsList.querySelectorAll(".action-hide").forEach((btn) => {
+            btn.addEventListener("click", () =>
+                toggleCommentVisibility(btn.getAttribute("data-id")!, true)
+            );
+        });
+        commentsList.querySelectorAll(".action-unhide").forEach((btn) => {
+            btn.addEventListener("click", () =>
+                toggleCommentVisibility(btn.getAttribute("data-id")!, false)
+            );
+        });
+        commentsList.querySelectorAll(".action-delete").forEach((btn) => {
+            btn.addEventListener("click", () =>
+                destructiveAction(btn.getAttribute("data-id")!)
+            );
+        });
+
+        // Specific Permanent Delete for nested replies
+        commentsList.querySelectorAll(".action-perm-delete").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                if(confirm("確定要永久刪除此條回覆？")) {
+                    deleteDoc(doc(db, "comments", btn.getAttribute("data-id")!));
+                }
+            });
+        });
+
+        // Reply UI Toggle
+        commentsList.querySelectorAll(".action-reply-toggle").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.getAttribute("data-id");
+                const form = document.getElementById(`reply-form-${id}`);
+                form?.classList.toggle("hidden");
+            });
+        });
+
+        commentsList.querySelectorAll(".cancel-reply").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.getAttribute("data-id");
+                const form = document.getElementById(`reply-form-${id}`);
+                form?.classList.add("hidden");
+            });
+        });
+
+        commentsList.querySelectorAll(".send-reply").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.getAttribute("data-id");
+                const slug = btn.getAttribute("data-slug");
+                const textarea = document.querySelector(`#reply-form-${id} textarea`) as HTMLTextAreaElement;
+                if (textarea.value.trim()) {
+                    submitReply(id!, slug!, textarea.value);
                 }
             });
         });
     }
 
+    async function markAsRead(id: string) {
+        try {
+            await updateDoc(doc(db, "comments", id), { is_read: true });
+        } catch (e) { console.error(e); }
+    }
+
+    async function toggleCommentVisibility(id: string, hide: boolean) {
+        try {
+            await updateDoc(doc(db, "comments", id), { is_hidden: hide });
+        } catch (e) {
+            (window as any).showToast("操作失敗: " + e, 'error');
+        }
+    }
+
+    async function destructiveAction(id: string) {
+        const comment = allComments.find(c => c.id === id);
+        if (!comment) return;
+
+        if (comment.is_deleted) {
+            // Permanent Delete
+            if (!confirm("確定要將這條留言從資料庫徹底移除嗎？此操作不可恢復。")) return;
+            try {
+                await deleteDoc(doc(db, "comments", id));
+            } catch (e) { (window as any).showToast("刪除失敗: " + e, 'error'); }
+        } else {
+            // Move to Trash
+            if (!confirm("將此留言移至回收桶？")) return;
+            try {
+                await updateDoc(doc(db, "comments", id), { is_deleted: true });
+            } catch (e) { (window as any).showToast("移動失敗: " + e, 'error'); }
+        }
+    }
+
+    async function submitReply(parentId: string, postSlug: string, content: string) {
+        try {
+            await addDoc(collection(db, "comments"), {
+                author_uid: auth.currentUser?.uid || "admin", // Dynamic Admin UID
+                author_name: "UU (站長)",
+                author_email: "uu-memo@outlook.com",
+                author_avatar: "/uu-memo.png",
+                content: content,
+                post_slug: postSlug,
+                parent_id: parentId, // Links to original comment
+                is_hidden: false,
+                is_deleted: false,
+                is_read: true,
+                is_guest: false,
+                created_at: serverTimestamp()
+            });
+            // Mark original as read
+            await markAsRead(parentId);
+            (window as any).showToast("回覆已發送", 'success');
+            const form = document.getElementById(`reply-form-${parentId}`);
+            form?.classList.add("hidden");
+        } catch (e) {
+            (window as any).showToast("發送失敗: " + e, 'error');
+        }
+    }
+
+
+    function renderImagePreview(
+        data: { url: string; type: string; w: number; h: number, id: string },
+        name: string
+    ) {
+        if (!imageQueue) return;
+        const card = document.createElement("div");
+        card.id = `img-card-${data.id}`;
+        card.className =
+            "bg-white border border-uu-sub/20 rounded-2xl p-4 flex gap-4 items-start group relative";
+
+        // Use aspect ratio based on type
+        let aspect = "aspect-auto";
+        if (data.type === "Landscape") aspect = "aspect-video"; 
+        if (data.type === "Portrait") aspect = "aspect-[3/4]";
+        if (data.type === "Square") aspect = "aspect-square";
+
+        const dateStr = new Date().toISOString().split('T')[0].substring(2).replace(/-/g, '');
+        const currentSlug = slugInput?.value.trim() || "";
+        const prefix = currentSlug ? `${dateStr}-${currentSlug}-` : `${dateStr}-`;
+
+        card.innerHTML = `
+            <div class="w-16 ${aspect} rounded-lg overflow-hidden bg-uu-sub/10 flex-shrink-0 border border-uu-sub/10">
+                <img src="${data.url}" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-[9px] font-black bg-uu-main/10 text-uu-main px-1.5 py-0.5 rounded">${data.type}</span>
+                    <span class="text-[9px] text-uu-main/40 uppercase font-mono">${data.w} × ${data.h}</span>
+                </div>
+                <p class="text-[10px] font-bold text-uu-dark truncate mb-2">${name}</p>
+                <input type="text" data-id="${data.id}" placeholder="${dateStr}-slug-01" value="${prefix}" class="img-filename-input w-full bg-uu-base/10 shadow-inner border shadow-sm border-uu-sub/30 rounded-lg px-2 py-1.5 text-[11px] font-mono focus:outline-none focus:ring-1 focus:ring-uu-main/50 transition-all font-bold text-uu-dark" />
+            </div>
+            <button class="absolute top-2 right-2 text-uu-main/20 hover:text-uu-dark opacity-0 group-hover:opacity-100 transition-opacity" onclick="removeImage('${data.id}')">
+                <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+        `;
+        imageQueue.appendChild(card);
+    }
+
+    (window as any).removeImage = (id: string) => {
+        processedImages = processedImages.filter(img => img.id !== id);
+        document.getElementById(`img-card-${id}`)?.remove();
+    };
+
+    // --- Sync to GitHub Logic ---
+    const finalPushBtn = document.getElementById("final-push-btn");
+
+    finalPushBtn?.addEventListener("click", async () => {
+        const slug = slugInput.value.trim();
+        const content = mdEditor.value.trim();
+        const status = (document.getElementById("post-status") as HTMLSelectElement).value;
+
+        if (!slug || !content) {
+            (window as any).showToast("請填寫 Slug 與 文章內容", 'info');
+            return;
+        }
+
+        if (!confirm("確定要將文章與圖片同步至 GitHub 嗎？")) return;
+
+        (window as any).showToast("正在建立同步請求...", 'info');
+
+        const btnText = finalPushBtn.querySelector('span:not(.material-symbols-outlined)');
+        const btnIcon = finalPushBtn.querySelector('.material-symbols-outlined');
+        const originalText = btnText?.textContent || "";
+        
+        if (btnText) btnText.textContent = "SYNCING...";
+        finalPushBtn.setAttribute("disabled", "true");
+
+        try {
+            const files = [];
+            
+            // 1. 準備 Markdown 文章
+            const fileName = `${slug}.md`;
+            const filePath = `src/content/posts/${fileName}`;
+            files.push({
+                path: filePath,
+                content: btoa(unescape(encodeURIComponent(content)))
+            });
+
+            // 2. 準備圖片
+            const datePath = new Date().toISOString().split('T')[0].substring(2, 4) + new Date().toISOString().split('T')[0].substring(5, 7);
+            for (const img of processedImages) {
+                const imgInput = document.querySelector(`.img-filename-input[data-id="${img.id}"]`) as HTMLInputElement;
+                let finalName = imgInput?.value.trim() || img.id;
+                if (!finalName.includes('.')) finalName += ".jpg";
+                
+                const imgPath = `public/images/${datePath}/${finalName}`;
+                files.push({
+                    path: imgPath,
+                    content: img.url.split(',')[1]
+                });
+            }
+
+            // 3. 發起批次同步請求 (單次 Commit)
+            console.log("[Sync] Batch uploading files:", files.map(f => f.path));
+            
+            const syncResponse = await fetch(GAS_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify({
+                    action: "batch_upload",
+                    files: files,
+                    message: `Admin: Sync "${slug}" (${files.length} files)`,
+                    branch: "main"
+                })
+            });
+
+            (window as any).showToast(`成功！已將 ${files.length} 個檔案統整為一次提交同步。`, 'success', 5000);
+        } catch (err) {
+            console.error("[Sync] Error:", err);
+            (window as any).showToast("同步失敗，請檢查連線或 GAS 設定。", 'error');
+        } finally {
+            if (btnText) btnText.textContent = originalText;
+            finalPushBtn.removeAttribute("disabled");
+        }
+    });
+
+    // --- Cleanup Build Logic ---
+    const cleanupBtn = document.getElementById("cleanup-build-btn");
+    cleanupBtn?.addEventListener("click", async () => {
+        if (!confirm("確定要從 GitHub 刪除 src/content/posts/test.md 嗎？這通常用於修復建置失敗。")) return;
+        
+        const originalContent = cleanupBtn.innerHTML;
+        cleanupBtn.innerHTML = `<span class="material-symbols-outlined text-sm animate-spin">sync</span> 清理中...`;
+        cleanupBtn.setAttribute("disabled", "true");
+
+        try {
+            await fetch(GAS_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify({
+                    action: "delete_file",
+                    path: "src/content/posts/test.md",
+                    message: "Admin: Emergency cleanup of corrupted test.md",
+                    branch: "main"
+                })
+            });
+            (window as any).showToast("清理請求已送出！建置應會在幾分鐘後恢復正常。", 'success');
+        } catch (err) {
+            (window as any).showToast("清理失敗", 'error');
+        } finally {
+            cleanupBtn.innerHTML = originalContent;
+            cleanupBtn.removeAttribute("disabled");
+        }
+    });
+
+    // --- Seeding Logic ---
+    const seedBtn = document.getElementById("seed-comments-btn");
+    seedBtn?.addEventListener("click", async () => {
+        if (!confirm("Add 3 test comments to Firestore?")) return;
+
+        const testData = [
+            {
+                author_name: "小林",
+                author_email: "lin@example.com",
+                content:
+                    "這篇文章寫得很有溫度，圖片的色調也配得很安靜。期待更多的分享！",
+                post_slug: "2024-spring-trip",
+                is_hidden: false,
+                is_deleted: false,
+                is_read: false,
+                created_at: serverTimestamp(),
+            },
+            {
+                author_name: "Art Explorer",
+                author_email: "art@travel.io",
+                content:
+                    "關於膠卷攝影的那一段很有同感，那種等待沖洗的不確定感才是最迷人的地方。",
+                post_slug: "film-photography-essence",
+                is_hidden: true,
+                is_deleted: false,
+                is_read: false,
+                created_at: serverTimestamp(),
+            },
+            {
+                author_name: "匿名訪客",
+                author_email: "",
+                content: "請問這張照片是在哪裡拍的？構圖好美！",
+                post_slug: "kyoto-morning-walk",
+                is_hidden: false,
+                is_deleted: false,
+                is_read: true,
+                created_at: serverTimestamp(),
+            },
+        ];
+
+        try {
+            for (const item of testData) {
+                await addDoc(collection(db, "comments"), item);
+            }
+            alert("Test data seeded successfully!");
+        } catch (e) {
+            alert("Seeding failed: " + e);
+        }
+    });
+
+    // --- Logic for Login Button ---
+    adminLoginBtn?.addEventListener("click", async () => {
+        try {
+            const provider = new GoogleAuthProvider();
+            await signInWithPopup(auth, provider);
+        } catch (err: any) {
+            alert("Login Failed: " + err.message);
+        }
+    });
+
+    // --- Authentication & Initialization Execution ---
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            // No User -> Show Login UI
+            loading?.classList.add("opacity-0");
+            setTimeout(() => {
+                loading?.classList.add("hidden");
+                loginUI?.classList.remove("hidden");
+                dashboard?.classList.add("hidden");
+            }, 300);
+            return;
+        }
+
+        // We have a user, now verify permission (Admin Trap)
+        console.log("[Auth] User detected:", user.email);
+        
+        try {
+            const credentialRef = doc(db, "admin_vault", "credentials");
+            await getDoc(credentialRef); // Permission trap
+            
+            // Access Granted
+            console.log("[System] Admin Verified.");
+            if (emailSpan) emailSpan.textContent = user.email;
+
+            // Fetch Data
+            fetchSystemConfig();
+            fetchAuthorConfig();
+            fetchPromptConfig();
+            initCommentsModule();
+
+            // Transition UI
+            loading?.classList.add("opacity-0");
+            loginUI?.classList.add("hidden");
+            setTimeout(() => {
+                loading?.classList.add("hidden");
+                dashboard?.classList.remove("hidden");
+                dashboard?.classList.add("opacity-100");
+            }, 300);
+
+        } catch (err: any) {
+            // Access Denied (Logged in but no permission)
+            console.error("[Auth] Access Denied for", user.email, ":", err.code);
+            
+            if (deniedEmail) deniedEmail.textContent = user.email || "Unknown Account";
+            unauthorizedMsg?.classList.remove("hidden");
+            
+            loading?.classList.add("opacity-0");
+            setTimeout(() => {
+                loading?.classList.add("hidden");
+                loginUI?.classList.remove("hidden");
+            }, 300);
+        }
+    });
+
     document.getElementById("logout-btn")?.addEventListener("click", () => {
         auth.signOut();
         window.location.reload();
     });
+    }
+    // --- Draft Tool Logic ---
+    const initDraftTool = () => {
+        const generateDraftBtn = document.getElementById("generate-draft-btn");
+        const copyPromptBtn = document.getElementById("copy-prompt-btn");
+        const draftResultContainer = document.getElementById("draft-result-container");
+        const draftResultArea = document.getElementById("draft-result") as HTMLTextAreaElement;
+
+        generateDraftBtn?.addEventListener("click", () => {
+            const q1 = (document.getElementById("draft-q1") as HTMLInputElement).value || "[未填寫]";
+            const q2 = (document.getElementById("draft-q2") as HTMLInputElement).value || "[未填寫]";
+            const q3 = (document.getElementById("draft-q3") as HTMLInputElement).value || "[未填寫]";
+            const q4 = (document.getElementById("draft-q4") as HTMLTextAreaElement).value || "[未填寫]";
+            const q5 = (document.getElementById("draft-q5") as HTMLTextAreaElement).value || "[未填寫]";
+            const q6 = (document.getElementById("draft-q6") as HTMLInputElement).value || "輕鬆幽默的個人隨筆";
+            const q7 = (document.getElementById("draft-q7") as HTMLTextAreaElement).value || "[未填寫]";
+            const slug = (document.getElementById("draft-slug") as HTMLInputElement).value || "your-slug";
+            const cat = (document.getElementById("draft-cat") as HTMLInputElement).value || "";
+            const tags = (document.getElementById("draft-tags") as HTMLInputElement).value || "";
+
+            const today = new Date().toISOString().split('T')[0];
+            const datePath = today.substring(2, 4) + today.substring(5, 7); // YYMM
+            
+            // Handle Tags Logic (Dynamic Expansion if < 5)
+            let tagsOutput = "我回答的標籤，無則你負責生成，至少 6 個";
+            if (tags.trim()) {
+                const tagsArr = tags.split(',').map(t => t.trim()).filter(t => t);
+                if (tagsArr.length > 0 && tagsArr.length < 5) {
+                    tagsOutput = `${tagsArr.join(', ')}，請以此為基礎擴增到至少 6 個以上`;
+                } else if (tagsArr.length >= 5) {
+                    tagsOutput = tagsArr.join(', ');
+                }
+            }
+
+            // Get template string
+            const templateEl = document.getElementById("draft-template") as HTMLTextAreaElement;
+            let prompt = templateEl ? templateEl.value : "";
+            
+            // Format q4 to handle line breaks properly if not empty
+            const formattedQ4 = q4 !== "[未填寫]" 
+                ? q4.split('\n').filter(l => l.trim()).map(line => `   ${line.trim().startsWith('-') ? '' : '- '}${line}`).join('\n')
+                : q4;
+
+            // Replace variables placeholders with actual values
+            prompt = prompt.replace(/\{\{q1\}\}/g, q1)
+                           .replace(/\{\{q2\}\}/g, q2)
+                           .replace(/\{\{q3\}\}/g, q3)
+                           .replace(/\{\{q4\}\}/g, formattedQ4)
+                           .replace(/\{\{q5\}\}/g, q5)
+                           .replace(/\{\{q6\}\}/g, q6)
+                           .replace(/\{\{q7\}\}/g, q7)
+                           .replace(/\{\{slug\}\}/g, slug)
+                           .replace(/\{\{cat\}\}/g, cat || '我回答的分類，無則你負責生成')
+                           .replace(/\{\{tags\}\}/g, tagsOutput)
+                           .replace(/\{\{date\}\}/g, today)
+                           .replace(/\{\{datePath\}\}/g, datePath);
+
+            if (draftResultArea) draftResultArea.value = prompt;
+            draftResultContainer?.classList.remove("hidden");
+            draftResultContainer?.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        copyPromptBtn?.addEventListener("click", () => {
+            if (draftResultArea) {
+                draftResultArea.select();
+                document.execCommand("copy");
+                const originalText = copyPromptBtn.innerHTML;
+                copyPromptBtn.innerHTML = `<span class="material-symbols-outlined text-sm">done</span> 已複製`;
+                setTimeout(() => {
+                    copyPromptBtn.innerHTML = originalText;
+                }, 2000);
+            }
+        });
+    };
+
+    if (typeof window !== 'undefined') {
+        initDraftTool();
+    }
 </script>
 
-<style is:global>
-    /* UUSelect Global Styles */
-    .uu-select-container {
-        position: relative;
-        width: 100%;
-    }
-    .uu-select-trigger {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        padding: 0.75rem 1rem;
-        background: rgba(245, 240, 231, 0.4);
-        border: 1px solid rgba(109, 73, 47, 0.15);
-        border-radius: 0.75rem;
-        font-size: 0.875rem;
-        color: #4a301e;
-        cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        backdrop-filter: blur(10px);
-    }
-    .uu-select-trigger:hover {
-        border-color: rgba(109, 73, 47, 0.4);
-        background: white;
-    }
-    .uu-select-trigger.active {
-        border-color: #6d492f;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(109, 73, 47, 0.08);
-    }
-    .uu-select-trigger .selected-content {
-        display: flex;
-        align-items: center;
-        gap: 0.625rem;
-    }
-    .uu-select-trigger .arrow-icon {
-        font-size: 1.125rem;
-        transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        color: rgba(109, 73, 47, 0.25);
-    }
-    .uu-select-trigger.active .arrow-icon {
-        transform: rotate(180deg);
-        color: #6d492f;
-    }
-    .uu-select-dropdown {
-        position: absolute;
-        top: calc(100% + 0.5rem);
-        left: 0;
-        right: 0;
-        background: rgba(255, 255, 255, 0.98);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(109, 73, 47, 0.12);
-        border-radius: 1rem;
-        box-shadow: 0 25px 50px -12px rgba(109, 73, 47, 0.2);
-        z-index: 2000;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-12px) scale(0.96);
-        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-        padding: 0.625rem;
-    }
-    .uu-select-dropdown.open {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0) scale(1);
-    }
-    .uu-select-option {
-        padding: 0.75rem 1rem;
-        font-size: 0.8125rem;
-        color: #6d492f;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        border-radius: 0.75rem;
-        transition: all 0.2s;
-    }
-    .uu-select-option:hover {
-        background: rgba(109, 73, 47, 0.04);
-        transform: translateX(4px);
-    }
-    .uu-select-option.selected {
-        background: #6d492f;
-        color: white;
-    }
-</style>
-
 <style>
+    /* Reuse User Dashboard Styles */
     .dashboard-layout {
         display: grid;
         grid-template-columns: 288px minmax(0, 1fr);
         gap: 2.5rem;
+        align-items: start;
         width: 100%;
     }
     .dashboard-sidebar {
@@ -408,7 +1782,10 @@ import ModalGlobal from "../../components/admin/ModalGlobal.astro";
     .dashboard-content {
         min-width: 0;
         width: 100%;
+        overflow: hidden;
     }
+
+    /* Mobile Responsive */
     @media (max-width: 767px) {
         .dashboard-layout {
             display: flex;
@@ -418,5 +1795,14 @@ import ModalGlobal from "../../components/admin/ModalGlobal.astro";
             width: 100%;
             position: static;
         }
+    }
+
+    /* Scrollbar for editor */
+    #md-content::-webkit-scrollbar {
+        width: 6px;
+    }
+    #md-content::-webkit-scrollbar-thumb {
+        background: rgba(26, 26, 26, 0.1);
+        border-radius: 10px;
     }
 </style>
