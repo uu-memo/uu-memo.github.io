@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### [2026-03-15.2] - Article Management Layout Fix
+
+#### Summary of changes
+- Fixed the layout of the "Article Management" tab to ensure consistency with other dashboard sections.
+- Eliminated redundant white card containers causing horizontal overflow on smaller screens.
+- Standardized container padding and flex alignment across all management tabs.
+
+#### Technical details
+- Refactored `tab-posts` section in `index.astro` to use the standard `w-full flex-1 flex flex-col p-10` utility classes.
+- Integrated the "Fetch" action button into the section header for a more balanced UI.
+- Verified that all dashboard components now share a unified vertical and horizontal rhythm.
+
+#### Affected files
+- `src/pages/admin/index.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None.
+
+**中文說明：修復「文章管理」頁籤的佈局溢出問題。透過移除冗餘容器並對齊標準 Padding 規範，確保管理後台所有頁籤的視覺體驗與對齊邏輯 100% 一致。**
+
 ### [2026-03-15] - UI/UX Refinement & Post Management Module
 
 #### Summary of changes

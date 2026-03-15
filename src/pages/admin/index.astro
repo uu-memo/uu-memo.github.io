@@ -674,25 +674,20 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
                     </div>
                 </section>
                 <!-- TAB: Post Management -->
-                <section id="tab-posts" class="tab-content hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    <div class="flex items-center gap-3.5 mb-8 pb-6 border-b border-uu-sub/20">
-                        <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main">
-                            <span class="material-symbols-outlined">inventory_2</span>
+                <section id="tab-posts" class="tab-content hidden w-full flex-1 flex flex-col p-10">
+                    <div class="flex items-center justify-between mb-8 pb-6 border-b border-uu-sub/20">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-10 h-10 rounded-full bg-uu-sub/10 flex items-center justify-center text-uu-main">
+                                <span class="material-symbols-outlined">inventory_2</span>
+                            </div>
+                            <h3 class="font-bold text-xl text-uu-dark">文章管理</h3>
                         </div>
-                        <h3 class="font-bold text-xl text-uu-dark">文章管理</h3>
+                        <button id="toggle-list-btn-main" class="bg-uu-main text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-uu-dark transition-all flex items-center gap-2 shadow-lg shadow-uu-main/20">
+                            <span class="material-symbols-rounded text-sm">sync</span>載入 GitHub 清單
+                        </button>
                     </div>
 
-                    <div class="bg-white p-8 rounded-3xl border border-uu-sub shadow-sm min-h-[500px] flex flex-col">
-                        <div class="flex items-center justify-between mb-8">
-                            <div>
-                                <h4 class="text-lg font-bold text-uu-dark mb-1">既有文章清單</h4>
-                                <p class="text-xs text-uu-main/40 uppercase tracking-widest font-bold">Manage your published content from GitHub</p>
-                            </div>
-                            <button id="toggle-list-btn-main" class="bg-uu-main text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-uu-dark transition-all flex items-center gap-2 shadow-lg shadow-uu-main/20">
-                                <span class="material-symbols-rounded text-sm">sync</span>載入 GitHub 清單
-                            </button>
-                        </div>
-
+                    <div class="flex-1 flex flex-col min-h-[500px]">
                         <div id="post-list-container-main" class="hidden flex-1 overflow-y-auto pr-2 custom-scrollbar">
                             <!-- Items will be injected here -->
                              <div class="text-center py-12 text-uu-main/40 italic">正在獲取文章列表...</div>
