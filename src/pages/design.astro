@@ -1,0 +1,282 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PrimaryButton from "../components/PrimaryButton.astro";
+import ModalGlobal from "../components/admin/ModalGlobal.astro";
+
+/**
+ * Design System Showcase Page
+ * Route: /design
+ * Purpose: Centralized library for all UU MEMO components and design tokens.
+ */
+---
+
+<Layout title="Design System | UU MEMO">
+    <main class="max-w-7xl mx-auto px-6 py-20 min-h-screen">
+        <!-- Header -->
+        <header class="mb-20 border-b border-uu-sub/30 pb-12">
+            <div class="flex items-center gap-4 mb-4">
+                <span class="px-3 py-1 bg-uu-main text-white text-[10px] font-black tracking-widest rounded-full uppercase">Internal Tool</span>
+                <span class="text-uu-main/40 text-[10px] font-medium tracking-widest uppercase">v1.0.0</span>
+            </div>
+            <h1 class="text-6xl font-black text-uu-dark tracking-tighter mb-4">Design <span class="text-uu-main/20 italic">System</span></h1>
+            <p class="text-lg text-uu-main/60 max-w-2xl leading-relaxed">
+                UU MEMO 的正式元件庫與設計規範。這裡展示了專案中所有核心 UI 元素、色彩系統與文字排版，作為未來開發與樣式溝通的單一事實來源。
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-20">
+            <!-- Sticky Sidebar Navigation -->
+            <nav class="hidden lg:block sticky top-32 h-fit">
+                <ul class="space-y-6">
+                    <li><a href="#colors" class="text-xs font-black tracking-widest text-uu-main/40 hover:text-uu-main transition-all uppercase">01. Colors</a></li>
+                    <li><a href="#typography" class="text-xs font-black tracking-widest text-uu-main/40 hover:text-uu-main transition-all uppercase">02. Typography</a></li>
+                    <li><a href="#buttons" class="text-xs font-black tracking-widest text-uu-main/40 hover:text-uu-main transition-all uppercase">03. Buttons</a></li>
+                    <li><a href="#forms" class="text-xs font-black tracking-widest text-uu-main/40 hover:text-uu-main transition-all uppercase">04. Form Elements</a></li>
+                    <li><a href="#feedback" class="text-xs font-black tracking-widest text-uu-main/40 hover:text-uu-main transition-all uppercase">05. Feedback</a></li>
+                    <li><a href="#prose" class="text-xs font-black tracking-widest text-uu-main/40 hover:text-uu-main transition-all uppercase">06. Prose Style</a></li>
+                </ul>
+            </nav>
+
+            <div class="space-y-32">
+                <!-- Section: Colors -->
+                <section id="colors" class="scroll-mt-32">
+                    <h2 class="text-xs font-black tracking-[0.3em] text-uu-dark uppercase mb-12 flex items-center gap-3">
+                        <span class="w-8 h-[1px] bg-uu-sub"></span>
+                        01. Color Palette
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div class="space-y-4">
+                            <div class="h-32 rounded-3xl bg-uu-main shadow-xl border border-white/20"></div>
+                            <div>
+                                <p class="text-xs font-black text-uu-dark uppercase">UU Main</p>
+                                <p class="text-[10px] text-uu-main/40 font-mono">#6D492F</p>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="h-32 rounded-3xl bg-uu-sub shadow-xl border border-white/20"></div>
+                            <div>
+                                <p class="text-xs font-black text-uu-dark uppercase">UU Sub</p>
+                                <p class="text-[10px] text-uu-main/40 font-mono">#DDCCB3</p>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="h-32 rounded-3xl bg-uu-base shadow-xl border border-uu-sub/20"></div>
+                            <div>
+                                <p class="text-xs font-black text-uu-dark uppercase">UU Base</p>
+                                <p class="text-[10px] text-uu-main/40 font-mono">#F5F0E7</p>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="h-32 rounded-3xl bg-uu-dark shadow-xl border border-white/20"></div>
+                            <div>
+                                <p class="text-xs font-black text-uu-dark uppercase">UU Dark</p>
+                                <p class="text-[10px] text-uu-main/40 font-mono">#4A301E</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Typography -->
+                <section id="typography" class="scroll-mt-32">
+                    <h2 class="text-xs font-black tracking-[0.3em] text-uu-dark uppercase mb-12 flex items-center gap-3">
+                        <span class="w-8 h-[1px] bg-uu-sub"></span>
+                        02. Typography
+                    </h2>
+                    <div class="space-y-12">
+                        <div class="border-l-2 border-uu-sub/30 pl-8 py-4">
+                            <h3 class="text-5xl font-black text-uu-dark mb-4">Heading Level 1</h3>
+                            <p class="text-xs text-uu-main/40 font-mono">5xl / Black / Tracking-tight</p>
+                        </div>
+                        <div class="border-l-2 border-uu-sub/30 pl-8 py-4">
+                            <h3 class="text-3xl font-black text-uu-dark mb-4">Heading Level 2</h3>
+                            <p class="text-xs text-uu-main/40 font-mono">3xl / Black</p>
+                        </div>
+                        <div class="border-l-2 border-uu-sub/30 pl-8 py-4">
+                            <p class="text-lg leading-relaxed text-uu-main max-w-2xl">
+                                這是內文樣例。UU MEMO 使用 Noto Sans TC 作為主要字體，確保在中日文字並存時依然擁有極佳的閱讀體驗。這裡展示的是一段較長的文字描述，用於測試行高與文字間距。
+                            </p>
+                            <p class="text-xs text-uu-main/40 font-mono mt-4">lg / Leading-relaxed / Noto Sans TC</p>
+                        </div>
+                        <div class="border-l-2 border-uu-sub/30 pl-8 py-4 font-logo">
+                            <p class="text-4xl text-uu-main">ゼン丸ゴシック</p>
+                            <p class="text-xs text-uu-main/40 font-mono mt-4">Logo Font: Zen Maru Gothic</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Buttons -->
+                <section id="buttons" class="scroll-mt-32">
+                    <h2 class="text-xs font-black tracking-[0.3em] text-uu-dark uppercase mb-12 flex items-center gap-3">
+                        <span class="w-8 h-[1px] bg-uu-sub"></span>
+                        03. Buttons
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <div class="space-y-6">
+                            <p class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest mb-4">Action Buttons</p>
+                            <PrimaryButton text="Primary Action" />
+                            <PrimaryButton text="Loading State" showLoader={true} loaderId="demo-loader" className="!bg-uu-dark" />
+                            <PrimaryButton text="With Icon" icon="bolt" />
+                        </div>
+                        <div class="space-y-8">
+                            <div>
+                                <p class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest mb-4">Text Buttons</p>
+                                <button class="btn-text text-sm font-bold">Standard Link Button</button>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest mb-4">Icon Buttons</p>
+                                <div class="flex gap-4">
+                                    <button class="w-10 h-10 rounded-full bg-uu-sub/20 text-uu-main flex items-center justify-center hover:bg-uu-main hover:text-white transition-all">
+                                        <span class="material-symbols-outlined text-sm">edit</span>
+                                    </button>
+                                    <button class="w-10 h-10 rounded-lg bg-uu-dark text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
+                                        <span class="material-symbols-outlined text-sm">share</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Forms -->
+                <section id="forms" class="scroll-mt-32">
+                    <h2 class="text-xs font-black tracking-[0.3em] text-uu-dark uppercase mb-12 flex items-center gap-3">
+                        <span class="w-8 h-[1px] bg-uu-sub"></span>
+                        04. Form Elements
+                    </h2>
+                    <div class="max-w-xl space-y-10">
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block pl-2">Label Name</label>
+                            <input type="text" class="w-full bg-uu-base/10 border border-uu-sub/30 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all shadow-sm" placeholder="Enter something..." />
+                        </div>
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block pl-2">Textarea Example</label>
+                            <textarea class="w-full bg-uu-base/10 border border-uu-sub/30 rounded-3xl p-8 text-sm focus:outline-none focus:bg-white transition-all min-h-[160px] shadow-inner" placeholder="Enter detailed content..."></textarea>
+                        </div>
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest block pl-2">Custom Select</label>
+                            <div class="relative">
+                                <select class="w-full appearance-none bg-uu-base/10 border border-uu-sub/30 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-uu-main focus:bg-white transition-all cursor-pointer">
+                                    <option>Option 01</option>
+                                    <option>Option 02</option>
+                                    <option>Option 03</option>
+                                </select>
+                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-uu-main/30 pointer-events-none">expand_more</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Feedback -->
+                <section id="feedback" class="scroll-mt-32">
+                    <h2 class="text-xs font-black tracking-[0.3em] text-uu-dark uppercase mb-12 flex items-center gap-3">
+                        <span class="w-8 h-[1px] bg-uu-sub"></span>
+                        05. Feedback & Interactions
+                    </h2>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="window.showToast('Success Notification', 'check_circle', 'success')" class="px-8 py-4 bg-uu-main/10 text-uu-main text-xs font-black rounded-full hover:bg-uu-main hover:text-white transition-all uppercase tracking-widest">
+                            Trigger Success Toast
+                        </button>
+                        <button onclick="window.showToast('Error notification example', 'report', 'error')" class="px-8 py-4 bg-uu-dark/10 text-uu-dark text-xs font-black rounded-full hover:bg-uu-dark hover:text-white transition-all uppercase tracking-widest">
+                            Trigger Error Toast
+                        </button>
+                        <button id="open-modal-demo" class="px-8 py-4 bg-uu-dark text-white text-xs font-black rounded-full hover:bg-uu-main transition-all shadow-xl uppercase tracking-widest">
+                            Open Modal Example
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Section: Prose -->
+                <section id="prose" class="scroll-mt-32 pb-40">
+                    <h2 class="text-xs font-black tracking-[0.3em] text-uu-dark uppercase mb-12 flex items-center gap-3">
+                        <span class="w-8 h-[1px] bg-uu-sub"></span>
+                        06. Prose (Markdown Style)
+                    </h2>
+                    <div class="prose max-w-none">
+                        <h3>Markdown Table Standard</h3>
+                        <p>這是自動渲染的靜態表格樣式範例：</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Design System</td>
+                                    <td>In Progress</td>
+                                    <td>High</td>
+                                </tr>
+                                <tr>
+                                    <td>Image Copy</td>
+                                    <td>Completed</td>
+                                    <td>Critical</td>
+                                </tr>
+                                <tr>
+                                    <td>Mobile Optimization</td>
+                                    <td>Pending</td>
+                                    <td>Medium</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Demo Implementation -->
+    <ModalGlobal id="design-modal" title="COMPONENT SHOWCASE">
+        <div class="space-y-6">
+            <div class="w-20 h-20 rounded-full bg-uu-sub/20 flex items-center justify-center mx-auto text-uu-main">
+                <span class="material-symbols-outlined text-4xl">inventory_2</span>
+            </div>
+            <div class="text-center">
+                <h3 class="text-xl font-black text-uu-dark mb-2">Modal Title Example</h3>
+                <p class="text-sm text-uu-main/60 leading-relaxed">
+                    這是一個全域對話框組件的範例。您可以在此放入任何內容，它會自動處理背景模糊與過渡動畫。
+                </p>
+            </div>
+            <div class="pt-4">
+                <PrimaryButton text="GOT IT" onclick="document.getElementById('design-modal').close()" />
+            </div>
+        </div>
+    </ModalGlobal>
+
+    <script is:inline>
+        // Modal Trigger Logic
+        document.getElementById('open-modal-demo')?.addEventListener('click', () => {
+            document.getElementById('design-modal')?.showModal();
+        });
+
+        // Smooth Scroll Logic
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</Layout>
+
+<style>
+    /* Section Anchors for sticky nav highlighting (conceptual) */
+    section {
+        position: relative;
+    }
+    
+    /* Custom grid underline effect for sections */
+    h2::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(to right, var(--color-uu-sub), transparent);
+        opacity: 0.3;
+    }
+</style>

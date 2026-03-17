@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### [2026-03-17] - Phase 9: Color Compliance Enforcement
+
+#### Summary of changes
+- Enforced strict brand color policy by removing all prohibited colors (Red, Green, Blue) from UI feedback components.
+- Standardized `Toast` and interactive feedback elements to use only the UU core palette.
+- Updated the Design System showcase page to reflect the minimal color philosophy.
+
+#### Technical details
+- **Component Refactor**: Modified `Toast.astro` to remove `text-red-500` and `emerald` suggestions. The `error` and `success` states are now distinguished by `UU Dark` and `UU Main` accents rather than chromatic hues.
+- **Showcase Cleanup**: Removed all legacy status color (emerald, rose) examples from `design.astro`.
+- **Validation**: Performed a regex-based codebase audit to ensure no forbidden Tailwind color classes exist in the `src` directory.
+
+#### Affected files
+- `src/components/Toast.astro`
+- `src/pages/design.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- Informational and error messages now rely on iconography and tonal shifts (Dark/Main) instead of traditional traffic-light colors.
+
+**中文說明：顏色規範徹底執行。移除了全站所有非品牌色的回饋組件（紅、綠、藍），將 Toast 通知與設計頁面範例統一為 UU 品牌色調，確保視覺美學的極致統一。**
+
 ### [2026-03-15.2] - Article Management Layout Fix
 
 #### Summary of changes
@@ -1328,3 +1350,21 @@ All notable changes to this project will be documented in this file.
 - None.
 
 **中文說明：實作圖片一鍵複製 Markdown 功能，並自動修復文章封面的路徑錯誤。同時重構了 GAS Bridge 以解決類型錯誤，並完成本地與遠端文章內容的同步。**
+
+### [2026-03-17] - Design System Page Implementation (Phase 8)
+
+#### Summary of changes
+- Created a standalone Design System page at `/design` to showcase all core UI components and design tokens.
+- Implemented sections for Color Tokens, Typography, Buttons, Form Elements, and Feedback systems.
+- integrated existing components like `PrimaryButton`, `Toast`, and `ModalGlobal` for interactive testing.
+- Added responsive layout and smooth-scroll navigation for better UX.
+
+#### Technical details
+- New page: `src/pages/design.astro`
+- Utilized CSS variables defined in `global.css` for color rendering.
+- Implemented specific script logic for Modal triggering and Toast simulation.
+
+#### Affected files
+- [NEW] `src/pages/design.astro`
+
+實作了獨立的設計系統頁面 (`/design`)，整合了所有按鈕、色彩與元件範例，作為未來樣式溝通的素材庫。
