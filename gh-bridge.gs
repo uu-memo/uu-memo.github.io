@@ -16,10 +16,12 @@ function doPost(e) {
     const { action, path, files, content, message, branch = 'main', token: providedToken } = data;
 
     // --- 安全金鑰驗證 ---
-    // 對於敏感操作 (GitHub/Email)，檢查 token 是否正確
+    console.log(`[Bridge] Received Action: ${action}`);
+    const isSecretValid = secretToken && providedToken === secretToken;
+    console.log(`[Bridge] Secret Valid: ${isSecretValid}`);
+
     if (secretToken && providedToken !== secretToken) {
         // 特別注意：如果是從後台 Admin 來的請求，可能還沒更新傳送 token 邏輯
-        // 但為了聯絡表單安全性，我們建議統一驗證。
     }
 
     // --- 動作分流 (Action Routing) ---
@@ -65,13 +67,23 @@ function doPost(e) {
 
     // 5. 獲取文章列表
     if (action === 'list_posts') {
-        return listPostsFromGitHub(owner, repo, branch, token);
+        const postsData = listPostsFromGitHub(owner, repo, branch, token);
+        return ContentService.createTextOutput(JSON.stringify({
+            success: postsData.status === 'success',
+            files: postsData.posts || [],
+            message: postsData.message
+        })).setMimeType(ContentService.MimeType.JSON);
     }
 
     // 6. 獲取單一文章內容
     if (action === 'get_content') {
         if (!path) throw new Error("Missing path for get_content");
-        return getFileContentFromGitHub(owner, repo, path, branch, token);
+        const contentData = getFileContentFromGitHub(owner, repo, path, branch, token);
+        return ContentService.createTextOutput(JSON.stringify({
+            success: contentData.status === 'success',
+            content: contentData.content,
+            message: contentData.message
+        })).setMimeType(ContentService.MimeType.JSON);
     }
 
     // 相容舊版單一檔案上傳
@@ -80,8 +92,10 @@ function doPost(e) {
       return uploadToGitHub(owner, repo, path, content, message, branch, token);
     }
 
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'Unknown action: ' + action }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({ 
+        status: 'error', 
+        message: `Unknown action: ${action}. Please check if you have deployed the latest gh-bridge.gs version.` 
+    })).setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({
@@ -312,7 +326,7 @@ function listPostsFromGitHub(owner, repo, branch, token) {
   
   const response = UrlFetchApp.fetch(url, options);
   if (response.getResponseCode() !== 200) {
-    return ContentService.createTextOutput(response.getContentText()).setMimeType(ContentService.MimeType.JSON);
+    return { status: 'error', message: response.getContentText() };
   }
   
   const files = JSON.parse(response.getContentText());
@@ -323,10 +337,10 @@ function listPostsFromGitHub(owner, repo, branch, token) {
     size: f.size
   }));
   
-  return ContentService.createTextOutput(JSON.stringify({
+  return {
     status: 'success',
     posts: posts
-  })).setMimeType(ContentService.MimeType.JSON);
+  };
 }
 
 /**
@@ -340,5 +354,10 @@ function getFileContentFromGitHub(owner, repo, path, branch, token) {
   };
   
   const response = UrlFetchApp.fetch(url, options);
-  return ContentService.createTextOutput(response.getContentText()).setMimeType(ContentService.MimeType.JSON);
+  const data = JSON.parse(response.getContentText());
+  return {
+    status: response.getResponseCode() === 200 ? 'success' : 'error',
+    content: data.content,
+    message: data.message
+  };
 }

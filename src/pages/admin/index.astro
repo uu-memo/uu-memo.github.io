@@ -1492,7 +1492,16 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
                     <span class="text-[9px] text-uu-main/40 uppercase font-mono">${data.w} × ${data.h}</span>
                 </div>
                 <p class="text-[10px] font-bold text-uu-dark truncate mb-2">${name}</p>
-                <input type="text" data-id="${data.id}" placeholder="${dateStr}-slug-01" value="${prefix}" class="img-filename-input w-full bg-uu-base/10 shadow-inner border shadow-sm border-uu-sub/30 rounded-lg px-2 py-1.5 text-[11px] font-mono focus:outline-none focus:ring-1 focus:ring-uu-main/50 transition-all font-bold text-uu-dark" />
+                <div class="flex gap-2">
+                    <input type="text" data-id="${data.id}" placeholder="${dateStr}-slug-01" value="${prefix}" class="img-filename-input flex-1 bg-uu-base/10 shadow-inner border shadow-sm border-uu-sub/30 rounded-lg px-2 py-1.5 text-[11px] font-mono focus:outline-none focus:ring-1 focus:ring-uu-main/50 transition-all font-bold text-uu-dark" />
+                    <button 
+                        class="p-1.5 bg-uu-main/5 text-uu-main hover:bg-uu-main hover:text-white rounded-lg transition-all"
+                        onclick="copyImageCode('${data.id}')"
+                        title="複製 Markdown 代碼"
+                    >
+                        <span class="material-symbols-outlined text-sm">content_copy</span>
+                    </button>
+                </div>
             </div>
             <button class="absolute top-2 right-2 text-uu-main/20 hover:text-uu-dark opacity-0 group-hover:opacity-100 transition-opacity" onclick="removeImage('${data.id}')">
                 <span class="material-symbols-outlined text-sm">close</span>
@@ -1504,6 +1513,32 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
     (window as any).removeImage = (id: string) => {
         processedImages = processedImages.filter(img => img.id !== id);
         document.getElementById(`img-card-${id}`)?.remove();
+    };
+
+    (window as any).copyImageCode = (id: string) => {
+        const input = document.querySelector(`.img-filename-input[data-id="${id}"]`) as HTMLInputElement;
+        if (!input) return;
+
+        let filename = input.value.trim();
+        if (!filename) {
+            (window as any).showToast("請先設定圖檔名稱", 'info');
+            return;
+        }
+        if (!filename.includes('.')) filename += ".jpg";
+
+        const now = new Date();
+        const yy = now.getFullYear().toString().substring(2);
+        const mm = (now.getMonth() + 1).toString().padStart(2, '0');
+        const datePath = `${yy}${mm}`;
+        
+        const markdownCode = `![圖片](/images/${datePath}/${filename})`;
+        
+        navigator.clipboard.writeText(markdownCode).then(() => {
+            (window as any).showToast("Markdown 代碼已複製！", 'success');
+        }).catch(err => {
+            console.error("Copy failed", err);
+            (window as any).showToast("複製失敗", 'error');
+        });
     };
 
     // --- Sync to GitHub Logic ---
@@ -1690,6 +1725,12 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
             
             // Access Granted
             console.log("[System] Admin Verified.");
+            // 專案名稱校驗
+            const isUUMemo = window.location.hostname.includes('uu-memo') || window.location.hostname === 'localhost';
+            console.log(`[System] Project Context Check: ${isUUMemo ? '✅ uu-memo' : '⚠️ Unknown Project'}`);
+            if (!isUUMemo) {
+                console.warn("[System] Warning: Running on a domain not associated with uu-memo.");
+            }
             if (emailSpan) emailSpan.textContent = user.email;
 
             // Fetch Data
@@ -1741,18 +1782,24 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
         postListContainerMain.innerHTML = '<div class="text-center py-12 text-uu-main/40 italic flex flex-col items-center gap-2"><span class="material-symbols-outlined animate-spin text-xl">sync</span><span class="text-[10px] font-bold uppercase tracking-widest">正在從 GitHub 同步清單...</span></div>';
 
         try {
+            const payload = {
+                action: 'list_posts',
+                token: PUBLIC_GAS_SECRET // 使用更新後的 token 欄位名稱
+            };
+            console.log("[Network] Fetching Post List from GAS...", payload);
+
             const response = await fetch(PUBLIC_GAS_URL, {
                 method: 'POST',
-                body: JSON.stringify({
-                    action: 'list_posts',
-                    secret: PUBLIC_GAS_SECRET
-                })
+                body: JSON.stringify(payload)
             });
 
             const result = await response.json();
+            console.log("[Network] Received Result:", result);
+            const isSuccess = result.success || result.status === 'success';
             
-            if (result.success) {
-                if (result.files.length === 0) {
+            if (isSuccess) {
+                const files = result.files || result.posts || [];
+                if (files.length === 0) {
                     postListContainerMain.innerHTML = '<div class="text-center py-12 text-uu-main/40 italic">查無文章檔案</div>';
                     return;
                 }

@@ -33,11 +33,21 @@ const categories = Array.isArray(post.data.category)
     : post.data.category ? [post.data.category] : ['未分類'];
 
 // --- OG & SEO Fallback Logic ---
+// 0. Path Resolution for heroImage
+let resolvedHeroImage = post.data.heroImage;
+if (resolvedHeroImage && !resolvedHeroImage.startsWith('/') && !resolvedHeroImage.startsWith('http')) {
+    // If it looks like 'YYMMDD-...', extract YYMM to point to /images/YYMM/
+    const dateMatch = resolvedHeroImage.match(/^(\d{4})\d{2}-/);
+    if (dateMatch) {
+        resolvedHeroImage = `/images/${dateMatch[1]}/${resolvedHeroImage}`;
+    }
+}
+
 // 1. Image: heroImage -> First image in body -> Default site image
 const markdownBody = post["body"] || "";
 const firstImageMatch = markdownBody.match(/!\[.*?\]\((.*?)\)/);
 const firstImage = firstImageMatch ? firstImageMatch[1] : null;
-const ogImage = post.data.heroImage || firstImage || '/uu-memo.png';
+const ogImage = resolvedHeroImage || firstImage || '/uu-memo.png';
 
 // 2. Description: frontmatter description -> first 100 chars of body
 const seoDescription = post.data.description || 
@@ -63,10 +73,10 @@ const seoDescription = post.data.description ||
                 <h1 class="text-3xl md:text-4xl font-bold text-uu-main mb-6 leading-tight">
                     {post.data.title}
                 </h1>
-                {post.data.heroImage && (
+                {resolvedHeroImage && (
                     <div class="mt-8 rounded-xl overflow-hidden aspect-video bg-uu-sub/20 relative">
                          <!-- Placeholder or actual image -->
-                         <img src={post.data.heroImage} alt="" class="w-full h-full object-cover opacity-80" onerror="this.style.display='none'" />
+                         <img src={resolvedHeroImage} alt="" class="w-full h-full object-cover opacity-80" onerror="this.style.display='none'" />
                          <div class="absolute inset-0 flex items-center justify-center text-uu-main/20 -z-10">
                             <span class="material-symbols-outlined text-6xl">image</span>
                          </div>

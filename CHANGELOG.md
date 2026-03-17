@@ -1303,3 +1303,28 @@ All notable changes to this project will be documented in this file.
 - GitHub API rate limits apply; however, since operations are performed on-demand by the admin, this is not an issue for normal usage.
 
 **中文說明：實作「既有文章管理」與 GitHub 整合編輯功能。透過擴展 GAS Bridge 支援讀取 GitHub 檔案清單與內容，管理員現在可以在後台一鍵載入已發佈的文章並直接修改，大幅優化了維護效率。介面完全符合品牌色彩規範，並具備完善的載入狀態與錯誤提示。**
+
+### [2026-03-17] - Image Utility & Routing Repair (Phase 5 + Phase 6 Sync)
+
+#### Summary of changes
+- Implemented "Copy Markdown" button for images in the Admin Dashboard.
+- Fixed heroImage resolution in post templates to handle relative paths.
+- Refactored GAS Bridge to resolve TypeError and improve type consistency.
+- Synchronized local repository with remote article edits via Git.
+
+#### Technical details
+- **Image Workshop**: Added `copyImageCode` function to generate absolute paths (e.g., `/images/YYMM/file.jpg`) for Markdown embeds.
+- **Post Template**: Updated `[...slug].astro` with a resolution helper that automatically prepends the correct directory for heroImage filenames.
+- **GAS Bridge**: Unified `doPost` response handling and modified `listPostsFromGitHub` / `getFileContentFromGitHub` to return raw POJOs instead of `TextOutput`.
+- **Git Workflow**: Performed a controlled rebase to integrate online article edits without overwriting local system logic.
+
+#### Affected files
+- `src/pages/admin/index.astro`
+- `src/pages/posts/[...slug].astro`
+- `gh-bridge.gs`
+- `ADMIN_GUIDE.md`
+
+#### Side effects
+- None.
+
+**中文說明：實作圖片一鍵複製 Markdown 功能，並自動修復文章封面的路徑錯誤。同時重構了 GAS Bridge 以解決類型錯誤，並完成本地與遠端文章內容的同步。**

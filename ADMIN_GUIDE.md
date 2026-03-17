@@ -24,10 +24,17 @@
 ### 2.2 配置環境變數
 在 GAS 編輯器左側導覽列，點擊 **專案設定 (Project Settings)** (齒輪圖示)：
 1. 捲動到 **指令碼屬性 (Script Properties)**。
-2. 新增以下屬性：
-   - `GITHUB_PAT`: 您剛生成的 GitHub Token。
-   - `GITHUB_OWNER`: `uu-memo` (或您的用戶名)。
-   - `GITHUB_REPO`: `uu-memo.github.io`。
+2. 點擊 **新增指令碼屬性 (Add script property)** 並設定以下屬性：
+
+| 屬性名稱 (Key) | 說明 | 內容範例 |
+| :--- | :--- | :--- |
+| **`GITHUB_PAT`** | GitHub 個人存取權杖 | `github_pat_...` (步驟 1.1 生成) |
+| **`GITHUB_OWNER`** | GitHub 帳號名稱 | `uu-memo` |
+| **`GITHUB_REPO`** | 專案儲存庫名稱 | `uu-memo.github.io` |
+| **`GAS_SECRET_TOKEN`** | **重要！** 前後端通訊密鑰 | 須與 `.env` 的 `PUBLIC_GAS_SECRET` 一致 |
+| **`TARGET_EMAIL`** | 聯絡表單轉寄目標郵箱 | `your-email@example.com` |
+
+3. 點擊 **儲存指令碼屬性 (Save script properties)**。
 
 ### 2.3 部署為 Web 應用程式
 1. 點擊右上方 **部署 (Deploy)** > **新增部署 (New deployment)**。
@@ -35,25 +42,22 @@
 3. **誰可以存取 (Who has access)**：選擇 **任何人 (Anyone)** (我們會在程式碼內額外檢查來源或金鑰)。
 4. 部署後，複製產生的 **Web App URL**，將其存入後台的設定中。
 
----
-
-## 3. 圖片處理邏輯 (自動執行)
-
-系統會在瀏覽器端執行以下預處理，再傳送至 GAS：
-
-- **橫式 (Landscape)**:
-  - 條件：寬 > 高
-  - 動作：智慧中心裁切 + 壓縮
-  - 輸出：`1200 x 630`
-- **直式 (Portrait)**:
-  - 條件：高 > 寬
-  - 動作：等比縮放
-  - 輸出：`高度固定 1200`
-- **正方形 (Square)**:
-  - 條件：寬 = 高
-  - 動作：等比縮放
-  - 輸出：`1200 x 1200`
+### 2.4 處理權限授權錯誤 (重要)
+如果您在後台控制台看到 `你沒有呼叫「UrlFetchApp.fetch」的權限`：
+1. 開啟 GAS 編輯器。
+2. 在上方工具列選單中選擇 `doPost` 函式。
+3. 點擊 **「執行 (Run)」**。
+4. 此時會彈出 **「需要授權 (Authorization Required)」** 視窗。
+5. 點擊 **查看權限 (Review Permissions)** -> 選擇您的 Google 帳戶。
+6. (如果有警告畫面) 點擊 **進階 (Advanced)** -> **前往 bridge (不安全)**。
+7. 點擊 **允許 (Allow)**。
+8. 再次點擊「部署」確認版本為最新。
 
 ---
 
-**中文說明：此文件定義了管理員後台的連線邏輯，包含 GitHub Token 的申請流程，以及 GAS 如何作為中間人處理圖片備份與轉傳。**
+## 3. Firebase 部署驗證
+
+本專案鎖定的正式 Firebase 專案為：`uu-memo`。
+
+- **線上網址**：`https://uu-memo.web.app` 或 `https://uu-memo.github.io`
+- **確認方式**：檢查專案根目錄下的 `.firebaserc` 檔案，`default` 應為 `uu-memo`。
