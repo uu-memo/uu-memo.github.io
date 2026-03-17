@@ -6,7 +6,7 @@ description: "關於秋天的散步"
 pubDate: "2026-02-12"
 category: ["life", "精選文章"]
 tags: ["生活", "隨筆", "春天", "精選"]
-heroImage: "260317-first-post-01.png"
+heroImage: "260317-first-post-01.jpg"
 slug: "first-post"
 ---
 
