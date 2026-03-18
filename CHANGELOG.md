@@ -4,6 +4,56 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### [2026-03-18] - Phase 11: Design System Refinement & Admin Maintenance UI
+#### Summary of changes
+- **Emergency Fix Button**: Redesigned the "Clean Build Error" button in the admin panel to perfectly match the "Sync" button's style, size, and color (`UU Main`), using `rounded-2xl` and `material-symbols-rounded` icon font.
+- **Flexible PrimaryButton**: Enhanced `PrimaryButton.astro` to support all standard HTML button attributes via `...rest` spreading.
+- Formalized the "No State Color" policy in the Design System page (`/design`).
+- Added an Admin Component Showcase section to the Design System for better developer alignment.
+
+#### Technical details
+- **Premium Maintenance Tools**: Perfectly aligned system-level action buttons (Emergency Fix) with standard action buttons (Sync) for a consistent and balanced UI rhythm.
+- **Interactive Component Library**: Updated `/design` with live previews of admin navigational and input elements.
+- **Component Update**: Refactored `PrimaryButton.astro` using `...rest` spread for full attribute support (e.g., `onclick`, `data-` attributes).
+
+#### Affected files
+- `src/pages/admin/index.astro`
+- `src/pages/design.astro`
+- `src/components/PrimaryButton.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- The `PrimaryButton` is now more robust and reusable across the entire project.
+
+**中文說明：設計系統展示頁面優化與運維工具品牌化。確立「禁用狀態色」的核心原則，並將後台修復按鈕提升至品牌頂級質感，確保全站美學一致性。**
+
+
+### [2026-03-17.2] - Phase 10: Admin UI Brand Modernization
+
+#### Summary of changes
+- Modernized the entire Admin Dashboard interface to align with the core brand design system.
+- Replaced all native HTML form elements (inputs, selects, textareas) with custom-styled brand components.
+- Upgraded the sidebar navigation and layout container to a premium, high-fidelity aesthetic with smooth micro-interactions.
+- Standardized buttons across all admin sections to use brand-consistent roundedness (`rounded-2xl`) and color schemes.
+
+#### Technical details
+- **Layout & Sidebar**: Upgraded dashboard containers and sidebar buttons to `rounded-2xl` and `rounded-[2.5rem]` respectively. Added glassmorphism-inspired borders and subtle shadows.
+- **Form Elements**: Implemented custom styling for all input fields and textareas using `bg-uu-base/10`, `border-uu-sub/30`, and `rounded-2xl`. Optimized focus states with `border-uu-main`.
+- **Button Standards**: Migrated legacy buttons to either `PrimaryButton` or styled action buttons with `uppercase` text and `tracking-widest` typography.
+- **JavaScript Refactor**: Updated tab-switching logic to dynamically manage complex brand classes and ensure flawless state transitions.
+- **Visual Polish**: Applied `prose` styles to all markdown preview areas to ensure what the admin sees matches the front-end user experience.
+
+#### Affected files
+- `src/pages/admin/index.astro`
+- `src/components/PrimaryButton.astro`
+- `CHANGELOG.md`
+
+#### Side effects
+- None. The modernization is purely visual and does not change the underlying administrative logic.
+
+**中文說明：管理員後台「全面品牌化」。將 `/admin` 頁面內所有原生元件（輸入框、按鈕、側邊欄）完整替換為 UU 品牌設計系統樣式，透過圓角化、品牌配色與微動畫優化，打造與前台一致的頂級管理體驗。**
+
+
 ### [2026-03-17] - Phase 9: Color Compliance Enforcement
 
 #### Summary of changes

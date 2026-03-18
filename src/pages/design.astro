@@ -16,12 +16,28 @@ import ModalGlobal from "../components/admin/ModalGlobal.astro";
         <header class="mb-20 border-b border-uu-sub/30 pb-12">
             <div class="flex items-center gap-4 mb-4">
                 <span class="px-3 py-1 bg-uu-main text-white text-[10px] font-black tracking-widest rounded-full uppercase">Internal Tool</span>
-                <span class="text-uu-main/40 text-[10px] font-medium tracking-widest uppercase">v1.0.0</span>
+                <span class="text-uu-main/40 text-[10px] font-medium tracking-widest uppercase">v1.1.0</span>
             </div>
             <h1 class="text-6xl font-black text-uu-dark tracking-tighter mb-4">Design <span class="text-uu-main/20 italic">System</span></h1>
-            <p class="text-lg text-uu-main/60 max-w-2xl leading-relaxed">
+            <p class="text-lg text-uu-main/60 max-w-2xl leading-relaxed mb-10">
                 UU MEMO 的正式元件庫與設計規範。這裡展示了專案中所有核心 UI 元素、色彩系統與文字排版，作為未來開發與樣式溝通的單一事實來源。
             </p>
+
+            <!-- Brand Principles -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-10 border-t border-uu-sub/10">
+                <div class="space-y-3">
+                    <p class="text-[10px] font-black text-uu-main uppercase tracking-[0.2em]">01. 禁用狀態色</p>
+                    <p class="text-xs text-uu-main/60 leading-relaxed">嚴禁使用 Red, Green, Blue 等傳統狀態色。視覺反饋應完全由 UU 核心色盤組成。</p>
+                </div>
+                <div class="space-y-3">
+                    <p class="text-[10px] font-black text-uu-main uppercase tracking-[0.2em]">02. 核心色盤限制</p>
+                    <p class="text-xs text-uu-main/60 leading-relaxed">僅允許使用 UU Main, Sub, Base, Dark 四種色值，確保品牌視覺的高度純淨與統一。</p>
+                </div>
+                <div class="space-y-3">
+                    <p class="text-[10px] font-black text-uu-main uppercase tracking-[0.2em]">03. 透過圖標與厚度溝通</p>
+                    <p class="text-xs text-uu-main/60 leading-relaxed">利用圖標 (Icons) 與背景透明度 (Opacity) 來區分層級與表達操作成功或錯誤狀態。</p>
+                </div>
+            </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-20">
@@ -33,7 +49,8 @@ import ModalGlobal from "../components/admin/ModalGlobal.astro";
                     <li><a href="#buttons" class="text-xs font-black tracking-widest text-uu-main/40 hover:text-uu-main transition-all uppercase">03. Buttons</a></li>
                     <li><a href="#forms" class="text-xs font-black tracking-widest text-uu-main/40 hover:text-uu-main transition-all uppercase">04. Form Elements</a></li>
                     <li><a href="#feedback" class="text-xs font-black tracking-widest text-uu-main/40 hover:text-uu-main transition-all uppercase">05. Feedback</a></li>
-                    <li><a href="#prose" class="text-xs font-black tracking-widest text-uu-main/40 hover:text-uu-main transition-all uppercase">06. Prose Style</a></li>
+                    <li><a href="#admin" class="text-xs font-black tracking-widest text-uu-main/40 hover:text-uu-main transition-all uppercase">06. Admin Components</a></li>
+                    <li><a href="#prose" class="text-xs font-black tracking-widest text-uu-main/40 hover:text-uu-main transition-all uppercase">07. Prose Style</a></li>
                 </ul>
             </nav>
 
@@ -172,16 +189,55 @@ import ModalGlobal from "../components/admin/ModalGlobal.astro";
                         <span class="w-8 h-[1px] bg-uu-sub"></span>
                         05. Feedback & Interactions
                     </h2>
-                    <div class="flex flex-wrap gap-4">
-                        <button onclick="window.showToast('Success Notification', 'check_circle', 'success')" class="px-8 py-4 bg-uu-main/10 text-uu-main text-xs font-black rounded-full hover:bg-uu-main hover:text-white transition-all uppercase tracking-widest">
-                            Trigger Success Toast
-                        </button>
-                        <button onclick="window.showToast('Error notification example', 'report', 'error')" class="px-8 py-4 bg-uu-dark/10 text-uu-dark text-xs font-black rounded-full hover:bg-uu-dark hover:text-white transition-all uppercase tracking-widest">
-                            Trigger Error Toast
-                        </button>
-                        <button id="open-modal-demo" class="px-8 py-4 bg-uu-dark text-white text-xs font-black rounded-full hover:bg-uu-main transition-all shadow-xl uppercase tracking-widest">
-                            Open Modal Example
-                        </button>
+                    <div class="space-y-10">
+                        <p class="text-xs text-uu-main/60 italic">註：不使用紅/綠色，改用品牌主色配合圖標表達狀態。</p>
+                        <div class="flex flex-wrap gap-4">
+                            <button onclick="window.showToast('操作成功完成', 'check_circle', 'success')" class="px-8 py-4 bg-uu-main/10 text-uu-main text-xs font-black rounded-full hover:bg-uu-main hover:text-white transition-all uppercase tracking-widest">
+                                Trigger Action Success
+                            </button>
+                            <button onclick="window.showToast('系統操作提示或警告', 'report', 'error')" class="px-8 py-4 bg-uu-dark/10 text-uu-dark text-xs font-black rounded-full hover:bg-uu-dark hover:text-white transition-all uppercase tracking-widest">
+                                Trigger Alert / Conflict
+                            </button>
+                            <button id="open-modal-demo" class="px-8 py-4 bg-uu-dark text-white text-xs font-black rounded-full hover:bg-uu-main transition-all shadow-xl uppercase tracking-widest">
+                                Open Modal Example
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Admin Components -->
+                <section id="admin" class="scroll-mt-32">
+                    <h2 class="text-xs font-black tracking-[0.3em] text-uu-dark uppercase mb-12 flex items-center gap-3">
+                        <span class="w-8 h-[1px] bg-uu-sub"></span>
+                        06. Admin-Specific Components
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+                        <!-- Sidebar Item Preview -->
+                        <div class="bg-uu-base/20 border border-uu-sub/20 rounded-[2.5rem] p-10 space-y-6">
+                            <p class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest mb-4">Sidebar Navigation Items</p>
+                            <div class="space-y-2 max-w-[200px]">
+                                <div class="flex items-center gap-4 px-5 py-4 rounded-2xl bg-uu-main text-white shadow-md">
+                                    <span class="material-symbols-outlined text-xl">edit</span>
+                                    <span class="text-sm font-bold tracking-widest">選取狀態</span>
+                                </div>
+                                <div class="flex items-center gap-4 px-5 py-4 rounded-2xl text-uu-main/50 hover:bg-uu-sub/10 hover:text-uu-main transition-all">
+                                    <span class="material-symbols-outlined text-xl">folder</span>
+                                    <span class="text-sm font-bold tracking-widest">預設狀態</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Special Action Buttons -->
+                        <div class="space-y-6">
+                            <p class="text-[10px] font-black text-uu-main/40 uppercase tracking-widest mb-4">System Maintenance Buttons</p>
+                            <button class="flex items-center gap-2 px-8 py-4 bg-uu-dark text-white rounded-2xl text-[10px] font-black tracking-widest uppercase hover:bg-uu-main transition-all shadow-xl shadow-uu-dark/10 active:scale-95">
+                                <span class="material-symbols-outlined text-sm">build_circle</span>
+                                強制系統修復與校準
+                            </button>
+                            <p class="text-[10px] text-uu-main/40 leading-relaxed pl-2">
+                                用於系統層級的危險操作，採用 UU Dark 營造專業維護感。
+                            </p>
+                        </div>
                     </div>
                 </section>
 
@@ -189,7 +245,7 @@ import ModalGlobal from "../components/admin/ModalGlobal.astro";
                 <section id="prose" class="scroll-mt-32 pb-40">
                     <h2 class="text-xs font-black tracking-[0.3em] text-uu-dark uppercase mb-12 flex items-center gap-3">
                         <span class="w-8 h-[1px] bg-uu-sub"></span>
-                        06. Prose (Markdown Style)
+                        07. Prose (Markdown Style)
                     </h2>
                     <div class="prose max-w-none">
                         <h3>Markdown Table Standard</h3>
