@@ -10,7 +10,15 @@ const posts = defineCollection({
         pubDate: z.coerce.date().optional(),
         publishDate: z.coerce.date().optional(),
         updatedDate: z.coerce.date().optional(),
-        heroImage: z.string().optional(),
+        heroImage: z.string().optional().transform(val => {
+            if (!val || val.startsWith('/') || val.startsWith('http')) return val;
+            // If it's just a filename like 260317-slug-01.jpg, prepend the directory /images/YYMM/
+            const match = val.match(/^(\d{4})\d{2}-/);
+            if (match) {
+                return `/images/${match[1]}/${val}`;
+            }
+            return val;
+        }),
         // Support array or string for category for backward compatibility
         category: z.union([z.string(), z.array(z.string())]).optional(),
         tags: z.array(z.string()).optional(),
