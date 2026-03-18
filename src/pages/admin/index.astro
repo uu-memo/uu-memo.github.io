@@ -1001,22 +1001,28 @@ heroImage: '/images/&#123;&#123;datePath&#125;&#125;/&#123;&#123;datePath&#125;&
             });
 
             // 2. Push about.md to GitHub via GAS Bridge
-            await fetch(GAS_URL, {
+            const response = await fetch(GAS_URL, {
                 method: "POST",
-                mode: "no-cors",
                 body: JSON.stringify({
                     action: "upload_file",
                     path: "src/content/pages/about.md",
                     content: encoded,
                     message: "Admin: Update 'About Me' page",
-                    branch: "main"
+                    branch: "main",
+                    token: PUBLIC_GAS_SECRET // Include token for authentication
                 })
             });
+
+            const result = await response.json();
+            if (result.status === 'error' || result.success === false) {
+                throw new Error(result.message || "GitHub 同步失敗");
+            }
 
             renderAuthorPreview(bodyContent);
             (window as any).showToast("關於我已同步至 GitHub，網站將在約 1-2 分鐘後更新。", 'success');
             authorEditor?.classList.add("hidden");
             authorPreview?.classList.remove("hidden");
+
         } catch (err) {
             (window as any).showToast("同步失敗: " + err, 'error');
         } finally {

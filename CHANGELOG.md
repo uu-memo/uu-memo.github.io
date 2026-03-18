@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### [2026-03-18.2] - Phase 13: About Page Sync Fix & Data Alignment
+#### Summary of changes
+- **Sync Logic Repair**: Removed `mode: "no-cors"` from the GitHub sync request in the admin panel to enable proper error capturing.
+- **Enhanced Diagnostics**: Integrated API token validation and status checking to provide real-time feedback for sync failures.
+- **Data Alignment**: Manually synchronized the latest "About Me" content to `src/content/pages/about.md` to match the admin dashboard.
+
+#### Technical details
+- **Network Request Update**: Modified `src/pages/admin/index.astro` to use standard `CORS` mode for `fetch`, allowing the frontend to read the response body and status code from the GAS bridge.
+- **Error Handling**: Implemented a `throw new Error` pattern in the `author-save-btn` listener based on the JSON response from the GAS bridge.
+- **Content Synchronization**: Refined `about.md` by removing legacy paragraphs and inserting the user-confirmed latest text.
+
+#### Affected files
+- `src/pages/admin/index.astro`
+- `src/content/pages/about.md`
+- `CHANGELOG.md`
+
+#### Side effects
+- Admin users will now see explicit error messages (e.g., "Unauthorized", "Rate Limit") if the GitHub sync fails, instead of a misleading "Success" toast.
+
+**中文說明：修復 About 頁面同步機制。移除後台同步請求的 `no-cors` 限制，讓系統能正確回報 GitHub 同步失敗（如 Token 過期）的資訊。同時手動校準 `about.md` 文案，確保前台顯示與後台編輯內容 100% 同步。**
+
+
 ### [2026-03-18] - Phase 11: Design System Refinement & Admin Maintenance UI
 #### Summary of changes
 - **Emergency Fix Button**: Redesigned the "Clean Build Error" button in the admin panel to perfectly match the "Sync" button's style, size, and color (`UU Main`), using `rounded-2xl` and `material-symbols-rounded` icon font.
